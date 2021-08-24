@@ -1,0 +1,58 @@
+{% load static %}
+{% load humanize %}
+<h5 class="my-3">Crear Proyecto</h5>
+<form 
+  method="post" 
+  accept-charset="utf-8" 
+  action="{% url 'budget_register' %}"
+>
+  {% csrf_token %}
+  <input type="hidden" name="method" value="create-budget" />
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="project_desc_id">Descripción Proyecto</label>
+        <input 
+          class="form-control" 
+          placeholder="Ingrese nombre de Proyecto a crear" 
+          name="project_desc"
+          id="project_desc_id" 
+          type="text"
+        />
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="project_date_start_id">Fecha Inicio</label>
+        <input 
+          class="form-control" 
+          placeholder="Ingrese Fecha de inicio del proyecto" 
+          name="project_date_start"
+          id="project_date_start_id"
+          type="date"
+        />
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="project_date_end_id">Fecha Final</label>
+        <input 
+          class="form-control"
+          placeholder="Ingrese Fecha de final del proyecto" 
+          name="project_date_end"
+          id="project_date_end_id" 
+          type="date"
+        />
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4">
+      <div class="d-grid gap-2 my-2">
+        <button class="btn btn-safa" id="btn-create-project" type="button">Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

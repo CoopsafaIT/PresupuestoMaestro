@@ -1,0 +1,79 @@
+{% load static %}
+{% load humanize %}
+<div class="card card-template mt-4">
+  <div class="card-header">
+    <h5 class="card-title fw-light">
+      Inversiones Presupuestadas: 
+      {% if qs %} {{qs.0.codcentrocostoxcuentacontable.codcentrocosto}} {% endif %}
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="table-responsive">
+        <div class="col-md-12">
+          <table class="table table-hover table-striped table-bordered">
+            <thead>
+              <tr>
+                <th class="text-center">Cuenta</th>
+                <th class="text-center">Mes</th>
+                <th class="text-center">Descripcion</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-center">Monto Uni.</th>
+                <th class="text-center">Presupuestado</th>
+                <th class="text-center">Comentario</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in qs %}
+              <tr>
+                <td>{{item.codcentrocostoxcuentacontable.codcuentacontable}}</td>
+                <td>{{item.mes}}</td>
+                <td>{{item.descproducto}}</td>
+                <td>{{item.cantidad}}</td>
+                <td>{{item.valor|floatformat:2|intcomma}}</td>
+                <td>{{item.presupuestado|floatformat:2|intcomma}}</td>
+                <td>{{item.justificacion|default:''}}</td>
+                <td>
+                  <div class="d-grid gap-2 d-flex">
+                    <a 
+                      href="{% url 'investment_budget_update' item.pk %}" 
+                      class="btn btn-outline-safa me-2"
+                    > <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a 
+                      href="#!"
+                      data-form-url="{% url 'investement_budget_delete' item.pk %}"
+                      class="btn btn-outline-danger delete-investment-budget"
+                    > <i class="bi bi-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td 
+                  class="text-center" 
+                  colspan="8"
+                >
+                  <h5>No hay Inversiones presupuestadas</h5>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="2"> Total Presupuestado </th>
+                <td class="fw-light" colspan="6">{{total_budget|floatformat:2|intcomma}}</td>
+              </tr>
+              <tr>
+                <th colspan="2"> Total Disponible </th>
+                <td class="fw-light" colspan="6">{{amount_available|floatformat:2|intcomma}}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

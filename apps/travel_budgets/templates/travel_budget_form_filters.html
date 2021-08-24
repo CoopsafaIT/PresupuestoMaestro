@@ -1,0 +1,60 @@
+{% load static %}
+{% load humanize %}
+<h5 class="my-3">Seleccione datos</h5>
+<form
+  method="post"
+  accept-charset="utf-8"
+  action="{% url 'travel_budget_register' %}"
+>
+  {% csrf_token %}
+  <input type="hidden" name="method" value="filter-travel-budget" />
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_periods">Periodo</label>
+        <select 
+          class="form-select select2-style" 
+          id="id_period" 
+          name="period" 
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Periodo ---</option>
+          {% for period in periods %}
+          <option value="{{period.pk}}">{{period}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_cost_centers">Centro de Costos</label>
+        <select 
+          class="form-select select2-style"
+          id="id_cost_center"
+          name="cost_center"
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Centro Costos ---</option>
+          {% for cost_center in cost_centers %}
+          <option value="{{cost_center.pk}}">{{cost_center}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4">
+      <div class="d-grid gap-2 my-2">
+        <button class="btn btn-safa" type="submit">Filtrar</button>
+      </div>
+      <button 
+        class="btn btn-outline-safa" 
+        id="btn-generate-report" 
+        type="button"
+      >Generar Reporte
+      </button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,27 @@
+.btn-safa{
+  background-color: var(--institutional-green-color);
+  border-color: var(--institutional-green-color);
+  color: var(--white);
+  transition: 0.3s ease;
+  transition-delay: 0.1s;
+}
+
+.btn-safa:hover{
+  color: var(--institutional-golden-color);
+  transition: 0.3s ease ;
+}
+
+.btn-outline-safa{
+  color: var(--institutional-green-color);
+  border: solid 1px var(--institutional-green-color);
+  background-color: var(--white);
+  transition: 0.3s ease;
+  transition-delay: 0.1s;
+}
+
+.btn-outline-safa:hover{
+  color: var(--white);
+  background-color: var(--institutional-green-color);
+  border: va(--white);
+  transition: 0.3s ease ;
+}

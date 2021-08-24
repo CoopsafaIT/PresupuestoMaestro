@@ -1,0 +1,97 @@
+{% load static %}
+{% load humanize %}
+<div class="card card-template mt-4">
+  <div class="card-header">
+    <h5 class="card-title">Ingresar Presupuestos de Gastos</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="table-responsive">
+        <div class="col-md-12">
+          <table class="table table-hover table-striped" id="tablaPresupuesto">
+            <thead>
+              <tr>
+                <th class="text-center">Cuenta Contable</th>
+                <th class="text-center">Ejecutado {{month_projection}}</th>
+                <th class="text-center">Proyectado Diciembre</th>
+                <th class="text-center">Criterio</th>
+                <th class="text-center">%</th>
+                <th class="text-center">Monto</th>
+                <th class="text-center">Justificación</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for budget_item in qs_budget %}
+              <tr class="tr-meses" data-id='{{budget_item.pk}}' id="{{budget_item.pk}}">
+                <td class="font_size_min {% if budget_item.estado %} td-border-success{% endif %}"
+                  data-td='td-id-{{budget_item.pk}}'>
+                  <span>{{budget_item.codcentroscostoxcuentacontable.codcuentacontable}}</span>
+                </td>
+
+                <td class="text-center font_size_min {{budget_item.pk}}">
+                  {{budget_item.saldonoviembre|floatformat:2|intcomma}}
+                </td>
+
+                <td class="text-center font_size_min {{budget_item.pk}}">
+                  {{budget_item.saldodiciembre|floatformat:2|intcomma}}
+                </td>
+
+                <td style="width: 200px">
+                  <select class="budget_table_select criterio_ppto select2-style"
+                    data-id="{{budget_item.saldonoviembre|floatformat:2|intcomma}}"
+                    data-nov="{{budget_item.saldonoviembre|floatformat:2|intcomma}}"
+                    data-dic="{{budget_item.saldodiciembre|floatformat:2|intcomma}}" 
+                    id="id_criterio{{budget_item.pk}}"
+                    name="criterios">
+                    <option value="">-- Seleccione Criterio --</option>
+                    {% for item_criteria in criteria %}
+                    <option data-valor={{item_criteria.valor}}
+                      {% if item_criteria.pk == budget_item.criterio.codcriterio %} selected="selected" {% endif %}
+                      value="{{item_criteria.pk}}">{{item_criteria.descripcioncriterio}}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </td>
+
+                <td class="text-center">
+                  <input class="budget_table_input_v2 {{budget_item.pk}} percentaje_ppto validation-input-text"
+                    data-dic="{{budget_item.saldodiciembre|floatformat:2|intcomma}}" readonly type="text" value="0" />
+                </td>
+
+                <td class="text-center">
+                  <input class="budget_table_input total_ppto validation-input-text" name="total" readonly
+                    value="{{budget_item.montooriginal|floatformat:2|intcomma}}" type="text" />
+                </td>
+
+                <td class="text-center">
+                  <textarea class="text-form justificacion_ppto" rows="" readonly
+                    style="resize: none;">{{budget_item.justificacion|default:''}}</textarea>
+                </td>
+
+                <td class="text-center">
+                  {% if budget_item.aprobadoasamblea == None %}
+                  <a class="btn btn-success btn-sm save_budget_item" data-id="{{budget_item.pk}}"
+                    id="{{budget_item.pk}}">Presupuestar
+                  </a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="6" class="text-end">
+                  <h5>
+                    <b>{{qs_total_budget|floatformat:2|intcomma}}</b>
+                  </h5>
+                </td>
+                <td colspan="2"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+{% load static %}
+{% load humanize %}
+<div class="card card-template mt-4">
+  <div class="card-header">
+    <h5 class="card-title fw-light">
+      Personal Presupuestado
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="table-responsive">
+        <div class="col-md-12">
+          <table class="table table-hover table-striped table-bordered">
+            <thead>
+              <tr>
+                <th class="text-center">Mes</th>
+                <th class="text-center">Puesto</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-center">Tipo</th>
+                <th class="text-center">justificación</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in qs %}
+              <tr>
+                <td>{{item.mes}} {% if item.tipo == 1 %}  
+                  <i class="bi bi-chevron-right text-danger"></i>
+                  {{item.mesfin}}{% endif %}
+                </td>
+                <td>{{item.codpuesto}}</td>
+                <td>{{item.cantidad}}</td>
+                <td>{% if item.tipo == 1 %} Temporal {% else %} Permanente {% endif %}</td>
+                <td>{{item.justificacion|default:''}}</td>
+                <td>
+                  <div class="d-grid gap-2 d-flex">
+                    <a 
+                      href="{% url 'investment_budget_update' item.pk %}" 
+                      class="btn btn-outline-safa me-2"
+                    > <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a 
+                      href="#!"
+                      data-form-url="{% url 'investement_budget_delete' item.pk %}"
+                      class="btn btn-outline-danger delete-investment-budget"
+                    > <i class="bi bi-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td 
+                  class="text-center" 
+                  colspan="6"
+                >
+                  <h5 class="fw-light">No hay Presupuesto de personal registrado!</h5>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

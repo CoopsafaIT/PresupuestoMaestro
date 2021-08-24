@@ -1,0 +1,19 @@
+.budget_table_input{
+  width: 96px !important;
+}
+
+.budget_table_input_v2{
+  width: 50px !important;
+}
+
+.budget_table_select{
+  width: 150px !important;
+}
+
+.font_size_min{
+  font-size: 14px !important;
+}
+
+.td-border-success{
+  border-left: solid 2px var(--institutional-green-color) !important;
+}

@@ -7,24 +7,43 @@
   </div>
   <ul class="nav-links">
     <li>
-      <a href="#" class="institutional-golden-color">
+      <a href="{% url 'dashboard' %}" class="institutional-golden-color">
         <i class="bi bi-grid-3x3 "></i>
         <span class="link_name">Dashboard</span>
       </a>
       <ul class="sub-menu blank">
-        <li><a class="link_name" href="#">Dashboard</a></li>
+        <li><a class="link_name" href="{% url 'dashboard' %}">Dashboard</a></li>
       </ul>
     </li>
     <li>
       <div class="icon-link">
         <a href="#">
           <i class="bi bi-collection"></i>
-          <span class="link_name">Presupuestos</span>
+          <span class="link_name">Ingreso Ppto.</span>
         </a>
         <i class='bi bi-chevron-down arrow'></i>
       </div>
       <ul class="sub-menu">
-        <li><a class="link_name" href="#">Presupuestos</a></li>
+        <li><a class="link_name" href="#">Ingreso Ppto.</a></li>
+        <li><a href="{% url 'budget_register' %}">Gastos</a></li>
+        <li><a href="{% url 'travel_budget_register' %}">Viaticos</a></li>
+        <li><a href="{% url 'investment_budget_register' %}">Inversión</a></li>
+        <li><a href="{% url 'staff_budgets_register' %}">Personal</a></li>
+        <li><a href="#">Indirecto</a></li>
+        <li><a href="#">Costos</a></li>
+        <li><a href="#">Ingresos</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-bar-chart-steps"></i>
+          <span class="link_name">Ppto. Maestro</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Ppto. Maestro</a></li>
         <li><a href="#">Gastos</a></li>
         <li><a href="#">Indirecto</a></li>
         <li><a href="#">Costos</a></li>
@@ -101,10 +120,12 @@
           <i class="bi bi-person-circle"></i>
         </div>
         <div class="name-job">
-          <div class="profile_name">Juan Carlos</div>
-          <div class="job">Web Developer</div>
+          <div class="profile_name">{{request.user.first_name}}</div>
+          <div class="job">Sagrada Familia</div>
         </div>
-        <i class="bi bi-box-arrow-left"></i>
+        <a href="{% url 'logout' %}" class="text-decoration-none">
+          <i class="bi bi-box-arrow-left"></i>
+        </a>
       </div>
     </li>
   </ul>

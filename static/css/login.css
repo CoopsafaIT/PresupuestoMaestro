@@ -1,0 +1,38 @@
+:root {
+  --institutional-green-color: #017224;
+  --institutional-golden-color: #cbaa5b;
+  --white: #fff;
+}
+
+.login {
+  min-height: 100vh;
+}
+
+.bg-image {
+  background-image: url('./../img/login_bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.login-heading {
+  font-weight: 300;
+}
+
+.btn-login {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+}
+
+.btn-safa{
+  background-color: var(--institutional-green-color);
+  border-color: var(--institutional-green-color);
+  color: var(--white);
+  transition: 0.3s ease;
+  transition-delay: 0.1s;
+}
+
+.btn-safa:hover{
+  color: var(--institutional-golden-color);
+  transition: 0.3s ease ;
+}

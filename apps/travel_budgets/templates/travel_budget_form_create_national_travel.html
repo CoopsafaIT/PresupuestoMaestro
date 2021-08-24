@@ -1,0 +1,127 @@
+{% load static %}
+{% load humanize %}
+<h5 class="my-3 fw-light">Ingresar Presupuesto de viaje nacional</h5>
+<form
+  method="post"
+  accept-charset="utf-8"
+  action="{% url 'travel_budget_register' %}"
+>
+  {% csrf_token %}
+  <input type="hidden" name="method" value="create-national-travel-budget" />
+  <input type="hidden" name="travel_type" value="1" />
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_period_2">Periodo</label>
+        <select 
+          class="form-select select2-style" 
+          id="id_period_2" 
+          name="period" 
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Periodo ---</option>
+          {% for period in periods %}
+          <option value="{{period.pk}}">{{period}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_cost_center_2">Centro de Costos</label>
+        <select 
+          class="form-select select2-style"
+          id="id_cost_center_2"
+          name="cost_center"
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Centro Costos ---</option>
+          {% for cost_center in cost_centers %}
+          <option value="{{cost_center.pk}}">{{cost_center}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_number_trips_national">Cantidad de viajes</label>
+        <input
+          class="form-control" 
+          type="number"
+          name="number_trips"
+          required
+          id="id_number_trips_national"
+        />
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_category_national">Categoria</label>
+        <select 
+          class="form-select select2-style"
+          id="id_category_national"
+          name="category" 
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione categoria ---</option>
+          {% for key, category in categories.items %}
+          <option value="{{key}}">{{category}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_filial_national">Filiales</label>
+        <select 
+          class="form-select select2-style"
+          id="id_filial_national"
+          name="filial" 
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione filial ---</option>
+          {% for filial in filials %}
+          <option value="{{filial.pk}}">{{filial}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_number_days_national">Cantidad de días</label>
+        <input
+          class="form-control" 
+          type="number"
+          step="any"
+          name="number_days"
+          required
+          id="id_number_days_national"
+        />
+      </div>
+    </div>
+    <div class="w-100"></div>
+
+    <div class="col-md-4 mb-3">
+      <label for="id_justification_national">Justificación</label>
+      <textarea
+        name="justification"
+        required
+        class="form-control"
+        id="id_justification_national"
+        rows="3"
+        style="resize: none;"
+        ></textarea>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4">
+      <div class="d-grid gap-2 my-2">
+        <button class="btn btn-safa" type="submit">Guardar</button>
+      </div>
+    </div>
+  </div>
+</form>

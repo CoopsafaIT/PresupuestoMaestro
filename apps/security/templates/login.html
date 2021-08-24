@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'css/icons/bootstrap-icons.css' %}">
+  <title>Login | Sistema de Gestión Presupuestaria</title>
+</head>
+<body>
+  <div class="container-fluid ps-md-0">
+    <div class="row g-0">
+      <div class="d-none d-md-flex col-md-8 col-lg-8 bg-image"></div>
+      <div class="col-md-4 col-lg-4">
+        <div class="login d-flex align-items-center py-5">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-9 col-lg-8 mx-auto">
+                <img src="{% static 'img/coop.png' %}" class="img-fluid" alt="Coop. Sagrada Familia">
+                <h3 class="login-heading mb-5 mt-2">Sistema Gestión Presupuestaria</h3>
+                {% include 'layout/messages.html' %}
+                <form method="POST">
+                  {% csrf_token %}
+                  <div class="form-floating mb-4">
+                    <input 
+                      type="text"
+                      class="form-control"
+                      value="{{request.session.first_name}}"
+                      id="id_first_name"
+                      name="first_name"
+                      placeholder="karen_alvarado"
+                      />
+                    <label for="id_first_name">Usuario</label>
+                  </div>
+                  <div class="form-floating mb-4">
+                    <input 
+                      type="password"
+                      class="form-control"
+                      id="id_password"
+                      name="password"
+                      placeholder="Ingrese contraseña"
+                    />
+                    <label for="id_password">Contraseña</label>
+                  </div>
+                  <div class="d-grid">
+                    <button 
+                      class="btn btn-lg btn-safa btn-login text-uppercase fw-bold mb-3" 
+                      type="submit"
+                    >Ingresar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+</body>
+</html>

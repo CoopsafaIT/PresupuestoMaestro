@@ -1,0 +1,64 @@
+{% load static %}
+{% load humanize %}
+<div class="card card-template mt-4">
+  <div class="card-header">
+    <h5 class="card-title">Viajes Nacionales Presupuestados</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="table-responsive">
+        <div class="col-md-12">
+          <table class="table table-hover table-striped table-bordered">
+            <thead>
+              <tr>
+                <th class="text-center">Filial</th>
+                <th class="text-center">Categoria</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-center">Dias</th>
+                <th class="text-center">Comentario</th>
+                <th class="text-center">Justificación</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in qs_national_travel_budget %}
+              <tr>
+                <td>{{item.filial}}</td>
+                <td>{{item.categoria}}</td>
+                <td>{{item.cantidadviajes|floatformat:'0'|default:'0'}}</td>
+                <td>{{item.cantidaddias|floatformat:'2'|default:'0'}}</td>
+                <td>{{item.comentario|default:''}}</td>
+                <td>{{item.justificacion|default:''}}</td>
+                <td>
+                  <div class="d-grid gap-2 d-flex">
+                    <a 
+                      href="{% url 'travel_budget_update' item.pk %}" 
+                      class="btn btn-outline-safa me-2"
+                    > <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a 
+                      href="#!"
+                      data-form-url="{% url 'travel_budget_delete' item.pk %}"
+                      class="btn btn-outline-danger delete-travel-budget"
+                    > <i class="bi bi-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td 
+                  class="text-center" 
+                  colspan="7"
+                >
+                  <h5>No hay viajes Nacionales presupuestados</h5>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

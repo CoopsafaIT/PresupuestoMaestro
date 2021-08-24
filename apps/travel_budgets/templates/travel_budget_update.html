@@ -1,0 +1,206 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Presupuestos de Viaticos {% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/budgets.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container-fluid pt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-template">
+      <li class="breadcrumb-item"><a href="{% url 'travel_budget_register' %}">Volver a Listado</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Editar de Presupuestos de Viaticos</li>
+    </ol>
+  </nav>
+
+  <div class="card card-template">
+    <div class="card-header">
+      <h5 class="card-title">Editar Presupuestos de Viaticos</h5>
+    </div>
+    <div class="card-body">
+      <form
+        method="post"
+        accept-charset="utf-8"
+        action="{% url 'travel_budget_update' qs.pk %}"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="travel_type" value="{{qs.tipoviatico}}" />
+        <input 
+          type="hidden" 
+          name="method" 
+          {% if qs.tipoviatico == 1 %}
+            value="update-national-travel-budget"
+          {% else %} 
+            value="update-international-travel-budget"
+          {% endif %}
+        />
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_period">Periodo</label>
+              <select 
+                class="form-select select2-style" 
+                id="id_period" 
+                name="period" 
+                required
+                style="width: 100%;"
+              >
+                <option value="">--- Seleccione Periodo ---</option>
+                {% for period in periods %}
+                <option 
+                  value="{{period.pk}}"
+                  {% if period.pk == qs.codperiodo.pk %} selected {% endif %}
+                >{{period}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_cost_center_2">Centro de Costos</label>
+              <select 
+                class="form-select select2-style"
+                id="id_cost_center_2"
+                name="cost_center"
+                required
+                style="width: 100%;"
+              >
+                <option value="">--- Seleccione Centro Costos ---</option>
+                {% for cost_center in cost_centers %}
+                <option 
+                  value="{{cost_center.pk}}"
+                  {% if cost_center.pk == qs.codcentrocosto.pk %} selected {% endif %}
+                >{{cost_center}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_number_trips_national">Cantidad de viajes</label>
+              <input
+                class="form-control" 
+                type="number"
+                name="number_trips"
+                required
+                value="{{qs.cantidadviajes}}"
+                id="id_number_trips_national"
+              />
+            </div>
+          </div>
+          <div class="w-100"></div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_category_national">Categoria</label>
+              <select 
+                class="form-select select2-style"
+                id="id_category_national"
+                name="category" 
+                required
+                style="width: 100%;"
+              >
+                <option value="">--- Seleccione categoria ---</option>
+                {% for key, category in categories.items %}
+                <option 
+                  value="{{key}}" 
+                  {% if key == qs.categoria %} selected {% endif %}
+                >{{category}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          {% if qs.tipoviatico == 1 %}
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_filial_national">Filiales</label>
+              <select 
+                class="form-select select2-style"
+                id="id_filial_national"
+                name="filial" 
+                required
+                style="width: 100%;"
+              >
+                <option value="">--- Seleccione filial ---</option>
+                {% for filial in filials %}
+                <option 
+                  value="{{filial.pk}}"
+                  {% if filial.pk == qs.filial.pk %} selected {% endif %}
+                >{{filial}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          {% else %}
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_zone">Zona</label>
+              <select 
+                class="form-select select2-style"
+                id="id_zone"
+                name="zone" 
+                required
+                style="width: 100%;"
+              >
+                <option value="">--- Seleccione zone ---</option>
+                {% for key, zone in zones.items %}
+                <option 
+                  value="{{key}}"
+                  {% if key == qs.zona %} selected {% endif %}
+                >{{zone}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          {% endif %}
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_number_days_national">Cantidad de días</label>
+              <input
+                class="form-control" 
+                type="number"
+                step="any"
+                name="number_days"
+                required
+                value='{{qs.cantidaddias|floatformat:2}}'
+                id="id_number_days_national"
+              />
+            </div>
+          </div>
+          <div class="w-100"></div>
+
+          <div class="col-md-4 mb-3">
+            <label for="id_justification_national">Justificación</label>
+            <textarea
+              name="justification"
+              required
+              class="form-control"
+              id="id_justification_national"
+              rows="3"
+              style="resize: none;"
+              >{{qs.justificacion|default:''}}</textarea>
+          </div>
+          <div class="w-100"></div>
+          <div class="col-md-4">
+            <div class="d-grid gap-2 my-2">
+              <button class="btn btn-safa" type="submit">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(() => {
+    $('#btn-generate-report').hide();
+  })
+</script>
+{% endblock javascript %}

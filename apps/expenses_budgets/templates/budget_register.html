@@ -1,0 +1,137 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Presupuestos de Gastos {% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/budgets.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container-fluid pt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-template">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Presupuestos de Gastos</li>
+    </ol>
+  </nav>
+
+  <div class="card card-template">
+    <div class="card-body">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="inicio-tab" data-bs-toggle="tab" data-bs-target="#inicio" type="button"
+            role="tab" aria-controls="inicio" aria-selected="true">Inicio</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="proyecto-tab" data-bs-toggle="tab" data-bs-target="#proyecto" type="button"
+            role="tab" aria-controls="proyecto" aria-selected="false">Proyectos</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="approve-tab" data-bs-toggle="tab" data-bs-target="#approve" type="button"
+            role="tab" aria-controls="approve" aria-selected="false">Aprobación</button>
+        </li>
+
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="inicio" role="tabpanel" aria-labelledby="inicio-tab">
+          {% include 'form_filters.html' %}
+        </div>
+        <div class="tab-pane fade" id="proyecto" role="tabpanel" aria-labelledby="proyecto-tab">
+          {% include 'form_create_projects.html' %}
+        </div>
+        <div class="tab-pane fade" id="approve" role="tabpanel" aria-labelledby="approve-tab">
+          <h5 class="my-3">Aprobación</h5>
+          <form 
+            accept-charset="utf-8"
+            action="{% url 'budget_register' %}"
+            class="mt-4"
+            method="post"
+            >
+            {% csrf_token %}
+            <input type="hidden" name="method" id="input_method_aprroved" />
+            <input type="hidden" name="period" id="input_period_aprroved" />
+            <input type="hidden" name="cost_center" id="input_cost_center_aprroved" />
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    data-method='save-requested'
+                    type="checkbox" 
+                    id="flexSwitchCheckChecked"
+                    checked 
+                  />
+                  <label 
+                    class="form-check-label" 
+                    for="flexSwitchCheckChecked"
+                  >
+                  Guardar todo como solicitado {% if qs_requested > 0 %}({{qs_requested}} cuentas){% endif %}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'card_budget_items.html' %}
+  <input 
+    type="hidden" 
+    name=""
+    id="id_urls"
+    data-get_projects='{% url "get_projects_by_cost_center" %}'
+    data-create_project='{% url "user_create_project" %}'
+    data-budget-register='{% url "budget_register" %}'
+  />
+  <input 
+    type="hidden" 
+    name=""
+    id="id_var"
+    data-project_session='{{request.session.project}}'
+  />
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/utils.js' %}"></script>
+<script src="{% static 'js/expenses_budgets/criteria.js' %}"></script>
+<script src="{% static 'js/expenses_budgets/save_budget_item.js' %}"></script>
+<script src="{% static 'js/expenses_budgets/generate_excel_report.js' %}"></script>
+<script src="{% static 'js/expenses_budgets/projects.js' %}"></script>
+<script>
+  $(document).ready(()=>{
+    // TODO: Create save flow approve!
+    $('.save_approved').click(function(e){
+      e.preventDefault()
+      e.stopPropagation()
+      if(
+        confirm('La siguiente acción no podrá ser modificada. ¿Está seguro?')
+      ){
+        let method = $(this).data('method')
+        let cost_center = $('#id_cost_centers option:selected').val()
+        let period = $('#id_periods option:selected').val()
+        if(method === '' || cost_center === '' || period === ''){
+          alert('Seleccione centro de costo y periodo')
+          return
+        }
+      }
+    })
+  })
+</script>
+<script>
+  $(document).ready(() => {
+    $('#btn-generate-report').hide();
+    $(
+      "#id_periods option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+    $(
+      "#id_cost_centers option[value= '{{request.session.cost_center}}'] "
+    ).prop('selected', true).trigger("change");
+  })
+</script>
+
+
+{% endblock javascript %}

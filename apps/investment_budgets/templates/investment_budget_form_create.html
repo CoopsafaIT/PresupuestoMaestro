@@ -1,0 +1,147 @@
+{% load static %}
+{% load humanize %}
+<h5 class="my-3 fw-light">Ingresar Inversión</h5>
+<form
+  method="post"
+  accept-charset="utf-8"
+  action="{% url 'investment_budget_register' %}"
+>
+  {% csrf_token %}
+  <input 
+    type="hidden"
+    name="method"
+    value="create-investment-budget"
+  />
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_period_2">Periodo</label>
+        <select 
+          class="form-select select2-style" 
+          id="id_period_2" 
+          name="period" 
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Periodo ---</option>
+          {% for period in periods %}
+          <option value="{{period.pk}}">{{period}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_cost_center_2">Centro de Costos</label>
+        <select 
+          class="form-select select2-style"
+          id="id_cost_center_2"
+          name="cost_center"
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Centro Costos ---</option>
+          {% for cost_center in cost_centers %}
+          <option value="{{cost_center.pk}}">{{cost_center}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_month">Mes</label>
+        <select
+          class="form-select select2-style"
+          id="id_month"
+          name="month"
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Mes ---</option>
+          {% for month in months %}
+          <option value="{{month}}">{{month}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_account">Cuenta Contable</label>
+        <select 
+          class="form-select select2-style"
+          id="id_account"
+          name="account"
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Cuenta Contable ---</option>
+          {% for account in accounts %}
+          <option value="{{account.pk}}">{{account}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_investment">Inversiones</label>
+        <select 
+          class="form-select select2-style"
+          id="id_investment"
+          name="investment" 
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Inversión ---</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_number">Cantidad</label>
+        <input
+          class="form-control" 
+          id="id_number"
+          min="0"
+          name="number"
+          required
+          step="1"
+          type="number"
+        />
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_unit_amount">Monto Unitario</label>
+        <input
+          class="form-control validation-number-input-text" 
+          id="id_unit_amount"
+          min="0"
+          name="unit_amount"
+          required
+          step="1"
+          type="text"
+        />
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <label for="id_justification_national">Justificación</label>
+      <textarea
+        name="justification"
+        required
+        class="form-control"
+        id="id_justification_national"
+        rows="3"
+        style="resize: none;"
+        ></textarea>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4">
+      <div class="d-grid gap-2 my-2">
+        <button class="btn btn-safa" type="submit">Guardar</button>
+      </div>
+    </div>
+  </div>
+</form>
