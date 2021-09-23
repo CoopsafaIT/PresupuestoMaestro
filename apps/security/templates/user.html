@@ -1,0 +1,76 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+
+{% block title %}Editar Usuario {{user}} {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item text-white ">
+    <a href="{% url 'users' %}" class="text-white text-decoration-none">/ Usuarios</a>
+  </li>
+  <li class="breadcrumb-item active text-white before-none" aria-current="page"> / Editando Usuario {{user}}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-fluid pt-3">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row mb-2">
+            <div class="col-md-12 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Editar Usuario</h1>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="method" value="update">
+            <div class="row">
+              {% for field in form.visible_fields  %}
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  {{ field.label_tag }}
+                  {{ field }}
+                  {% if field.help_text %}
+                  <small class="text-muted">{{ field.help_text }}</small>
+                  {% endif %}
+                  {% for error in field.errors %}
+                  <p class="text-danger">{{ error }}</p>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+
+              <div class="col-md-12">
+                <div class="group mb-3">
+                  <label for="id_groups">Roles</label>
+                  <select name="groups[]" class="form-select select2-style-roles" multiple="multiple"
+                    style="width: 100%;" id="id_groups">
+                    {% for group in groups %}
+                    <option
+                      value="{{group.pk}}"
+                      {% if group in user.groups.all %} selected {% endif %}
+                    >{{group.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-safa">Aceptar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+  $(document).ready(() => {
+    $('.select2-style-roles').select2({
+      language: "es"
+    });
+  })
+</script>
+{% endblock javascript %}

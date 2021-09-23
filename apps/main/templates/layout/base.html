@@ -24,7 +24,16 @@
       <span class="icon-menu">
         <i class="bi bi-list icon-menu"></i>
       </span>
-      <span class="header-navbar-title">Gestión Presupuestaria</span>
+      <span class="header-navbar-title fw-light">
+        <a href="{% url 'dashboard' %}" class="text-decoration-none text-white fs-6">
+          Gestión Presupuestaria
+        </a>
+      </span>
+      <nav aria-label="breadcrumb" class="ms-3 text-white">
+        <ol class="breadcrumb my-0 text-white">
+          {% block breadcrumb %} {% endblock breadcrumb %}
+        </ol>
+      </nav>
     </div>
     {% include 'layout/messages.html' %}
     {% block content %}
@@ -33,6 +42,7 @@
 
 
   <script src="{% static 'js/sidebar-menu.js' %}"></script>
+  <script src="{% static 'plugins/popper/popper.min.js' %}"></script>
   <script src="{% static 'js/bootstrap.js' %}"></script>
   <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/django-ajax.js' %}"></script>
@@ -41,6 +51,10 @@
     $('.select2-style').select2({
       language: "es"
     });
+    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
   </script>
   {% block javascript %}
   {% endblock javascript %}

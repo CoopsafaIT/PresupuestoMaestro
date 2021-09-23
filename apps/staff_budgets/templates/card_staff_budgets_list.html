@@ -35,14 +35,14 @@
                 <td>
                   <div class="d-grid gap-2 d-flex">
                     <a 
-                      href="{% url 'investment_budget_update' item.pk %}" 
+                      href="{% url 'staff_budgets_update' item.pk %}" 
                       class="btn btn-outline-safa me-2"
                     > <i class="bi bi-pencil-square"></i>
                     </a>
                     <a 
                       href="#!"
-                      data-form-url="{% url 'investement_budget_delete' item.pk %}"
-                      class="btn btn-outline-danger delete-investment-budget"
+                      data-form-url="{% url 'staff_budgets_delete' item.pk %}"
+                      class="btn btn-outline-danger delete-staff-budget"
                     > <i class="bi bi-trash"></i>
                     </a>
                   </div>

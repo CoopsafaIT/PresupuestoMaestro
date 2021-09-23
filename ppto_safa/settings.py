@@ -27,13 +27,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-
     'apps.administration',
     'apps.main',
     'apps.expenses_budgets',
     'apps.travel_budgets',
     'apps.staff_budgets',
     'apps.investment_budgets',
+    'apps.indirect_budgets',
+    'apps.income_budgets',
+    'apps.cost_budgets',
     'apps.security',
 ]
 

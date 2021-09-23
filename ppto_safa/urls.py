@@ -15,6 +15,9 @@ urlpatterns = [
     path('travel-budgets/', include('apps.travel_budgets.urls')),
     path('investment-budgets/', include('apps.investment_budgets.urls')),
     path('staff-budgets/', include('apps.staff_budgets.urls')),
+    path('indirect-budgets/', include('apps.indirect_budgets.urls')),
+    path('income-budgets/', include('apps.income_budgets.urls')),
+    path('cost-budgets/', include('apps.cost_budgets.urls')),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT

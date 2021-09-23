@@ -1,0 +1,85 @@
+{% load static %}
+{% load humanize %}
+<div class="card card-template mt-4">
+  <div class="card-header d-flex justify-content-between">
+    <h5 class="card-title fw-light">
+      Listado de Centros de Costos
+    </h5>
+    <button 
+      class="btn btn-outline-safa"
+      id="btn-recalculate-list"
+      type="button"
+    >Recalcular
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="table-responsive">
+        <div class="col-md-12">
+          <table class="table table-hover table-striped table-bordered">
+            <thead>
+              <tr>
+                <th class="text-center">Centro Costos</th>
+                <th class="text-center">Cuenta Contable</th>
+                <th class="text-center">Ejecutado a {{month_projection}}</th>
+                <th class="text-center">Proyectado a Diciembre</th>
+                <th class="text-center">%</th>
+                <th class="text-center">Presupuestado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <form
+                accept-charset="utf-8"
+                id="form-recalculate-values"
+                method="post"
+              >
+                {% csrf_token %}
+                <input type="hidden" name="method" value="recalculate">
+                <input type="hidden" name="period" id="id_period_recalculate">
+                <input type="hidden" name="account" id="id_account_recalculate">
+                {% for item in qs %}
+                <tr>
+                  <input type="hidden" name="id[]" value="{{item.pk}}"/>
+                  <td class="text-center">{{item.codcentrocostoxcuentacontable_new.codcentrocosto}}</td>
+                  <td class="text-center">{{item.codcentrocostoxcuentacontable_new.codcuentacontable}}</td>
+                  <td class="text-center">{{item.ejecutadodiciembre|floatformat:2|intcomma}}</td>
+                  <td class="text-center">{{item.proyeccion|floatformat:2|intcomma}}</td>
+                  <td class="text-center">
+                   {{item.porcentaje|floatformat:2|intcomma}}
+                  </td>
+                  <td class="text-center">
+                    <input 
+                      type="text"
+                      name="value[]"
+                      class="validation-input-text"
+                      value="{{item.total|intcomma}}"
+                    />
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td 
+                    class="text-center" 
+                    colspan="6"
+                  >
+                    <h5>No hay Disponible</h5>
+                  </td>
+                </tr>
+                {% endfor %}
+              </form>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2" class="text-end fw-bold">Totales:</td>
+                <td>{{total.total_ejecutado_diciembre|floatformat:2|intcomma|default:''}}</td>
+                <td>{{total.proyeccion|floatformat:2|intcomma|default:''}}</td>
+                <td>{{total.porcentaje|floatformat:2|intcomma|default:''}}</td>
+                <td>{{total.totalpresupuestado|floatformat:2|intcomma|default:''}}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

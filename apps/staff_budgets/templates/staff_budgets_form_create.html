@@ -5,6 +5,7 @@
   method="post"
   accept-charset="utf-8"
   action="{% url 'staff_budgets_register' %}"
+  onsubmit="document.getElementById('btn-register-staff-budget').setAttribute('disabled', 'disabled')"
 >
   {% csrf_token %}
   <input 
@@ -145,7 +146,7 @@
     <div class="w-100"></div>
     <div class="col-md-4">
       <div class="d-grid gap-2 my-2">
-        <button class="btn btn-safa" type="submit">Guardar</button>
+        <button class="btn btn-safa" type="submit" id="btn-register-staff-budget">Guardar</button>
       </div>
     </div>
   </div>

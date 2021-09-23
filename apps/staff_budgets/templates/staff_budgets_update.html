@@ -1,0 +1,173 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Presupuestos de Personal {% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/budgets.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container-fluid pt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-template">
+      <li class="breadcrumb-item"><a href="{% url 'staff_budgets_register' %}">Volver a Listado</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Editar de Presupuestos de Personal</li>
+    </ol>
+  </nav>
+
+  <div class="card card-template">
+    <div class="card-header">
+      <h5 class="card-title">Editar Presupuestos de Personal</h5>
+    </div>
+    <div class="card-body">
+      <form method="post" accept-charset="utf-8" action="{% url 'staff_budgets_update' qs.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="method" value="create-staff-budget"/>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_period_2">Periodo</label>
+              <select class="form-select select2-style" id="id_period_2" name="period" required style="width: 100%;">
+                <option value="">--- Seleccione Periodo ---</option>
+                {% for period in periods %}
+                <option 
+                  value="{{period.pk}}"
+                  {% if period.pk == qs.periodo.pk %} selected {% endif %}
+                >{{period}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_cost_center_2">Centro de Costos</label>
+              <select class="form-select select2-style" id="id_cost_center_2" name="cost_center" required
+                style="width: 100%;">
+                <option value="">--- Seleccione Centro Costos ---</option>
+                {% for cost_center in cost_centers %}
+                <option
+                  value="{{cost_center.pk}}"
+                  {% if cost_center.pk == qs.codcentrocosto.pk %} selected {% endif %}
+                >{{cost_center}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_month">Mes Inicio {{qs.mes}}</label>
+              <select class="form-select select2-style" id="id_month" name="month" required style="width: 100%;">
+                <option value="">--- Seleccione Mes ---</option>
+                {% for month in months %}
+                <option 
+                  value="{{month}}"
+                  {% if month == qs.mes %} selected {% endif %}  
+                >{{month}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="w-100"></div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_job_position">Puesto</label>
+              <select class="form-select select2-style" id="id_job_position" name="job_position" required
+                style="width: 100%;">
+                <option value="">--- Seleccione Puesto ---</option>
+                {% for job in job_positions %}
+                <option 
+                  value="{{job.pk}}"
+                  {% if job.pk == qs.codpuesto.pk %} selected {% endif %} 
+                >{{job}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_type_position">Tipo</label>
+              <select class="form-select select2-style" id="id_type_position" name="type_position" required
+                style="width: 100%;">
+                <option value="">--- Seleccione Tipo Posición ---</option>
+                {% for key, staff_position in staff_positions.items %}
+                <option
+                  value="{{key}}"
+                  {% if key == qs.tipo %} selected {% endif %}
+                >{{staff_position}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="form-group">
+              <label for="id_number">Cantidad</label>
+              <input
+                class="form-control"
+                id="id_number"
+                min="0"
+                name="number"
+                required
+                step="1"
+                type="number"
+                value="{{qs.cantidad|default:'0'}}"
+              />
+            </div>
+          </div>
+          <div class="w-100"></div>
+          <div class="col-md-4 mb-3" id="id_month_end_container">
+            <div class="form-group">
+              <label for="id_month_end">Mes Fin</label>
+              <select class="form-select select2-style" id="id_month_end" name="month_end" style="width: 100%;">
+                <option value="">--- Seleccione Mes Fin ---</option>
+                {% for month in months %}
+                <option
+                  value="{{month}}"
+                  {% if month == qs.mesfin %} selected {% endif %}
+                >{{month}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label for="id_justification_national">Justificación</label>
+            <textarea name="justification" required class="form-control" id="id_justification_national" rows="3"
+              style="resize: none;">{{qs.justificacion|default:''}}</textarea>
+          </div>
+          <div class="w-100"></div>
+          <div class="col-md-4">
+            <div class="d-grid gap-2 my-2">
+              <button class="btn btn-safa" type="submit" id="btn-register-staff-budget">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script src="{% static 'js/utils.js' %}"></script>
+
+<script>
+  $(document).ready(()=>{
+    $('#id_month_end_container').hide()
+    $("#id_type_position").change(()=>change_type_position())
+
+    function change_type_position (){
+      let val = $('#id_type_position').val();
+      if (val === '') return
+      if(val === '1'){
+        $('#id_month_end_container').show()
+        $('#id_month_end').attr('required', true);
+      }else{
+        $('#id_month_end_container').hide()
+        $('#id_month_end').removeAttr('required');
+      }
+    }
+
+    change_type_position()
+  })
+</script>
+{% endblock javascript %}

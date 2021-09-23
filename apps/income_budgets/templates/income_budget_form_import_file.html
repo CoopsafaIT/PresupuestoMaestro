@@ -1,0 +1,34 @@
+{% load static %}
+{% load humanize %}
+<h5 class="my-3 fw-light">Seleccione Archivo</h5>
+<form
+  method="post"
+  accept-charset="utf-8"
+  enctype="multipart/form-data"
+>
+{% csrf_token %}
+<input type="hidden" name="method" value="load-excel-file">
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <input 
+        class="form-control"
+        type="file" 
+        name="excel-file" 
+        required  
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      />
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4">
+      <div class="d-grid gap-2 my-2">
+        <button class="btn btn-safa" type="submit">Cargar</button>
+      </div>
+      <button 
+        class="btn btn-outline-safa"
+        id="btn-get-excel-format"
+        type="button"
+      >Generar Formato
+      </button>
+    </div>
+  </div>
+</form>

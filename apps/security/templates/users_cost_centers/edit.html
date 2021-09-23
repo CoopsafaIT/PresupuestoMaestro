@@ -1,0 +1,58 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+
+{% block title %}Editar Asociación de Usuario a CECO {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item text-white ">
+    <a href="{% url 'users_cost_centers' %}" class="text-white text-decoration-none">/ Responsables de CECO</a>
+  </li>
+  <li class="breadcrumb-item active text-white before-none" aria-current="page"> / Editar Usuario a CECO</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-fluid pt-3">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row mb-2">
+            <div class="col-md-12 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Editar Usuario a CECO</h1>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+              {% for field in form.visible_fields  %}
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  {{ field.label_tag }}
+                  {{ field }}
+                  {% if field.help_text %}
+                  <small class="text-muted">{{ field.help_text }}</small>
+                  {% endif %}
+                  {% for error in field.errors %}
+                  <p class="text-danger">{{ error }}</p>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-safa">Aceptar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+  $('.select2-style').select2({
+    language: "es",
+  });
+</script>
+{% endblock javascript %}

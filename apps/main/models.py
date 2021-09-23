@@ -3,16 +3,16 @@ from django.contrib.auth.models import User
 from django.db import models
 from ppto_safa.constants import ZONES
 
+
 class Administracionpresupuesto(models.Model):
     codadministracionpresupuesto = models.AutoField(
         db_column="CodAdministracionPresupuesto", primary_key=True
     )
-    cerrarpresupuesto = models.NullBooleanField(
+    cerrarpresupuesto = models.BooleanField(
         db_column="CerrarPresupuesto"
     )
 
     class Meta:
-        managed = False
         db_table = "AdministracionPresupuesto"
 
 
@@ -38,13 +38,12 @@ class Periodo(models.Model):
     fechalimite = models.DateTimeField(
         db_column="FechaLimite", blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
-    cerrado = models.NullBooleanField(db_column="Cerrado")
+    cerrado = models.BooleanField(db_column="Cerrado")
 
     class Meta:
-        managed = False
         db_table = "Periodo"
 
     def __unicode__(self):
@@ -72,7 +71,7 @@ class Centrocostoxcuentacontable(models.Model):
         blank=True,
         null=True,
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
     fechacreacion = models.DateTimeField(
@@ -92,7 +91,6 @@ class Centrocostoxcuentacontable(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "CentroCostoXCuentaContable"
 
 
@@ -109,7 +107,7 @@ class Centroscosto(models.Model):
     metropolitana = models.IntegerField(
         db_column="Metropolitana", blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
     fechacreacion = models.DateTimeField(
@@ -129,7 +127,6 @@ class Centroscosto(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "CentrosCosto"
 
     def __unicode__(self):
@@ -149,7 +146,7 @@ class Cuentascontables(models.Model):
     desccuentacontable = models.CharField(
         db_column="DescCuentaContable", max_length=150, blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
     codtipocuenta = models.ForeignKey(
@@ -177,7 +174,6 @@ class Cuentascontables(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "CuentasContables"
 
     def __unicode__(self):
@@ -328,7 +324,7 @@ class Presupuestos(models.Model):
     mesproyeccion = models.CharField(
         db_column="MesProyeccion", max_length=100, blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
 
@@ -404,9 +400,9 @@ class Detallexpresupuestoinversion(models.Model):
         blank=True,
         null=True,
     )
-    aprobadojuntadirectiva = models.NullBooleanField(db_column="AprobadoJuntaDirectiva")
-    aprobadojuntagerenciag = models.NullBooleanField(db_column="AprobadoJuntaGerenciaG")
-    aprobadojuntaasamblea = models.NullBooleanField(db_column="AprobadoJuntaAsamblea")
+    aprobadojuntadirectiva = models.BooleanField(db_column="AprobadoJuntaDirectiva")
+    aprobadojuntagerenciag = models.BooleanField(db_column="AprobadoJuntaGerenciaG")
+    aprobadojuntaasamblea = models.BooleanField(db_column="AprobadoJuntaAsamblea")
     justificacion = models.TextField(
         db_column="Justificacion", blank=True, null=True
     )
@@ -420,7 +416,7 @@ class Detallexpresupuestoinversion(models.Model):
     periodo = models.ForeignKey(
         "Periodo", models.DO_NOTHING, db_column="Periodo", blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
     reservado = models.DecimalField(
@@ -579,7 +575,7 @@ class Detallexpresupuestoviaticos(models.Model):
         db_column="Justificacion", blank=True, null=True
     )
 
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
 
@@ -605,7 +601,7 @@ class Presupuestoindirecto(models.Model):
     total = models.DecimalField(
         db_column="Total", max_digits=17, decimal_places=2, blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
     periodo = models.ForeignKey(
@@ -629,9 +625,9 @@ class Presupuestoindirecto(models.Model):
     estado = models.IntegerField(
         db_column="Estado", blank=True, null=True
     )
-    # aprobadojuntadirectiva = models.NullBooleanField(db_column='AprobadoJuntaDirectiva')
-    # aprobadojuntagerenciag = models.NullBooleanField(db_column='AprobadoJuntaGerenciaG')
-    # aprobadojuntaasamblea = models.NullBooleanField(db_column='AprobadoJuntaAsamblea')
+    # aprobadojuntadirectiva = models.BooleanField(db_column='AprobadoJuntaDirectiva')
+    # aprobadojuntagerenciag = models.BooleanField(db_column='AprobadoJuntaGerenciaG')
+    # aprobadojuntaasamblea = models.BooleanField(db_column='AprobadoJuntaAsamblea')
     porcentaje = models.DecimalField(
         db_column="Porcentaje", max_digits=17, decimal_places=10, blank=True, null=True
     )
@@ -657,7 +653,6 @@ class Presupuestoindirecto(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "PresupuestoIndirecto"
 
 
@@ -678,7 +673,7 @@ class Presupuestoingresos(models.Model):
     total = models.DecimalField(
         db_column="Total", max_digits=17, decimal_places=2, blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
     periodo = models.ForeignKey(
@@ -728,7 +723,6 @@ class Presupuestoingresos(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "PresupuestoIngresos"
 
 
@@ -749,7 +743,7 @@ class Presupuestocostos(models.Model):
     total = models.DecimalField(
         db_column="Total", max_digits=17, decimal_places=2, blank=True, null=True
     )
-    habilitado = models.NullBooleanField(
+    habilitado = models.BooleanField(
         db_column="Habilitado"
     )
     periodo = models.ForeignKey(
@@ -773,13 +767,13 @@ class Presupuestocostos(models.Model):
     estado = models.IntegerField(
         db_column="Estado", blank=True, null=True
     )
-    aprobadojuntadirectiva = models.NullBooleanField(
+    aprobadojuntadirectiva = models.BooleanField(
         db_column="AprobadoJuntaDirectiva"
     )
-    aprobadojuntagerenciag = models.NullBooleanField(
+    aprobadojuntagerenciag = models.BooleanField(
         db_column="AprobadoJuntaGerenciaG"
     )
-    aprobadojuntaasamblea = models.NullBooleanField(
+    aprobadojuntaasamblea = models.BooleanField(
         db_column="AprobadoJuntaAsamblea"
     )
     porcentaje = models.DecimalField(
@@ -808,7 +802,6 @@ class Presupuestocostos(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "PresupuestoCostos"
 
 
@@ -846,7 +839,6 @@ class Proyectos(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "Proyectos"
 
     def __unicode__(self):
@@ -865,7 +857,6 @@ class Tipopresupuesto(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "TipoPresupuesto"
 
     def __unicode__(self):
@@ -893,7 +884,6 @@ class Tiposcuenta(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "TiposCuenta"
 
     def __unicode__(self):
@@ -921,10 +911,9 @@ class Puestos(models.Model):
         blank=True,
         null=True,
     )
-    puestoestado = models.NullBooleanField(db_column="puestoEstado")
+    puestoestado = models.BooleanField(db_column="puestoEstado")
 
     class Meta:
-        managed = False
         db_table = "Puestos"
 
     def __unicode__(self):
@@ -946,7 +935,6 @@ class Filiales(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "Filiales"
 
     def __unicode__(self):
@@ -967,12 +955,19 @@ class ResponsablesPorCentrosCostos(models.Model):
         blank=True,
         null=True,
     )
-    CodUser = models.ForeignKey(User, models.DO_NOTHING, db_column="CodUser", blank=True, null=True,)
-    Estado = models.NullBooleanField(db_column="Estado")
+    CodUser = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="CodUser",
+        blank=True,
+        null=True,
+    )
+    Estado = models.BooleanField(db_column="Estado")
 
     class Meta:
-        managed = False
         db_table = "ResponsablesPorCentrosCostos"
+        ordering = ("CodCentroCosto", "CodUser", "Estado")
+        unique_together = ('CodCentroCosto', 'CodUser',)
 
 
 class Inversiones(models.Model):
@@ -989,6 +984,9 @@ class Inversiones(models.Model):
         blank=True,
         null=True,
     )
+    meses_depreciacion = models.IntegerField(
+        db_column="MesesDepreciacion", blank=True, null=True
+    )
     fechacreacion = models.DateTimeField(
         db_column="FechaCreacion", blank=True, null=True
     )
@@ -1001,11 +999,13 @@ class Inversiones(models.Model):
     usuariomodificacion = models.IntegerField(
         db_column="UsuarioModificacion", blank=True, null=True
     )
-    Habilitado = models.NullBooleanField(db_column="Habilitado")
+    Habilitado = models.BooleanField(db_column="Habilitado")
 
     class Meta:
-        managed = False
         db_table = "Inversiones"
+
+    def __str__(self):
+        return f'{self.descinversion}'
 
 
 class Manejodeviaticos(models.Model):
@@ -1076,7 +1076,6 @@ class Manejodeviaticos(models.Model):
     # )
 
     class Meta:
-        managed = False
         db_table = "ManejoDeViaticos"
 
 
@@ -1110,7 +1109,6 @@ class Historicotrasladosviaticos(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "HistoricoTrasladosViaticos"
 
 
@@ -1160,7 +1158,6 @@ class Manejopersonal(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "ManejoPersonal"
 
 
@@ -1224,7 +1221,6 @@ class Historicotrasladosinversiones(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "HistoricoTrasladosInversiones"
 
 
@@ -1262,7 +1258,6 @@ class Transaccionesviaticos(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "TransaccionesViaticos"
 
 
@@ -1300,7 +1295,6 @@ class Transaccionesinversiones(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "TransaccionesInversiones"
 
 
@@ -1320,7 +1314,6 @@ class Valoresviativos(models.Model):
     valor = models.DecimalField(max_digits=17, decimal_places=2, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = "ValoresViativos"
         # unique_together = (('zona', 'tipoviatico', 'categoria'),)
 
@@ -1337,7 +1330,6 @@ class Criterios(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "Criterios"
 
     def __unicode__(self):
@@ -1353,7 +1345,6 @@ class Tipoaccionpresupuestoinversion(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "TipoAccionPresupuestoInversion"
 
     def __unicode__(self):
@@ -1444,5 +1435,4 @@ class Historicotraslados(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = "HistoricoTraslados"

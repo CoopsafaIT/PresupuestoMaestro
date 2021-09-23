@@ -29,9 +29,9 @@
         <li><a href="{% url 'travel_budget_register' %}">Viaticos</a></li>
         <li><a href="{% url 'investment_budget_register' %}">Inversión</a></li>
         <li><a href="{% url 'staff_budgets_register' %}">Personal</a></li>
-        <li><a href="#">Indirecto</a></li>
-        <li><a href="#">Costos</a></li>
-        <li><a href="#">Ingresos</a></li>
+        <li><a href="{% url 'indirect_budget_register' %}">Indirecto</a></li>
+        <li><a href="{% url 'cost_budget_register' %}">Costos</a></li>
+        <li><a href="{% url 'income_budget_register' %}">Ingresos</a></li>
       </ul>
     </li>
     <li>
@@ -48,6 +48,27 @@
         <li><a href="#">Indirecto</a></li>
         <li><a href="#">Costos</a></li>
         <li><a href="#">Ingresos</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-gear"></i>
+          <span class="link_name">Admin</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Administración</a></li>
+        <li><a href="#">Proyectos</a></li>
+        <li><a href="#">Proyección</a></li>
+        <li><a href="#">Periodos</a></li>
+        <li><a href="{% url 'investment_accounts' %}">Cuentas de Inversión</a></li>
+        <li><a href="{% url 'investments' %}">Inversiones</a></li>
+        <li><a href="{% url 'cost_centers' %}">Centros de Costos</a></li>
+        <li><a href="{% url 'inflationary_index' %}">Indice Inflacionario</a></li>
+        <li><a href="{% url 'job_positions' %}">Puestos</a></li>
+        <li><a href="#">Accesos</a></li>
       </ul>
     </li>
     <li>
@@ -82,26 +103,6 @@
     <li>
       <div class="icon-link">
         <a href="#">
-          <i class="bi bi-gear"></i>
-          <span class="link_name">Admin</span>
-        </a>
-        <i class='bi bi-chevron-down arrow'></i>
-      </div>
-      <ul class="sub-menu">
-        <li><a class="link_name" href="#">Administración</a></li>
-        <li><a href="#">Proyectos</a></li>
-        <li><a href="#">Proyección</a></li>
-        <li><a href="#">Periodos</a></li>
-        <li><a href="#">Cuentas Contables</a></li>
-        <li><a href="#">Centros de Costos</a></li>
-        <li><a href="#">Indice Inflacionario</a></li>
-        <li><a href="#">Puestos</a></li>
-        <li><a href="#">Habilitar-Deshabilitar Acceso</a></li>
-      </ul>
-    </li>
-    <li>
-      <div class="icon-link">
-        <a href="#">
           <i class="bi bi-people"></i>
           <span class="link_name">Seguridad</span>
         </a>
@@ -109,8 +110,9 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Seguridad</a></li>
-        <li><a href="#">Roles</a></li>
-        <li><a href="#">Usuarios</a></li>
+        <li><a href="{% url 'users' %}">Usuarios</a></li>
+        <li><a href="{% url 'users_cost_centers' %}">Usuarios por CECO</a></li>
+        <li><a href="{% url 'roles' %}">Roles</a></li>
       </ul>
     </li>
 

@@ -1,0 +1,23 @@
+{% load static %}
+{% load humanize %}
+<h5 class="my-3 fw-light">Ingrese Valor</h5>
+<form method="post" accept-charset="utf-8">
+  {% csrf_token %}
+  <input type="hidden" name="method" value="apply-value">
+  <input type="hidden" name="period" id="id_period_value" />
+  <input type="hidden" name="account" id="id_account_value" />
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <input class="form-control" type="number" id="id_value" name="value" value="0" required />
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4">
+      <button 
+        class="btn btn-safa btn-apply-value"
+        id="btn-apply-value"
+        type="submit">Aplicar</button>
+    </div>
+  </div>
+</form>

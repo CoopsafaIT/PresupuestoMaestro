@@ -1,0 +1,156 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Presupuesto Indirecto {% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/budgets.css' %}">
+{% endblock css %}
+{% block content %}
+<div class="container-fluid pt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-template">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Ingreso de Presupuesto Indirecto</li>
+    </ol>
+  </nav>
+
+  <div class="card card-template">
+    <div class="card-body">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button 
+            aria-controls="filtros"
+            aria-selected="true"
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#filtros"
+            id="filtros-tab"
+            role="tab"
+            type="button"
+          >Filtrar</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            aria-controls="ingresar-valores"
+            aria-selected="false"
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#ingresar-valores"
+            id="ingresar-valores-tab"
+            role="tab"
+            type="button"
+          >Ingresar Valores</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            aria-controls="ingresar-procentaje"
+            aria-selected="false"
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#ingresar-procentaje"
+            id="ingresar-procentaje-tab"
+            role="tab"
+            type="button"
+          >Porcentajes</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            aria-controls="import-file"
+            aria-selected="false"
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#import-file"
+            id="import-file-tab"
+            role="tab"
+            type="button"
+          >Importar Archivo</button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="filtros" role="tabpanel" aria-labelledby="filtros-tab">
+          {% include 'indirect_budget_form_filters.html' %}
+        </div>
+        <div class="tab-pane fade" id="ingresar-valores" role="tabpanel" aria-labelledby="ingresar-valores-tab">
+          {% include 'indirect_budget_form_insert_values.html' %}
+        </div>
+        <div class="tab-pane fade" id="ingresar-procentaje" role="tabpanel" aria-labelledby="ingresar-procentaje-tab">
+          {% include 'indirect_budget_form_percentage.html' %}
+        </div>
+        <div class="tab-pane fade" id="import-file" role="tabpanel" aria-labelledby="import-file-tab">
+          {% include 'indirect_budget_form_import_file.html' %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'card_indirect_budgets_list.html' %}
+
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/utils.js' %}"></script>
+
+<script>
+  $(document).ready(()=>{
+    let urlFormat = '{% url "generate_excel_file" 0 1 %}';
+    $('#btn-get-excel-format').click(function(){
+      let period = $('#id_period').val()
+      let account = $('#id_account').val()
+      if(period === '' && account === ''){
+        alert('En seccion de Filtros seleccione Periodo y Cuenta Contable')
+        return;
+      }
+      urlFormat = urlFormat.replace('0', period)
+      urlFormat = urlFormat.replace('1', account)
+      window.open(urlFormat, '_blank').focus();
+    })
+
+    $('.btn-percentage').click(function(){
+      let period = $('#id_period').val()
+      let account = $('#id_account').val()
+      if(period === '' && account === ''){
+        alert('En seccion de Filtros seleccione Periodo y Cuenta Contable')
+        return false;
+      }
+      $('#id_period_percentages').val(period)
+      $('#id_account_percentages').val(account)
+    })
+
+    $('#btn-recalculate-list').click(function(){
+      let period = $('#id_period').val()
+      let account = $('#id_account').val()
+      if(period === '' && account === ''){
+        alert('En seccion de Filtros seleccione Periodo y Cuenta Contable')
+        return false;
+      }
+      $('#id_period_recalculate').val(period)
+      $('#id_account_recalculate').val(account)
+      $('#form-recalculate-values').submit();
+    })
+
+    $('#btn-apply-value').click(function(){
+      let period = $('#id_period').val()
+      let account = $('#id_account').val()
+      if(period === '' && account === ''){
+        alert('En seccion de Filtros seleccione Periodo y Cuenta Contable')
+        return false;
+      }
+      $('#id_period_value').val(period)
+      $('#id_account_value').val(account)
+    })
+  })
+</script>
+
+
+<script>
+  $(document).ready(() => {
+    $(
+      "#id_period option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+    $(
+      "#id_account option[value= '{{request.session.account}}'] "
+    ).prop('selected', true).trigger("change");
+  })
+</script>
+
+{% endblock javascript %}

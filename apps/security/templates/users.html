@@ -1,0 +1,122 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+
+{% block title %}Usuarios {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Usuarios</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'user_create_modal.html' %}
+{% include 'user_change_status_modal.html' %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-2 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Usuarios</h1>
+            </div>
+            <div class="col-md-2 d-flex justify-content-end offset-md-4">
+              {% if perms.security.puede_crear_usuarios %}
+              <button 
+                class="btn btn-outline-safa" 
+                id="btn-register-user"
+                data-bs-toggle="modal" 
+                data-bs-target="#UserRegisterModal"
+              >Registrar</button>
+              {% endif %}
+            </div>
+            <div class="col-md-4">
+              {% include 'layout/search.html' %}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped align-middle mt-1">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Usuario</th>
+                  <th>Correo</th>
+                  <th>Nombre</th>
+                  <th>Estado</th>
+                  <th>Rol</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users %}
+                  <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{user}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.first_name}} {{user.last_name}}</td>
+                    <td>{{user.is_active|yesno:'Activo,Inactivo'}}</td>
+                    <td>{{user.groups.all.0}}</td>
+                    <td>
+                      {% if perms.security.puede_editar_usuarios %}
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <a 
+                          class="btn btn-outline-safa me-2"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          href="{% url 'user' user.pk %}" 
+                          title="Editar Usuario" 
+                        > <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <a 
+                          href="#!"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          title="Cambiar Estado de Usuario" 
+                          width=" white-space: nowrap;"
+                          data-form-url="{% url 'user' user.pk %}"
+                          class="btn btn-outline-danger change-user-status"
+                        > <i class="bi bi-person-dash-fill"></i>
+                        </a>
+                      </div>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td 
+                      class="fw-light text-center" 
+                      colspan="6"
+                    > No hay usuarios
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'layout/pagination.html' with qs=users %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    $(document).on('click', '.change-user-status', function(){
+      $('#formChangeUserStatus').attr('action', $(this).data('form-url'))
+      $('#modalChangeStatus').modal('show');
+    })
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    $('.select2-style-roles').select2({
+      language: "es",
+      dropdownParent: $('#UserRegisterModal')
+    });
+  })
+</script>
+{% endblock javascript %}

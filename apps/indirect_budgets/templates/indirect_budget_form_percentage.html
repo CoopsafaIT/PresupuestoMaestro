@@ -1,0 +1,44 @@
+{% load static %}
+{% load humanize %}
+<h5 class="my-3 fw-light">Ingrese Porcentajes</h5>
+<form
+  method="post"
+  accept-charset="utf-8"
+  action="{% url 'indirect_budget_register' %}"
+  enctype="multipart/form-data"
+>
+{% csrf_token %}
+<input type="hidden" name="method" value="percentage">
+<input type="hidden" name="period" id="id_period_percentages"/>
+<input type="hidden" name="account" id="id_account_percentages"/>
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
+        <label for="id_percentage">Porcentaje</label>
+        <input
+          class="form-control"
+          type="number"
+          id="id_percentage" 
+          name="percentage"
+          value="0"
+          required
+        />
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4">
+      <input
+        type="submit"
+        value="Incrementar"
+        name="btn-percentage"
+        class="btn btn-safa btn-percentage"
+      />
+      <input
+        type="submit"
+        value="Decrementar"
+        name="btn-percentage"
+        class="btn btn-safa btn-percentage"
+      />
+    </div>
+  </div>
+</form>
