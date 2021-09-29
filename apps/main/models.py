@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
-from ppto_safa.constants import ZONES
+from utils.constants import ZONES
 
 
 class Administracionpresupuesto(models.Model):
@@ -45,9 +45,7 @@ class Periodo(models.Model):
 
     class Meta:
         db_table = "Periodo"
-
-    def __unicode__(self):
-        return "%s" % (self.descperiodo)
+        ordering = ("-descperiodo", "-fechalimite",)
 
     def __str__(self):
         return "%s" % (self.descperiodo)
@@ -128,6 +126,7 @@ class Centroscosto(models.Model):
 
     class Meta:
         db_table = "CentrosCosto"
+        ordering = ("desccentrocosto",)
 
     def __unicode__(self):
         return "%s" % (self.desccentrocosto)
@@ -175,6 +174,7 @@ class Cuentascontables(models.Model):
 
     class Meta:
         db_table = "CuentasContables"
+        ordering = ("desccuentacontable",)
 
     def __unicode__(self):
         return "%s" % (self.desccuentacontable)
@@ -505,6 +505,9 @@ class Detallexpresupuestopersonal(models.Model):
     class Meta:
         managed = True
         db_table = "DetalleXPresupuestoPersonal"
+
+    def get_tipo_name(self):
+        return 'Temporal' if self.tipo == 1 else 'Permanente'
 
 
 class Detallexpresupuestoviaticos(models.Model):
@@ -840,9 +843,7 @@ class Proyectos(models.Model):
 
     class Meta:
         db_table = "Proyectos"
-
-    def __unicode__(self):
-        return "%s" % (self.descproyecto)
+        ordering = ("-fechainicio", "descproyecto", 'codcentrocosto',)
 
     def __str__(self):
         return "%s" % (self.descproyecto)
@@ -1003,6 +1004,7 @@ class Inversiones(models.Model):
 
     class Meta:
         db_table = "Inversiones"
+        ordering = ("descinversion",)
 
     def __str__(self):
         return f'{self.descinversion}'

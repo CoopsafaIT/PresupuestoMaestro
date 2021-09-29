@@ -60,15 +60,14 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Administración</a></li>
-        <li><a href="#">Proyectos</a></li>
-        <li><a href="#">Proyección</a></li>
-        <li><a href="#">Periodos</a></li>
+        <li><a href="{% url 'projects' %}">Proyectos</a></li>
+        <li><a href="{% url 'projections' %}">Proyección</a></li>
+        <li><a href="{% url 'periods' %}">Periodos</a></li>
         <li><a href="{% url 'investment_accounts' %}">Cuentas de Inversión</a></li>
         <li><a href="{% url 'investments' %}">Inversiones</a></li>
         <li><a href="{% url 'cost_centers' %}">Centros de Costos</a></li>
         <li><a href="{% url 'inflationary_index' %}">Indice Inflacionario</a></li>
         <li><a href="{% url 'job_positions' %}">Puestos</a></li>
-        <li><a href="#">Accesos</a></li>
       </ul>
     </li>
     <li>
@@ -81,9 +80,9 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Egresos</a></li>
-        <li><a href="#">Inversiones</a></li>
-        <li><a href="#">Viaticos</a></li>
-        <li><a href="#">Personal</a></li>
+        <li><a href="{% url 'check_out_investment' %}">Inversiones</a></li>
+        <li><a href="{% url 'check_out_staff' %}">Personal</a></li>
+        <li><a href="{% url 'check_out_travel' %}">Viaticos</a></li>
       </ul>
     </li>
     <li>

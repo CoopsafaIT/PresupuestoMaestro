@@ -11,15 +11,20 @@ from apps.main.models import (
     Cuentascontables,
     Inversiones,
     Puestos,
+    Proyectos,
+    Periodo,
     Tiposcuenta,
 
 )
 from apps.administration.forms import (
     CuentascontablesForm,
     InversionesForm,
-    PuestosForm
+    PuestosForm,
+    ProjectionForm,
 )
 from utils.pagination import pagination
+from utils.constants import PROJECTION_SP
+from utils.sql import execute_sql_query
 
 
 @login_required
@@ -244,3 +249,95 @@ def job_position(request, id):
         'form': form,
     }
     return render(request, 'investment/edit.html', ctx)
+
+
+@login_required
+def projections(request):
+    form = ProjectionForm()
+    if request.method == 'POST':
+        form = ProjectionForm(request.POST)
+        if form.is_valid():
+            period = request.POST.get('period')
+            year_base = request.POST.get('year_base')
+            month_base = request.POST.get('month_base')
+            sp_name = dict(PROJECTION_SP).get(request.POST.get('projection_type'))
+            query = f'EXEC {sp_name}@Periodo={period}, @Ano={year_base}, @Mes={month_base}'
+            execute_sql_query(query)
+            messages.success(request, 'Proyección Ingresada con éxito!')
+    ctx = {
+        'form': form
+    }
+    return render(request, 'projections.html', ctx)
+
+
+@login_required
+def projects(request):
+    page = request.GET.get('page', 1)
+    q = request.GET.get('q', '')
+    qs = Proyectos.objects.filter(
+        Q(descproyecto__icontains=q) |
+        Q(codcentrocosto__desccentrocosto__icontains=q)
+    )
+
+    result = pagination(qs=qs, page=page)
+    ctx = {
+        'qs': result,
+    }
+    return render(request, 'projects/list.html', ctx)
+
+
+@login_required
+def periods(request):
+    page = request.GET.get('page', 1)
+    q = request.GET.get('q', '')
+
+    if request.method == 'POST':
+        last = Periodo.objects.all().order_by(
+            'descperiodo'
+        ).last().descperiodo
+        period = Periodo()
+        period.descperiodo = int(last) + 1
+        period.usuariocreacion = request.user
+        period.habilitado = True
+        period.cerrado = False
+        period.save()
+        messages.success(
+            request,
+            f'Periodo: {period.descperiodo} creado con éxito'
+        )
+
+    qs = Periodo.objects.filter(
+        Q(descperiodo__icontains=q) |
+        Q(fechalimite__icontains=q)
+    )
+    result = pagination(qs=qs, page=page)
+    ctx = {
+        'qs': result,
+    }
+    return render(request, 'periods/list.html', ctx)
+
+
+@login_required
+def period(request, id):
+    if request.method == 'POST':
+        qs = get_object_or_404(Periodo, pk=id)
+        if request.POST.get('method') == 'close':
+            qs.cerrado = True
+            qs.save()
+            messages.success(
+                request,
+                f'Periodo: {qs.descperiodo} cerrado con éxito'
+            )
+        elif request.POST.get('method') == 'change-status':
+            qs.habilitado = not qs.habilitado
+            qs.save()
+            status = 'Activo' if qs.habilitado else 'Inactivo'
+            message = (
+                f'Periodo: {qs.descperiodo} '
+                f'cambiado a estado  {status} con éxito'
+            )
+            messages.success(
+                request,
+                message
+            )
+        return redirect('periods')

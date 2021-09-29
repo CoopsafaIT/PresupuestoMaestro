@@ -1,6 +1,6 @@
 from django import forms
 
-from ppto_safa.constants import TRAVEL_TYPE, TRAVEL_CATEGORY, ZONES
+from utils.constants import TRAVEL_TYPE, TRAVEL_CATEGORY, ZONES
 
 
 class NacionalTravelBudget(forms.Form):

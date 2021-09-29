@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 
 from django.shortcuts import (
     render,
@@ -6,19 +7,23 @@ from django.shortcuts import (
     get_object_or_404
 )
 from django.urls import reverse
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 
-from ppto_safa.constants import STAFF_POSITIONS, MONTHS_LIST
+from utils.constants import STAFF_POSITIONS, MONTHS_LIST
 from apps.main.models import (
     Centroscosto,
     Detallexpresupuestopersonal,
     Periodo,
     Puestos,
+    Manejopersonal,
 )
 from apps.staff_budgets.reports import create_excel_report
 from apps.staff_budgets.forms import StaffCUForm
+from utils.pagination import pagination
 
 
 @login_required()
@@ -212,3 +217,86 @@ def generate_excel_report(request, period, cost_center):
         periodo=period
     ).order_by('tipo')
     return create_excel_report(qs)
+
+
+@login_required
+def check_out_staff(request):
+    if request.is_ajax():
+        data = Manejopersonal.objects.values('comentario').filter(
+            codcentrocosto=request.GET.get('cost_center'),
+            codperiodo=request.GET.get('period'),
+            codpuesto=request.GET.get('job_id')
+        )
+        return HttpResponse(
+            json.dumps({'data': list(data)}),
+            content_type='application/json'
+        )
+
+    if request.method == 'POST':
+        qs = get_object_or_404(Detallexpresupuestopersonal, pk=request.POST.get('id'))
+        quantity = int(request.POST.get('quantity', 0))
+
+        if quantity > qs.disponible:
+            messages.warning(
+                request,
+                (
+                    f'Requisición de personal por cantidad {quantity} '
+                    f'mayor al disponible: {qs.disponible}'
+                )
+            )
+            return redirect('check_out_staff')
+
+        qs.disponible = qs.disponible - quantity
+        if qs.disponible == 0:
+            qs.tipoaccion = 1
+        qs.usuariomodificacion = request.user
+        qs.fechamodificacion = dt.datetime.today()
+        qs.save()
+
+        personal = Manejopersonal()
+        personal.codpuesto = Puestos.objects.get(pk=qs.codpuesto.pk)
+        personal.mesinicio = request.POST.get('month')
+        if qs.tipo == 1:
+            personal.mesfin = request.POST.get('month_end')
+        personal.cantidad = request.POST.get('quantity')
+        personal.codcentrocosto = Centroscosto.objects.get(pk=qs.codcentrocosto.pk)
+        personal.usuariocreacion = request.user
+        personal.fechacreacion = dt.datetime.today()
+        personal.codperiodo = Periodo.objects.get(pk=qs.periodo.pk)
+        personal.comentario = request.POST.get('comment', '')
+        personal.save()
+        messages.success(request, 'Requisición de personal realizado con éxito!')
+
+    if request.GET.get('period') and request.GET.get('cost_center'):
+        request.session['period'] = request.GET.get('period', '')
+        request.session['cost_center'] = request.GET.get('cost_center', '')
+
+    periods = Periodo.objects.filter(habilitado=True)
+    cost_centers = Centroscosto.objects.filter(habilitado=True)
+    ctx = {
+        'periods': periods,
+        'cost_centers': cost_centers,
+        'months': MONTHS_LIST
+    }
+
+    if (
+        request.session.get('period', None) and
+        request.session.get('cost_center', None)
+    ):
+        cost_center = request.session['cost_center']
+        period = request.session['period']
+        page = request.GET.get('page', 1)
+        q = request.GET.get('q', '')
+
+        qs = Detallexpresupuestopersonal.objects.filter(
+            codcentrocosto=cost_center,
+            periodo=period
+        ).filter(
+            Q(codpuesto__descpuesto__icontains=q) |
+            Q(tipo__icontains=q) |
+            Q(mes__icontains=q)
+        ).order_by('-tipo', 'codpuesto__descpuesto')
+
+        ctx['qs'] = pagination(qs, page=page)
+
+    return render(request, 'check_out_staff/list.html', ctx)

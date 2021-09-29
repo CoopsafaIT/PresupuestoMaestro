@@ -3,7 +3,8 @@ from apps.travel_budgets.views import (
     travel_budget_register,
     travel_budget_update,
     travel_budget_delete,
-    generate_excel_report
+    generate_excel_report,
+    check_out_travel
 )
 
 urlpatterns = [
@@ -26,5 +27,10 @@ urlpatterns = [
         'generate-excel-report/<int:period>/<int:cost_center>/',
         generate_excel_report,
         name='generate_excel_report'
+    ),
+    path(
+        'check-out/',
+        check_out_travel,
+        name='check_out_travel'
     ),
 ]

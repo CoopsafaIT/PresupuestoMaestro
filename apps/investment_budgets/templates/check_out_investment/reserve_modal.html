@@ -1,0 +1,66 @@
+<div class="modal fade" id="reserveModal" tabindex="-1" aria-labelledby="reserveModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="reserveModalLabel">
+          Reservar Inversión 
+          <span id="reserve_available_title"></span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="reserve">
+          <input type="hidden" name="id" value="" id="id_investment"/>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_amount_reserve">Monto de Reserva</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="0"
+                  id="id_amount_reserve"
+                  required
+                  name="amount_reserve"
+                  step="0.01"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_correlative_reserve">Número de Solicitud</label>
+                <input
+                  type="text"
+                  id="id_correlative_reserve"
+                  name="correlative_reserve"
+                  readonly
+                  required
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_request_date">Fecha Solicitud</label>
+                <input
+                  type="date"
+                  id="id_request_date"
+                  required
+                  name="request_date"
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

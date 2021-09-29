@@ -10,6 +10,7 @@ from django.shortcuts import (
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Sum, Q
 from django.core.exceptions import ValidationError
 
 from apps.main.models import (
@@ -19,9 +20,12 @@ from apps.main.models import (
     Centroscosto,
     Periodo,
     Inversiones,
+    Transaccionesinversiones,
+
 )
 
-from ppto_safa.constants import MONTHS_LIST
+from utils.constants import MONTHS_LIST
+from utils.pagination import pagination
 from apps.investment_budgets.forms import InvestmentCUForm
 from apps.investment_budgets.reports import create_excel_report
 
@@ -244,3 +248,202 @@ def generate_excel_report(request, period, cost_center):
         habilitado=True
     ))
     return create_excel_report(qs)
+
+
+@login_required
+def check_out_investment(request):
+    if request.is_ajax():
+        if request.GET.get('method') == 'reserve':
+            require_number = (
+                f'{Transaccionesinversiones.objects.all().count()}'
+                f'{dt.datetime.now().year}{dt.datetime.now().month}'
+            )
+            return HttpResponse(
+                json.dumps({'require_number': require_number}),
+                content_type='application/json'
+            )
+        elif request.GET.get('method') == 'require':
+            id = request.GET.get('id', '')
+            comments = Transaccionesinversiones.objects.values('comentario').filter(
+                coddetallexpresupuestoinversion=id
+            )
+            settlement_number = (
+                f'{Transaccionesinversiones.objects.all().count()}'
+                f'{dt.datetime.now().year}{dt.datetime.now().month}'
+                f'{Transaccionesinversiones.objects.all().count()}'
+            )
+            sql_statement = 'CONVERT(nvarchar(25), CAST(Comprometido as DECIMAL(23,2)))'
+            requests = Transaccionesinversiones.objects.extra({
+                'comprometido': sql_statement,
+            }).values('numerosolicitud', 'comprometido', 'pk').filter(
+                numeroliquidacion__isnull=True, coddetallexpresupuestoinversion=id
+            )
+            data = {
+                'comments': list(comments),
+                'settlement_number': settlement_number,
+                'requests': list(requests),
+            }
+            return HttpResponse(json.dumps(data), content_type='application/json')
+
+    if request.method == 'POST':
+        if request.POST.get('method') == 'reserve':
+            qs = get_object_or_404(Detallexpresupuestoinversion, pk=request.POST.get('id'))
+            qs.reservado = float(qs.reservado) + float(request.POST.get('amount_reserve'))
+            qs.usuariomodificacion = request.user
+            qs.fechamodificacion = dt.datetime.today()
+            qs.save()
+
+            transaction = Transaccionesinversiones()
+            transaction.comprometido = float(request.POST.get('amount_reserve'))
+            transaction.coddetallexpresupuestoinversion = qs
+            transaction.fechacreacion = request.POST.get('request_date')
+            transaction.numerosolicitud = request.POST.get('correlative_reserve')
+            transaction.usuariocreacion = request.user.pk
+            transaction.save()
+            messages.success(request, 'Reserva realizada con éxito!')
+
+        elif request.POST.get('method') == 'require':
+            qs = get_object_or_404(Detallexpresupuestoinversion, pk=request.POST.get('id'))
+            if request.POST.get('request_number') == 'not_request_number':
+                amount = float(request.POST.get('purchase_amount'))
+                available = Detallexpresupuestoinversion.objects.extra(
+                    {'disponible': 'Disponible'}
+                ).values('disponible').get(pk=qs.pk)
+                if amount > float(available.get('disponible')):
+                    messages.warning(
+                        request,
+                        (
+                            f'Requisición de compra por valor {amount} '
+                            f'mayor al disponible: {float(available.get("disponible"))}'
+                        )
+                    )
+                    return redirect('check_out_investment')
+
+                trans = Transaccionesinversiones()
+                trans.coddetallexpresupuestoinversion = qs
+                trans.requerido = request.POST.get('purchase_amount')
+                trans.numeroliquidacion = request.POST.get('settlement_number')
+                trans.usuariocreacion = request.user.pk
+                trans.fechacreacion = dt.datetime.today()
+                trans.comentario = request.POST.get('comment')
+                trans.save()
+
+                executed = Transaccionesinversiones.objects.filter(
+                    coddetallexpresupuestoinversion=trans.coddetallexpresupuestoinversion
+                ).aggregate(Sum('requerido'))
+
+                qs.comentario = request.POST.get('comment')
+                qs.ejecutado = float(executed.get('requerido__sum'))
+                qs.save()
+
+            else:
+                id_trans = request.POST.get('request_number')
+                qs_trans = get_object_or_404(Transaccionesinversiones, pk=id_trans)
+                amount_trans_reserve = qs_trans.comprometido
+                amount_trans_require = qs_trans.requerido
+                correlative_number = qs_trans.numerosolicitud
+                purchase_amount = float(request.POST.get('purchase_amount'))
+                if amount_trans_require is None:
+                    amount_available = float(amount_trans_reserve)
+                else:
+                    amount_available = float(amount_trans_reserve) - float(amount_trans_require) # NOQA
+
+                if purchase_amount > amount_available:
+                    messages.warning(
+                        request,
+                        (
+                            f'Requisición de compra por valor {purchase_amount} '
+                            f'mayor al disponible {amount_available} para '
+                            f'número de solicitud: {correlative_number}'
+                        )
+                    )
+                    return redirect('check_out_investment')
+
+                qs_trans.requerido = purchase_amount
+                qs_trans.numeroliquidacion = request.POST.get('settlement_number')
+                qs_trans.save()
+
+                trans = Transaccionesinversiones()
+                trans.coddetallexpresupuestoinversion = qs
+                trans.requerido = purchase_amount
+                trans.numeroliquidacion = request.POST.get('settlement_number')
+                trans.usuariocreacion = request.user.pk
+                trans.fechacreacion = dt.datetime.today()
+                trans.comentario = request.POST.get('comment')
+                trans.save()
+
+                qs.ejecutado = float(qs.ejecutado) + purchase_amount
+                qs.reservado = qs.reservado - qs_trans.comprometido
+                qs.usuariomodificacion = request.user
+                qs.fechamodificacion = dt.datetime.today()
+                qs.save()
+
+            messages.success(request, 'Requisición de compra realizada con éxito!')
+
+    if request.GET.get('period') and request.GET.get('cost_center'):
+        request.session['period'] = request.GET.get('period', '')
+        request.session['cost_center'] = request.GET.get('cost_center', '')
+
+    periods = Periodo.objects.filter(habilitado=True)
+    cost_centers = Centroscosto.objects.filter(habilitado=True)
+    ctx = {
+        'periods': periods,
+        'cost_centers': cost_centers
+    }
+    if (
+        request.session.get('period', None) and
+        request.session.get('cost_center', None)
+    ):
+        cost_center = request.session['cost_center']
+        period = request.session['period']
+        page = request.GET.get('page', 1)
+        q = request.GET.get('q', '')
+        qs = Detallexpresupuestoinversion.objects.extra({
+            'presupuestado': 'CAST(CAST(Presupuestado as DECIMAL(23,5)) as nvarchar(150))',
+            'reservado': 'CAST(CAST(Reservado as DECIMAL(23,5)) as nvarchar(150))',
+            'ejecutado': 'CAST(CAST(Ejecutado as DECIMAL(23,5)) as nvarchar(150))',
+            'disponible': 'Disponible',
+        }).values(
+            'pk',
+            'presupuestadocontraslado',
+            'reservado',
+            'ejecutado',
+            'disponible',
+            'presupuestado',
+            'periodo__descperiodo',
+            'descproducto',
+            'valor',
+            'cantidad',
+            'presupuestado',
+            'tipoaccion__descripciontipoaccion',
+            'tipoaccion',
+            'valorfusion',
+            'mes'
+        ).filter(
+            codcentrocostoxcuentacontable__codcentrocosto=cost_center,
+            periodo=period,
+            habilitado=True
+        ).filter(
+            Q(descproducto__icontains=q) |
+            Q(cantidad__icontains=q)
+        ).order_by('descproducto', 'cantidad')
+
+        totales = qs.aggregate(
+            presupuestado=Sum('presupuestadocontraslado'),
+            reservado=Sum('reservado'),
+            ejecutado=Sum('ejecutado')
+        )
+
+        total_available = Detallexpresupuestoinversion.objects.extra(
+            {'disponible': 'SUM(Disponible)'}
+        ).values('disponible').filter(
+            codcentrocostoxcuentacontable__codcentrocosto=cost_center,
+            periodo=period,
+            habilitado=True
+        )
+        ctx['qs'] = pagination(qs, page=page)
+        ctx['total_executed'] = totales.get('ejecutado', '')
+        ctx['total_reserved'] = totales.get('reservado', '')
+        ctx['total_budget'] = totales.get('presupuestado', '')
+        ctx['total_available'] = total_available[0].get('disponible', '')
+    return render(request, 'check_out_investment/list.html', ctx)

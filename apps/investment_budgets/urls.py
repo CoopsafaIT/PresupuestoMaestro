@@ -5,6 +5,7 @@ from apps.investment_budgets.views import (
     investment_budget_update,
     get_investment_by_account,
     generate_excel_report,
+    check_out_investment,
 )
 
 urlpatterns = [
@@ -32,5 +33,10 @@ urlpatterns = [
         'generate-excel-report/<int:period>/<int:cost_center>/',
         generate_excel_report,
         name='generate_excel_report'
+    ),
+    path(
+        'check-out/',
+        check_out_investment,
+        name='check_out_investment'
     ),
 ]

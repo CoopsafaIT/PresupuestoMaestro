@@ -8,7 +8,11 @@ from apps.administration.views import (
     investments,
     investment,
     job_positions,
-    job_position
+    job_position,
+    projects,
+    projections,
+    periods,
+    period
 )
 
 urlpatterns = [
@@ -18,6 +22,10 @@ urlpatterns = [
     path('investment-account/<int:id>/', investment_account, name="investment_account"),
     path('investments/', investments, name="investments"),
     path('investment/<int:id>/', investment, name="investment"),
-    path('job_positions/', job_positions, name="job_positions"),
-    path('job_position/<int:id>/', job_position, name="job_position"),
+    path('job-positions/', job_positions, name="job_positions"),
+    path('job-position/<int:id>/', job_position, name="job_position"),
+    path('projects/', projects, name="projects"),
+    path('projections/', projections, name="projections"),
+    path('periods/', periods, name="periods"),
+    path('period/<int:id>/', period, name="period"),
 ]

@@ -66,7 +66,6 @@ def login(request):
             password = request.POST.get("password", "")
             user_query = User.objects.get(first_name=first_name)
             username = user_query.username
-
             if VALIDATE_AD:
                 ad_result = _validate_active_directory(username, password)
                 if ad_result.get('status') is not True:

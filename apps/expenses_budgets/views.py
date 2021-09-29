@@ -21,7 +21,7 @@ from apps.main.models import (
     Tipopresupuesto
 )
 from ppto_safa.utils import execute_sql_query
-from ppto_safa.constants import MONTH
+from utils.constants import MONTH
 
 
 @login_required()

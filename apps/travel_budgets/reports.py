@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 from openpyxl.styles import Font, Border, Side, PatternFill
 
-from ppto_safa.constants import TRAVEL_CATEGORY, ZONES, TRAVEL_TYPE
+from utils.constants import TRAVEL_CATEGORY, ZONES, TRAVEL_TYPE
 
 
 def create_excel_report(qs):

@@ -17,7 +17,7 @@ from ppto_safa.utils import (
     execute_sql_query,
     try_convert_float
 )
-from ppto_safa.constants import MONTH
+from utils.constants import MONTH
 from apps.indirect_budgets.reports import (
     generate_excel_file_format,
     load_excel_file
