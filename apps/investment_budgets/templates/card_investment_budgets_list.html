@@ -16,11 +16,11 @@
               <tr>
                 <th class="text-center">Cuenta</th>
                 <th class="text-center">Mes</th>
-                <th class="text-center">Descripcion</th>
+                <th class="text-center">Descripción</th>
                 <th class="text-center">Cantidad</th>
                 <th class="text-center">Monto Uni.</th>
                 <th class="text-center">Presupuestado</th>
-                <th class="text-center">Comentario</th>
+                <th class="text-center">Depreciación</th>
                 <th class="text-center">Acción</th>
               </tr>
             </thead>
@@ -29,21 +29,31 @@
               <tr>
                 <td>{{item.codcentrocostoxcuentacontable.codcuentacontable}}</td>
                 <td>{{item.mes}}</td>
-                <td>{{item.descproducto}}</td>
+                <td 
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="{{item.justificacion|default:''}}"
+                >{{item.descproducto}}</td>
                 <td>{{item.cantidad}}</td>
                 <td>{{item.valor|floatformat:2|intcomma}}</td>
                 <td>{{item.presupuestado|floatformat:2|intcomma}}</td>
-                <td>{{item.justificacion|default:''}}</td>
+                <td>{{item.monto_depreciacion_anual|floatformat:2|intcomma}}</td>
                 <td>
                   <div class="d-grid gap-2 d-flex">
                     <a 
                       href="{% url 'investment_budget_update' item.pk %}" 
                       class="btn btn-outline-safa me-2"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Editar"
                     > <i class="bi bi-pencil-square"></i>
                     </a>
                     <a 
                       href="#!"
                       data-form-url="{% url 'investement_budget_delete' item.pk %}"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Eliminar"
                       class="btn btn-outline-danger delete-investment-budget"
                     > <i class="bi bi-trash"></i>
                     </a>

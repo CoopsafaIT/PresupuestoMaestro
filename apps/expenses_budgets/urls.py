@@ -3,7 +3,8 @@ from apps.expenses_budgets.views import (
     budget_register,
     user_create_project,
     get_projects_by_cost_center,
-    generate_excel_report
+    generate_excel_report,
+    transfers_expenses
 )
 
 urlpatterns = [
@@ -18,5 +19,10 @@ urlpatterns = [
         'ajax-get-projects-by-cost-center/',
         get_projects_by_cost_center,
         name='get_projects_by_cost_center'
-    )
+    ),
+    path(
+        'transfers/',
+        transfers_expenses,
+        name='transfers_expenses'
+    ),
 ]

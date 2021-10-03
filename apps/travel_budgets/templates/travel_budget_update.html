@@ -7,14 +7,15 @@
 <link rel="stylesheet" href="{% static 'css/budgets.css' %}">
 {% endblock css %}
 
+{% block breadcrumb %}
+<li class="breadcrumb-item text-white ">
+  <a href="{% url 'travel_budget_register' %}" class="text-white text-decoration-none">/ Listado Viaticos</a>
+</li>
+<li class="breadcrumb-item active text-white before-none" aria-current="page"> / Editar Viatico</li>
+{% endblock breadcrumb %}
+
 {% block content %}
 <div class="container-fluid pt-4">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-template">
-      <li class="breadcrumb-item"><a href="{% url 'travel_budget_register' %}">Volver a Listado</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Editar de Presupuestos de Viaticos</li>
-    </ol>
-  </nav>
 
   <div class="card card-template">
     <div class="card-header">

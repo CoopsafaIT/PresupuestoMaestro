@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db import models
-from utils.constants import ZONES
+from utils.constants import ZONES, MONTH_CHOICES_REVERSE
 
 
 class Administracionpresupuesto(models.Model):
@@ -439,12 +441,54 @@ class Detallexpresupuestoinversion(models.Model):
         db_column="ValorFusion", max_digits=23, decimal_places=5, blank=True, null=True
     )
 
+    numero_meses = models.IntegerField(
+        db_column="NumeroMeses", blank=True, null=True
+    )
+
+    numero_meses_depreciacion = models.IntegerField(
+        db_column="NumeroMesesDepreciacion", blank=True, null=True
+    )
+
+    monto_depreciacion_mensual = models.DecimalField(
+        db_column="MontoDepreciacionMensual",
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+    monto_depreciacion_anual = models.DecimalField(
+        db_column="MontoDepreciacionAnual",
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
     class Meta:
         managed = True
         db_table = "DetalleXPresupuestoInversion"
 
     def __unicode__(self):
         return "%s" % (self.descproducto)
+
+
+@receiver(post_save, sender=Detallexpresupuestoinversion)
+def post_save_investment(sender, instance, created, **kwargs):
+    qs = instance
+    if qs.presupuestadocontraslado > 0:
+        month_acquisition = dict(MONTH_CHOICES_REVERSE).get(qs.mes)
+        month_of_period = 12 - month_acquisition + 1
+
+        total_budget = float(qs.presupuestadocontraslado) * 0.99
+        depreciation_per_month = total_budget / qs.numero_meses_depreciacion
+
+        total_depreciation_per_month = depreciation_per_month * month_of_period
+
+        Detallexpresupuestoinversion.objects.filter(pk=qs.pk).update(
+            numero_meses=month_of_period,
+            monto_depreciacion_mensual=depreciation_per_month,
+            monto_depreciacion_anual=total_depreciation_per_month
+        )
 
 
 class Detallexpresupuestopersonal(models.Model):

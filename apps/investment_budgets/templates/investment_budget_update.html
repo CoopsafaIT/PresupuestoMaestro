@@ -3,22 +3,22 @@
 {% load humanize %}
 {% block title %}Presupuestos de Inversión {% endblock title %}
 
+{% block breadcrumb %}
+<li class="breadcrumb-item text-white ">
+  <a href="{% url 'investment_budget_register' %}" class="text-white text-decoration-none">/ Listado Inversiones</a>
+</li>
+<li class="breadcrumb-item active text-white before-none" aria-current="page"> / Editar Inversión</li>
+{% endblock breadcrumb %}
+
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/budgets.css' %}">
 {% endblock css %}
 
 {% block content %}
 <div class="container-fluid pt-4">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-template">
-      <li class="breadcrumb-item"><a href="{% url 'investment_budget_register' %}">Volver a Listado</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Editar de Presupuestos de Inversión</li>
-    </ol>
-  </nav>
-
   <div class="card card-template">
     <div class="card-header">
-      <h5 class="card-title">Editar Presupuestos de Inversión</h5>
+      <h5 class="card-title fw-light">Editar Presupuestos de Inversión</h5>
     </div>
     <div class="card-body">
       <form method="post" accept-charset="utf-8" action="{% url 'investment_budget_update' qs.pk %}">
@@ -183,7 +183,7 @@
       $('#id_investment').empty();
       $('#id_investment').append('<option value="">--- Seleccione Inversión ---</option>');
       $.each(resp, (key, val) => {
-        $('#id_investment').append(`<option value=${val.descinversion}>${val.descinversion}</option>`);
+        $('#id_investment').append(`<option value='${val.descinversion}'>${val.descinversion}</option>`);
       })
       $('#id_investment').trigger("chosen:updated");
     }

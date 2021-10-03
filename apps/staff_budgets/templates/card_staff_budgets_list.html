@@ -37,12 +37,18 @@
                     <a 
                       href="{% url 'staff_budgets_update' item.pk %}" 
                       class="btn btn-outline-safa me-2"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Editar"
                     > <i class="bi bi-pencil-square"></i>
                     </a>
                     <a 
                       href="#!"
                       data-form-url="{% url 'staff_budgets_delete' item.pk %}"
                       class="btn btn-outline-danger delete-staff-budget"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Eliminar"
                     > <i class="bi bi-trash"></i>
                     </a>
                   </div>

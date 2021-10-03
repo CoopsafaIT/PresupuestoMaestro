@@ -1,0 +1,33 @@
+{% load static %}
+<form method="GET">
+  <div class="row">
+    <div class="col-md-3">
+      <span class="fw-light fs-5">Origen</span>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <select name="period" id="id_period_form" class="form-select select2-style" required style="width: 100%;">
+          <option value="">-- Periodo --</option>
+          {% for i in periods %}
+          <option {% if request.GET.period == i.pk %} selected {% endif %} 
+          value="{{i.pk}}">{{i}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <select name="cost_center" id="id_cost_center_form" class="form-select select2-style" required style="width: 100%;">
+          <option value="">-- Centro Costo --</option>
+          {% for i in cost_centers %}
+          <option {% if request.GET.cost_center == i.pk %} selected {% endif %} 
+          value="{{i.pk}}">{{i}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-outline-primary float-end">Buscar</button>
+    </div>
+  </div>
+</form>

@@ -99,7 +99,6 @@ def indirect_budget_register(request):
                             f'no es un valor'
                         )
                     if val.total != result:
-                        print('entrooooooo')
                         list_items_to_update.append({
                             'id': val.pk,
                             'value': result

@@ -2,7 +2,7 @@
 {% load humanize %}
 <div class="card card-template mt-4">
   <div class="card-header">
-    <h5 class="card-title">Viajes Nacionales Presupuestados</h5>
+    <h5 class="card-title fw-light">Viajes Nacionales Presupuestados</h5>
   </div>
   <div class="card-body">
     <div class="row">
@@ -34,12 +34,18 @@
                     <a 
                       href="{% url 'travel_budget_update' item.pk %}" 
                       class="btn btn-outline-safa me-2"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Editar"
                     > <i class="bi bi-pencil-square"></i>
                     </a>
                     <a 
                       href="#!"
                       data-form-url="{% url 'travel_budget_delete' item.pk %}"
                       class="btn btn-outline-danger delete-travel-budget"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Eliminar"
                     > <i class="bi bi-trash"></i>
                     </a>
                   </div>

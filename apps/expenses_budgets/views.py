@@ -1,6 +1,8 @@
 import json
 import os
-from django.shortcuts import render, redirect
+import datetime as dt
+from decimal import Decimal
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -15,10 +17,13 @@ from apps.main.models import (
     Centroscosto,
     Centrocostoxcuentacontable,
     Criterios,
+    Historicotraslados,
     Periodo,
     Proyectos,
     Presupuestos,
-    Tipopresupuesto
+    Presupuestocostos,
+    Presupuestoindirecto,
+    Tipopresupuesto,
 )
 from ppto_safa.utils import execute_sql_query
 from utils.constants import MONTH
@@ -560,3 +565,279 @@ def generate_excel_report(request, project, period, cost_center):
     response = HttpResponse(stream, content_type='text/xlsx')
     response['Content-Disposition'] = 'attachment; filename="PPTO. GASTOS '+period.descperiodo+'.xlsx"' # NOQA
     return response
+
+
+@login_required()
+def transfers_expenses(request):
+    def _get_cost_qs(cost_center_origin, cost_center_destination, period):
+        qs_cost_origin = Presupuestocostos.objects.extra({
+            'total': 'CAST(CAST(total as decimal (17,2)) as nvarchar(100))',
+        }).values(
+            'codpresupuestocostos',
+            'codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable',
+            'total'
+        ).filter(
+            codcentrocostoxcuentacontable_new__codcentrocosto=cost_center_origin,
+            periodo=period
+        )
+        qs_cost_destination = Presupuestocostos.objects.extra({
+            'total': 'CAST(CAST(total as decimal (17,2)) as nvarchar(100))',
+        }).values(
+            'codpresupuestocostos',
+            'codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable',
+            'total'
+        ).filter(
+            codcentrocostoxcuentacontable_new__codcentrocosto=cost_center_destination,
+            periodo=period
+        )
+        return {
+            'qs_cost_origin': qs_cost_origin,
+            'qs_cost_destination': qs_cost_destination
+        }
+
+    def _get_indirect_qs(cost_center_origin, cost_center_destination, period):
+        qs_indirect_origin = Presupuestoindirecto.objects.extra({
+            'total': 'CAST(CAST(total as decimal (17,2)) as nvarchar(100))',
+        }).values(
+            'codpresupuestoindirecto',
+            'codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable',
+            'total'
+        ).filter(
+            codcentrocostoxcuentacontable_new__codcentrocosto=cost_center_origin,
+            periodo=period
+        )
+
+        qs_indirect_destination = Presupuestoindirecto.objects.extra({
+            'total': 'CAST(CAST(total as decimal (17,2)) as nvarchar(100))',
+        }).values(
+            'codpresupuestoindirecto',
+            'codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable',
+            'total'
+        ).filter(
+            codcentrocostoxcuentacontable_new__codcentrocosto=cost_center_destination,
+            periodo=period
+        )
+
+        return {
+            'qs_indirect_origin': qs_indirect_origin,
+            'qs_indirect_destination': qs_indirect_destination
+        }
+
+    def _get_expenses_projects_qs(cost_center_origin, cost_center_destination):
+        projects_origin = Proyectos.objects.values(
+            'codproyecto', 'descproyecto'
+        ).filter(codcentrocosto=cost_center_origin)
+
+        projects_destination = Proyectos.objects.values(
+            'codproyecto', 'descproyecto'
+        ).filter(codcentrocosto=cost_center_destination)
+        return {
+            'projects_origin': projects_origin,
+            'projects_destination': projects_destination
+        }
+
+    if request.is_ajax():
+        period = request.GET.get('period')
+        cost_center = request.GET.get('cost_center')
+        project = request.GET.get('project')
+        data = Presupuestos.objects.extra({
+            'montooriginal': 'CAST(CAST(montooriginal as decimal (17,2)) as nvarchar(100))'
+        }).values(
+            'codcentroscostoxcuentacontable__codcuentacontable',
+            'pk',
+            'montooriginal',
+            'codcentroscostoxcuentacontable__codcuentacontable__desccuentacontable',
+            'codproyecto__descproyecto'
+        ).filter(
+            codcentroscostoxcuentacontable__codcentrocosto=cost_center,
+            codperiodo=period,
+            codtipopresupuesto=1,
+            codproyecto=project
+        )
+        return HttpResponse(
+            json.dumps({'data': list(data)}), content_type='application/json'
+        )
+
+    if request.method == 'POST':
+        application_date = request.POST.get('application_date')
+        now = dt.datetime.now()
+        cost_transfer = request.POST.get('cost_transfer')
+        indirect_transfer = request.POST.get('indirect_transfer')
+        expenses_transfer = request.POST.get('expenses_transfer')
+
+        if not not expenses_transfer:
+            expenses_transfer = json.loads(expenses_transfer)
+            budget_origin_qs = get_object_or_404(
+                Presupuestos, pk=expenses_transfer.get('originId')
+            )
+            budget_destination_qs = get_object_or_404(
+                Presupuestos, pk=expenses_transfer.get('destinationId')
+            )
+            amount = Decimal(expenses_transfer.get('amount'))
+            per_month = Decimal(amount / 12)
+
+            budget_origin_qs.montooriginal = budget_origin_qs.montooriginal - amount
+            budget_origin_qs.enero = budget_origin_qs.enero - per_month
+            budget_origin_qs.febrero = budget_origin_qs.febrero - per_month
+            budget_origin_qs.marzo = budget_origin_qs.marzo - per_month
+            budget_origin_qs.abril = budget_origin_qs.abril - per_month
+            budget_origin_qs.mayo = budget_origin_qs.mayo - per_month
+            budget_origin_qs.junio = budget_origin_qs.junio - per_month
+            budget_origin_qs.julio = budget_origin_qs.julio - per_month
+            budget_origin_qs.agosto = budget_origin_qs.agosto - per_month
+            budget_origin_qs.septiembre = budget_origin_qs.septiembre - per_month
+            budget_origin_qs.octubre = budget_origin_qs.octubre - per_month
+            budget_origin_qs.noviembre = budget_origin_qs.noviembre - per_month
+            budget_origin_qs.diciembre = budget_origin_qs.diciembre - per_month
+            budget_origin_qs.diciembre = budget_origin_qs.diciembre - per_month
+            budget_origin_qs.fechamodificacion = now
+            budget_origin_qs.usuariomodificacion = request.user.pk
+            budget_origin_qs.save()
+
+            budget_destination_qs.montooriginal = budget_destination_qs.montooriginal + amount # NOQA
+            budget_destination_qs.enero = budget_destination_qs.enero + per_month
+            budget_destination_qs.febrero = budget_destination_qs.febrero + per_month
+            budget_destination_qs.marzo = budget_destination_qs.marzo + per_month
+            budget_destination_qs.abril = budget_destination_qs.abril + per_month
+            budget_destination_qs.mayo = budget_destination_qs.mayo + per_month
+            budget_destination_qs.junio = budget_destination_qs.junio + per_month
+            budget_destination_qs.julio = budget_destination_qs.julio + per_month
+            budget_destination_qs.agosto = budget_destination_qs.agosto + per_month
+            budget_destination_qs.septiembre = budget_destination_qs.septiembre + per_month
+            budget_destination_qs.octubre = budget_destination_qs.octubre + per_month
+            budget_destination_qs.noviembre = budget_destination_qs.noviembre + per_month
+            budget_destination_qs.diciembre = budget_destination_qs.diciembre + per_month
+            budget_destination_qs.diciembre = budget_destination_qs.diciembre + per_month
+            budget_destination_qs.fechamodificacion = now
+            budget_destination_qs.usuariomodificacion = request.user.pk
+            budget_destination_qs.save()
+
+            history = Historicotraslados()
+            history.fechaaplicacion = application_date
+            history.codorigengastos = budget_origin_qs
+            history.coddestinogastos = budget_destination_qs
+            history.montoorigengastos = amount
+            history.codusuario = request.user
+            history.fechacreacion = now
+            history.save()
+            messages.success(
+                request,
+                (
+                    f'Traslado de PPTO. de Gastos realizado con éxito. '
+                    f'Monto de traslado: {amount}'
+                )
+            )
+
+        if not not indirect_transfer:
+            indirect_transfer = json.loads(indirect_transfer)
+            budget_origin_qs = get_object_or_404(
+                Presupuestoindirecto, pk=indirect_transfer.get('originId')
+            )
+            budget_destination_qs = get_object_or_404(
+                Presupuestoindirecto, pk=indirect_transfer.get('destinationId')
+            )
+            amount = Decimal(indirect_transfer.get('amount'))
+
+            budget_origin_qs.total = budget_origin_qs.total - amount
+            budget_origin_qs.valor = budget_origin_qs.valor - amount
+            budget_origin_qs.usuariomodificacion = request.user
+            budget_origin_qs.fechamodificacion = now
+            budget_origin_qs.save()
+
+            budget_destination_qs.total = budget_destination_qs.total + amount
+            budget_destination_qs.valor = budget_destination_qs.valor + amount
+            budget_destination_qs.usuariomodificacion = request.user
+            budget_destination_qs.fechamodificacion = now
+            budget_destination_qs.save()
+
+            history = Historicotraslados()
+            history.fechaaplicacion = application_date
+            history.codorigenindirecto = budget_origin_qs
+            history.coddestinoindirecto = budget_destination_qs
+            history.montoorigenindirecto = amount
+            history.codusuario = request.user
+            history.fechacreacion = now
+            history.save()
+            messages.success(
+                request,
+                (
+                    f'Traslado de PPTO. Indirecto realizado con éxito. '
+                    f'Monto de traslado: {amount}'
+                )
+            )
+
+        if not not cost_transfer:
+            cost_transfer = json.loads(cost_transfer)
+            budget_origin_qs = get_object_or_404(
+                Presupuestocostos, pk=cost_transfer.get('originId')
+            )
+            budget_destination_qs = get_object_or_404(
+                Presupuestocostos, pk=cost_transfer.get('destinationId')
+            )
+            amount = Decimal(cost_transfer.get('amount'))
+            budget_origin_qs.total = budget_origin_qs.total - amount
+            budget_origin_qs.valor = budget_origin_qs.valor - amount
+            budget_origin_qs.usuariomodificacion = request.user
+            budget_origin_qs.fechamodificacion = now
+            budget_origin_qs.save()
+
+            budget_destination_qs.total = budget_destination_qs.total + amount
+            budget_destination_qs.valor = budget_destination_qs.valor + amount
+            budget_destination_qs.usuariomodificacion = request.user
+            budget_destination_qs.fechamodificacion = now
+            budget_destination_qs.save()
+
+            history = Historicotraslados()
+            history.fechaaplicacion = application_date
+            history.codorigencostos = budget_origin_qs
+            history.coddestinocostos = budget_destination_qs
+            history.montoorigencostos = amount
+            history.codusuario = request.user
+            history.fechacreacion = now
+            history.save()
+            messages.success(
+                request,
+                (
+                    f'Traslado de PPTO. de Costos realizado con éxito. '
+                    f'Monto de traslado: {amount}'
+                )
+            )
+
+    if (
+        request.GET.get('period') and
+        request.GET.get('cost_center_origin') and
+        request.GET.get('cost_center_destination')
+    ):
+        cost_center_destination = request.GET.get('cost_center_destination')
+        request.session['period'] = request.GET.get('period')
+        request.session['cost_center_origin'] = request.GET.get('cost_center_origin')
+        request.session['cost_center_destination'] = cost_center_destination
+
+    periods = Periodo.objects.filter(habilitado=True)
+    cost_centers = Centroscosto.objects.filter(habilitado=True)
+    ctx = {
+        'periods': periods,
+        'cost_centers': cost_centers
+    }
+
+    if (
+        request.session.get('period') and
+        request.session.get('cost_center_origin') and
+        request.session.get('cost_center_destination')
+    ):
+        period = request.session.get('period')
+        cost_center_origin = request.session.get('cost_center_origin')
+        cost_center_destination = request.session.get('cost_center_destination')
+        cost = _get_cost_qs(
+            cost_center_origin, cost_center_destination, period
+        )
+        indirect = _get_indirect_qs(
+            cost_center_origin, cost_center_destination, period
+        )
+        expenses_project = _get_expenses_projects_qs(
+            cost_center_origin, cost_center_destination
+        )
+        ctx['cost'] = cost
+        ctx['indirect'] = indirect
+        ctx['expenses_project'] = expenses_project
+    return render(request, 'transfers_expenses/list.html', ctx)

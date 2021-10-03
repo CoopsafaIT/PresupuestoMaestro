@@ -1,0 +1,87 @@
+<div class="modal fade" id="addInvestmentModal" tabindex="-1" aria-labelledby="addInvestmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="addInvestmentModalLabel">
+          Registrar Inversión
+          <span id="require_available_title"></span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_period_register">Periodo</label>
+                <select
+                  name="period"
+                  id="id_period_register"
+                  class="form-select select2-style-register"
+                  style="width: 100%;"
+                >
+                  <option value="">-- Seleccione Periodo --</option>
+                  {% for i in periods %}
+                  <option value="{{i.pk}}">{{i}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_cost_center_register">Centro de Costos</label>
+                <select
+                  name="cost_center"
+                  id="id_cost_center_register"
+                  class="form-select select2-style-register"
+                  style="width: 100%;"
+                >
+                  <option value="">-- Seleccione Centro Costo --</option>
+                  {% for i in cost_centers %}
+                  <option value="{{i.pk}}">{{i}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_account_register">Cuenta Contable</label>
+                <select
+                  name="account"
+                  id="id_account_register"
+                  class="form-select select2-style-register"
+                  style="width: 100%;"
+                >
+                  <option value="">-- Seleccione Cuenta Contable --</option>
+                  {% for i in accounts %}
+                  <option value="{{i.pk}}">{{i}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_investment_register">Inversión</label>
+                <select
+                  name="investment"
+                  id="id_investment_register"
+                  class="form-select select2-style-register"
+                  required 
+                  style="width: 100%;"
+                >
+                  <option value="">-- Seleccione Inversión --</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-safa" id="btn-submit-create-investment">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
