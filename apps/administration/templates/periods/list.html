@@ -22,11 +22,13 @@
             <div class="col-md-2 d-flex justify-content-end offset-md-2">
               <form method="POST" id="form-create-period">
                 {% csrf_token %}
+                {% if perms.admin.puede_ingresar_periodos %}
                 <button
                 type="button"
                 class="btn btn-outline-safa" 
                 id="btn-register-period"
                 >Registrar</button>
+                {% endif %}
               </form>
             </div>
             <div class="col-md-4">
@@ -54,6 +56,7 @@
                     <td>{{item.habilitado|yesno:'Activo,Inactivo'}}</td>
                     <td>{{item.cerrado|yesno:'Si,No'}}</td>
                     <td>
+                      {% if perms.admin.puede_editar_periodos %}
                       <div class="d-grid gap-2 d-flex justify-content-center">
                         <a 
                           class="btn btn-outline-safa me-2 change_status"
@@ -72,6 +75,7 @@
                         > <i class="bi bi-x-circle"></i>
                         </a>
                       </div>
+                      {% endif %}
                     </td>
                   </tr>
                 {% empty %}

@@ -94,7 +94,7 @@
                 <option value="">--- Seleccione Inversión ---</option>
                 {% for investment in investments %}
                 <option
-                  value="{{investment.descinversion}}"
+                  value="{{investment.codinversion}}"
                   {% if investment.descinversion == qs.descproducto %} 
                     selected 
                   {% endif %}
@@ -183,7 +183,7 @@
       $('#id_investment').empty();
       $('#id_investment').append('<option value="">--- Seleccione Inversión ---</option>');
       $.each(resp, (key, val) => {
-        $('#id_investment').append(`<option value='${val.descinversion}'>${val.descinversion}</option>`);
+        $('#id_investment').append(`<option value='${val.codinversion}'>${val.descinversion}</option>`);
       })
       $('#id_investment').trigger("chosen:updated");
     }

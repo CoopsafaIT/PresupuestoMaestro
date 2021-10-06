@@ -4,7 +4,8 @@ from apps.travel_budgets.views import (
     travel_budget_update,
     travel_budget_delete,
     generate_excel_report,
-    check_out_travel
+    check_out_travel,
+    load_travel_distribution
 )
 
 urlpatterns = [
@@ -32,5 +33,10 @@ urlpatterns = [
         'check-out/',
         check_out_travel,
         name='check_out_travel'
+    ),
+    path(
+        'load-travel-distribution/',
+        load_travel_distribution,
+        name='load_travel_distribution'
     ),
 ]

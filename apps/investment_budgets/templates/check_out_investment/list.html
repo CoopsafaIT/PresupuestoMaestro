@@ -185,8 +185,8 @@
   
     const fillSelected = (data) => {
       $(`#id_request_number`).empty();
-      $(`#id_request_number`).append('<option value="">-- Seleccione Municipio --</option>');
-      $(`#id_request_number`).append('<option value="not_request_number"> Sin número de Solicitud</option>');
+      $(`#id_request_number`).append('<option value="">-- Seleccione Solicitud --</option>');
+      // $(`#id_request_number`).append('<option value="not_request_number"> Sin número de Solicitud</option>');
       $.each(data, (key, val) => {
         $(`#id_request_number`).append(
           `<option value=${val.pk}> ${val.numerosolicitud}</option>`

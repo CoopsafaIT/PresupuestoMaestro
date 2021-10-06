@@ -19,12 +19,14 @@
               <h1 class="card-title fs-4 fw-light mb-0">Cuentas Contables Inversión</h1>
             </div>
             <div class="col-md-2 d-flex justify-content-end offset-md-2">
+              {% if perms.admin.puede_ingresar_cuentas_inversion %}
               <button 
                 class="btn btn-outline-safa" 
                 id="btn-register-user"
                 data-bs-toggle="modal" 
                 data-bs-target="#investmentAccountsAddModal"
               >Registrar</button>
+              {% endif %}
             </div>
             <div class="col-md-4">
               {% include 'layout/search.html' %}
@@ -51,6 +53,7 @@
                     <td>{{item.desccuentacontable}}</td>
                     <td>{{item.habilitado|yesno:'Activo,Inactivo'}}</td>
                     <td>
+                      {% if perms.admin.puede_editar_cuentas_inversion %}
                       <div class="d-grid gap-2 d-flex justify-content-center">
                         <a 
                           class="btn btn-outline-safa me-2"
@@ -61,6 +64,7 @@
                         > <i class="bi bi-pencil-square"></i>
                         </a>
                       </div>
+                      {% endif %}
                     </td>
                   </tr>
                 {% empty %}

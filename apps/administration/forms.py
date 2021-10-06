@@ -131,7 +131,7 @@ class ProjectionForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-select select2'})
     )
     month_base = forms.ChoiceField(
-        label="Año base",
+        label="Mes base",
         choices=MONTH_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-select select2'})

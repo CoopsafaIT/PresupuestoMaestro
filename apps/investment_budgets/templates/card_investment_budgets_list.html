@@ -4,7 +4,9 @@
   <div class="card-header">
     <h5 class="card-title fw-light">
       Inversiones Presupuestadas: 
-      {% if qs %} {{qs.0.codcentrocostoxcuentacontable.codcentrocosto}} {% endif %}
+      {%  if request.session.cost_center == '__all__' %} Todos Centros de Costos
+      {% elif qs and request.session.cost_center != '__all__' %} {{qs.0.codcentrocostoxcuentacontable.codcentrocosto}} 
+      {% endif %}
     </h5>
   </div>
   <div class="card-body">
@@ -14,6 +16,9 @@
           <table class="table table-hover table-striped table-bordered">
             <thead>
               <tr>
+                {%  if request.session.cost_center == '__all__' %}
+                <th class="text-center">Centro de Costos</th>
+                {% endif %}
                 <th class="text-center">Cuenta</th>
                 <th class="text-center">Mes</th>
                 <th class="text-center">Descripción</th>
@@ -27,6 +32,9 @@
             <tbody>
               {% for item in qs %}
               <tr>
+                {%  if request.session.cost_center == '__all__' %}
+                <td>{{item.codcentrocostoxcuentacontable.codcentrocosto}}</td>
+                {% endif %}
                 <td>{{item.codcentrocostoxcuentacontable.codcuentacontable}}</td>
                 <td>{{item.mes}}</td>
                 <td 

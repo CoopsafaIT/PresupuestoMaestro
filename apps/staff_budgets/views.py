@@ -8,8 +8,9 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 
@@ -17,6 +18,7 @@ from utils.constants import STAFF_POSITIONS, MONTHS_LIST
 from apps.main.models import (
     Centroscosto,
     Detallexpresupuestopersonal,
+    ResponsablesPorCentrosCostos,
     Periodo,
     Puestos,
     Manejopersonal,
@@ -28,6 +30,23 @@ from utils.pagination import pagination
 
 @login_required()
 def staff_budgets_register(request):
+    if (
+        not request.user.has_perm('ppto_personal.puede_ingresar_ppto_personal_todos') and
+        not request.user.has_perm('ppto_personal.puede_ingresar_ppto_personal')
+    ):
+        raise PermissionDenied
+
+    def _get_ceco():
+        if not request.user.has_perm('ppto_personal.puede_ingresar_ppto_personal_todos'):
+            ceco_assigned = ResponsablesPorCentrosCostos.objects.filter(
+                CodUser=request.user.pk, Estado=True
+            ).values_list('CodCentroCosto', flat=True)
+            return Centroscosto.objects.filter(habilitado=True).filter(
+                pk__in=list(ceco_assigned)
+            )
+        else:
+            return Centroscosto.objects.filter(habilitado=True)
+
     if request.method == 'POST':
         if request.POST.get('method') == 'filter-staff-budget':
             request.session['period'] = request.POST.get('period', '')
@@ -90,11 +109,10 @@ def staff_budgets_register(request):
                 return redirect('staff_budgets_register')
 
     periods = Periodo.objects.filter(habilitado=True)
-    cost_centers = Centroscosto.objects.filter(habilitado=True)
     job_positions = Puestos.objects.filter(puestoestado=True)
     ctx = {
         'periods': periods,
-        'cost_centers': cost_centers,
+        'cost_centers': _get_ceco(),
         'job_positions': job_positions,
         'staff_positions': STAFF_POSITIONS,
         'months': MONTHS_LIST,
@@ -220,6 +238,9 @@ def generate_excel_report(request, period, cost_center):
 
 
 @login_required
+@permission_required(
+    'ppto_personal.puede_registrar_egresos_personal', raise_exception=True
+)
 def check_out_staff(request):
     if request.is_ajax():
         data = Manejopersonal.objects.values('comentario').filter(

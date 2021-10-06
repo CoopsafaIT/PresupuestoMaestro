@@ -8,7 +8,8 @@ from django.shortcuts import (
     get_object_or_404
 )
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Sum, Q
 from django.core.exceptions import ValidationError
@@ -19,6 +20,7 @@ from apps.main.models import (
     Cuentascontables,
     Centroscosto,
     Periodo,
+    ResponsablesPorCentrosCostos,
     Inversiones,
     Transaccionesinversiones,
     Historicotrasladosinversiones
@@ -32,6 +34,22 @@ from apps.investment_budgets.reports import create_excel_report
 
 @login_required()
 def investment_budget_register(request):
+    if (
+        not request.user.has_perm('ppto_inversion.puede_ingresar_ppto_inversion_todos') and
+        not request.user.has_perm('ppto_inversion.puede_ingresar_ppto_inversion')
+    ):
+        raise PermissionDenied
+
+    def _get_ceco():
+        if not request.user.has_perm('ppto_inversion.puede_ingresar_ppto_inversion_todos'):
+            ceco_assigned = ResponsablesPorCentrosCostos.objects.filter(
+                CodUser=request.user.pk, Estado=True
+            ).values_list('CodCentroCosto', flat=True)
+            return Centroscosto.objects.filter(habilitado=True).filter(
+                pk__in=list(ceco_assigned)
+            )
+        else:
+            return Centroscosto.objects.filter(habilitado=True)
     if request.method == 'POST':
         if request.POST.get('method') == 'filter-investment-budget':
             request.session['period'] = request.POST.get('period', '')
@@ -46,7 +64,7 @@ def investment_budget_register(request):
                     raise ValidationError(f'{ form.errors.as_text() }')
 
                 number = float(form.cleaned_data.get('number'))
-                investment_name = form.cleaned_data.get('investment')
+                investment_id = form.cleaned_data.get('investment')
                 unit_amount = float(form.cleaned_data.get('unit_amount').replace(',', ''))
                 total = number * unit_amount
                 qs_period = Periodo.objects.get(
@@ -57,12 +75,12 @@ def investment_budget_register(request):
                     codcuentacontable=form.cleaned_data.get('account')
                 )
                 qs_investment = get_object_or_404(
-                    Inversiones, descinversion=investment_name
+                    Inversiones, codinversion=investment_id
                 )
                 _new = Detallexpresupuestoinversion()
                 _new.mes = form.cleaned_data.get('month')
                 _new.justificacion = form.cleaned_data.get('justification')
-                _new.descproducto = form.cleaned_data.get('investment')
+                _new.descproducto = qs_investment.descinversion
                 _new.numero_meses_depreciacion = qs_investment.meses_depreciacion
                 _new.cantidad = number
                 _new.valor = unit_amount
@@ -103,11 +121,10 @@ def investment_budget_register(request):
                 return redirect('investment_budget_register')
 
     periods = Periodo.objects.filter(habilitado=True)
-    cost_centers = Centroscosto.objects.filter(habilitado=True)
     accounts = Cuentascontables.objects.filter(codtipocuenta=2, habilitado=True)
     ctx = {
         'periods': periods,
-        'cost_centers': cost_centers,
+        'cost_centers': _get_ceco(),
         'accounts': accounts,
         'months': MONTHS_LIST
     }
@@ -115,12 +132,18 @@ def investment_budget_register(request):
         request.session.get('period', None) and
         request.session.get('cost_center', None)
     ):
+        cost_center = request.session.get('cost_center')
+        ceco_filter = {}
+        if cost_center != '__all__':
+            ceco_filter = {
+                'codcentrocostoxcuentacontable__codcentrocosto': cost_center
+            }
         qs = Detallexpresupuestoinversion.objects.extra({
             'presupuestado': 'Presupuestado',
         }).filter(
-            codcentrocostoxcuentacontable__codcentrocosto=request.session.get('cost_center'), # NOQA
             periodo=request.session.get('period'),
-            habilitado=True
+            habilitado=True,
+            **ceco_filter
         )
         qs_sum = qs.extra({
             'total_budget': 'SUM(Presupuestado)',
@@ -147,15 +170,15 @@ def investment_budget_update(request, id):
             number = float(form.cleaned_data.get('number'))
             unit_amount = float(form.cleaned_data.get('unit_amount').replace(',', ''))
             total = number * unit_amount
-            investment_name = form.cleaned_data.get('investment')
+            investment_id = form.cleaned_data.get('investment')
 
             qs_investment = get_object_or_404(
-                Inversiones, descinversion=investment_name
+                Inversiones, codinversion=investment_id
             )
             upd_record = Detallexpresupuestoinversion.objects.get(pk=id)
             upd_record.mes = form.cleaned_data.get('month')
             upd_record.justificacion = form.cleaned_data.get('justification')
-            upd_record.descproducto = form.cleaned_data.get('investment')
+            upd_record.descproducto = qs_investment.descinversion
             upd_record.numero_meses_depreciacion = qs_investment.meses_depreciacion
             upd_record.cantidad = number
             upd_record.valor = unit_amount
@@ -191,6 +214,7 @@ def investment_budget_update(request, id):
             )
             return redirect(reverse('investment_budget_update', kwargs={'id': id}))
         except Exception as e:
+            raise e
             messages.error(
                 request,
                 f'Exception no determinada: {e.__str__()}'
@@ -264,6 +288,9 @@ def generate_excel_report(request, period, cost_center):
 
 
 @login_required
+@permission_required(
+    'ppto_inversion.puede_registrar_egresos_inversion', raise_exception=True
+)
 def check_out_investment(request):
     if request.is_ajax():
         if request.GET.get('method') == 'reserve':
@@ -463,6 +490,9 @@ def check_out_investment(request):
 
 
 @login_required
+@permission_required(
+    'ppto_inversion.puede_crear_traslados_inversion', raise_exception=True
+)
 def transfers_investment(request):
     def get_investments_list(cost_center, period):
         qs = Detallexpresupuestoinversion.objects.extra({

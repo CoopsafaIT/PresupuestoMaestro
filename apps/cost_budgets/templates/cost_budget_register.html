@@ -3,7 +3,7 @@
 {% load humanize %}
 {% block title %}Presupuesto de Costos {% endblock title %}
 {% block breadcrumb %}
-  <li class="breadcrumb-item active text-white" aria-current="page">/ Ingreso de Presupuestos de Costos</li>
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Presupuestos de Costos</li>
 {% endblock breadcrumb %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/budgets.css' %}">
@@ -88,7 +88,7 @@
 
 <script>
   $(document).ready(()=>{
-    let urlFormat = '{% url "income_budget_generate_excel_file" 0 1 %}';
+    let urlFormat = '{% url "cost_budget_generate_excel_file" 0 1 %}';
     $('#btn-get-excel-format').click(function(){
       let period = $('#id_period').val()
       let account = $('#id_account').val()

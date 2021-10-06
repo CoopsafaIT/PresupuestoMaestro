@@ -239,7 +239,7 @@ def roles(request):
     result = pagination(qs=roles, page=page)
     permissions = Permission.objects.exclude(
         content_type__app_label__in=['admin', 'auth', 'contenttypes', 'sessions']
-    )
+    ).order_by('content_type__app_label', 'name')
     ctx = {
         'roles': result,
         'permissions': permissions

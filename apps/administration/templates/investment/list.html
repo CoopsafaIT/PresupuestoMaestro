@@ -19,12 +19,14 @@
               <h1 class="card-title fs-4 fw-light mb-0">Inversiones</h1>
             </div>
             <div class="col-md-2 d-flex justify-content-end offset-md-2">
+              {% if perms.admin.puede_ingresar_inversiones %}
               <button 
                 class="btn btn-outline-safa" 
                 id="btn-register-user"
                 data-bs-toggle="modal" 
                 data-bs-target="#investmentAddModal"
               >Registrar</button>
+              {% endif %}
             </div>
             <div class="col-md-4">
               {% include 'layout/search.html' %}
@@ -53,6 +55,7 @@
                     <td>{{item.Habilitado|yesno:'Activo,Inactivo'}}</td>
                     <td>{{item.meses_depreciacion|default:'No Ingresado'}}</td>
                     <td>
+                      {% if perms.admin.puede_editar_inversiones %}
                       <div class="d-grid gap-2 d-flex justify-content-center">
                         <a 
                           class="btn btn-outline-safa me-2"
@@ -63,13 +66,14 @@
                         > <i class="bi bi-pencil-square"></i>
                         </a>
                       </div>
+                      {% endif %}
                     </td>
                   </tr>
                 {% empty %}
                   <tr>
                     <td 
                       class="fw-light text-center" 
-                      colspan="4"
+                      colspan="6"
                     > No hay inversiones
                     </td>
                   </tr>

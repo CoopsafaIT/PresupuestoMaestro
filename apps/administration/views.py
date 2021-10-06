@@ -1,8 +1,8 @@
 import datetime as dt
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required  # , permission_required
-# from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 
 from apps.main.models import (
@@ -28,6 +28,9 @@ from utils.sql import execute_sql_query
 
 
 @login_required
+@permission_required(
+    'admin.puede_listar_centros_costos', raise_exception=True
+)
 def cost_centers(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
@@ -42,11 +45,16 @@ def cost_centers(request):
 
 
 @login_required
+@permission_required(
+    'admin.puede_listar_cuentas_inversion', raise_exception=True
+)
 def investment_accounts(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     form = CuentascontablesForm()
     if request.method == 'POST':
+        if not request.user.has_perm('admin.puede_ingresar_cuentas_inversion'):
+            raise PermissionDenied
         form = CuentascontablesForm(request.POST)
         if not form.is_valid():
             messages.warning(
@@ -81,6 +89,9 @@ def investment_accounts(request):
 
 
 @login_required
+@permission_required(
+    'admin.puede_editar_cuentas_inversion', raise_exception=True
+)
 def investment_account(request, id):
     qs = get_object_or_404(Cuentascontables, pk=id)
     form = CuentascontablesForm(instance=qs)
@@ -110,11 +121,16 @@ def investment_account(request, id):
 
 
 @login_required
+@permission_required(
+    'admin.puede_listar_inversiones', raise_exception=True
+)
 def investments(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     form = InversionesForm()
     if request.method == 'POST':
+        if not request.user.has_perm('admin.puede_ingresar_inversiones'):
+            raise PermissionDenied
         form = InversionesForm(request.POST)
         if not form.is_valid():
             messages.warning(
@@ -146,6 +162,9 @@ def investments(request):
 
 
 @login_required
+@permission_required(
+    'admin.puede_editar_inversiones', raise_exception=True
+)
 def investment(request, id):
     qs = get_object_or_404(Inversiones, pk=id)
     form = InversionesForm(instance=qs)
@@ -174,6 +193,9 @@ def investment(request, id):
 
 
 @login_required
+@permission_required(
+    'admin.puede_editar_indice_inflacionario', raise_exception=True
+)
 def inflationary_index(request):
     qs = get_object_or_404(Criterios, pk=1)
     if request.method == 'POST':
@@ -190,11 +212,16 @@ def inflationary_index(request):
 
 
 @login_required
+@permission_required(
+    'admin.puede_listar_puestos_trabajo', raise_exception=True
+)
 def job_positions(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     form = PuestosForm()
     if request.method == 'POST':
+        if not request.user.has_perm('admin.puede_crear_puestos_trabajo'):
+            raise PermissionDenied
         form = PuestosForm(request.POST)
         if not form.is_valid():
             messages.warning(
@@ -225,6 +252,9 @@ def job_positions(request):
 
 
 @login_required
+@permission_required(
+    'admin.puede_editar_puestos_trabajo', raise_exception=True
+)
 def job_position(request, id):
     qs = get_object_or_404(Puestos, pk=id)
     form = PuestosForm(instance=qs)
@@ -252,6 +282,9 @@ def job_position(request, id):
 
 
 @login_required
+@permission_required(
+    'admin.puede_ingresar_proyeccion', raise_exception=True
+)
 def projections(request):
     form = ProjectionForm()
     if request.method == 'POST':
@@ -271,6 +304,9 @@ def projections(request):
 
 
 @login_required
+@permission_required(
+    'admin.puede_listar_proyectos', raise_exception=True
+)
 def projects(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
@@ -318,6 +354,9 @@ def periods(request):
 
 
 @login_required
+@permission_required(
+    'admin.puede_editar_periodos', raise_exception=True
+)
 def period(request, id):
     if request.method == 'POST':
         qs = get_object_or_404(Periodo, pk=id)
@@ -341,3 +380,40 @@ def period(request, id):
                 message
             )
         return redirect('periods')
+
+
+@login_required
+@permission_required(
+    'admin.puede_listar_control_ppto_centros_costos', raise_exception=True
+)
+def control_budgeted_cost_centers(request):
+    if request.method == 'GET':
+        request.session['period'] = request.GET.get('period')
+    periods = Periodo.objects.all()
+    ctx = {
+        'periods': periods
+    }
+
+    if request.session.get('period'):
+        period = request.session.get('period')
+        page = request.GET.get('page', 1)
+        query = (
+            f"SELECT SUM(CASE WHEN Estado=1 THEN 1 ELSE 0 END) as Presupuestada, "
+            f"COUNT(*) as Totales,CC.DescCentroCosto,PR.DescProyecto,CC.CodCentroCosto "
+            f"FROM [PresupuestoSafa].[dbo].[Presupuestos] A INNER JOIN "
+            f"PresupuestoSafa.dbo.Periodo B on A.CodPeriodo = B.CodPeriodo INNER JOIN "
+            f"PresupuestoSafa.dbo.CentroCostoXCuentaContable  C on "
+            f"A.CodCentrosCostoXCuentaContable = C.CodCentroCostoXCuentaContable "
+            f"inner join PresupuestoSafa.dbo.Proyectos PR on PR.CodProyecto = "
+            f"A.CodProyecto INNER JOIN PresupuestoSafa.dbo.CentrosCosto CC on "
+            f"C.CodCentroCosto = cc.CodCentroCosto Where  CodTipoPresupuesto=1 and "
+            f"A.CodPeriodo = {period} group by cc.DescCentroCosto,PR.DescProyecto , "
+            f"CC.CodCentroCosto order by DescCentroCosto"
+        )
+        result = execute_sql_query(query)
+        if result.get('status') == 'ok':
+            for item in result.get('data'):
+                item['Diferencia'] = item.get('Totales') - item.get('Presupuestada')
+            ctx['data'] = pagination(qs=result.get('data'), page=page)
+
+    return render(request, 'control_budgeted_cost_centers.html', ctx)

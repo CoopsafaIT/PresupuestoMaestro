@@ -4,7 +4,7 @@ from django.shortcuts import (
     render,
     redirect,
 )
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Sum, F
 from openpyxl.utils.exceptions import InvalidFileException
@@ -25,6 +25,9 @@ from apps.cost_budgets.reports import (
 
 
 @login_required()
+@permission_required(
+    'ppto_costos.puede_ingresar_ppto_costos', raise_exception=True
+)
 def cost_budget_register(request):
     if request.method == 'POST':
         if request.POST.get('method') == 'load-excel-file':

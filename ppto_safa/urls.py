@@ -2,9 +2,9 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
-from django.conf.urls import handler404, handler500
+from django.conf.urls import handler404, handler500, handler403
 
-from apps.main.views import error_500, error_404
+from apps.main.views import error_500, error_404, error_403
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +26,6 @@ urlpatterns = [
     document_root=settings.STATIC_ROOT
 )
 
+handler403 = error_403  # NOQA
 handler404 = error_404  # NOQA
 handler500 = error_500  # NOQA

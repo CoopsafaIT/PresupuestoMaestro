@@ -166,17 +166,42 @@
 <!-- Open Modals -->
 <script>
   $(document).ready(() => {
-    $("#btn-add-expenses-transfer").click(function () {
-      $('#transferExpensesModal').modal('show');
+    $("#btn-add-expenses-transfer").click(function (){
+      if(validateCECO()) modalsTextCECO('expenses_title_origin','expenses_title_destination')
+      $('#transferExpensesModal').modal('show')
     })
 
-    $("#btn-add-indirect-transfer").click(function () {
-      $('#transferIndirectModal').modal('show');
+    $("#btn-add-indirect-transfer").click(function (){
+      if(validateCECO()) modalsTextCECO('indirect_title_origin', 'indirect_title_destination')
+      $('#transferIndirectModal').modal('show')
     })
 
     $("#btn-add-cost-transfer").click(function () {
-      $('#transferCostsModal').modal('show');
+      if(validateCECO()) modalsTextCECO('cost_title_origin', 'cost_title_destination')
+      $('#transferCostsModal').modal('show')
     })
+
+    const validateCECO = ()=>{
+      let origin = $(
+        "#id_cost_center_origin option[value= '{{request.session.cost_center_origin}}'] "
+      ).val()
+      let destination = $(
+        "#id_cost_center_destination option[value= '{{request.session.cost_center_destination}}'] "
+      ).val()
+      if(!!origin && !!destination) return true
+      else return false
+    }
+
+    const modalsTextCECO = (where_origin, where_destination) => {
+      let origin = $(
+        "#id_cost_center_origin option[value= '{{request.session.cost_center_origin}}'] "
+      )
+      let destination = $(
+        "#id_cost_center_destination option[value= '{{request.session.cost_center_destination}}'] "
+      )
+      $(`#${where_origin}`).html(origin.text())
+      $(`#${where_destination}`).html(destination.text())
+    }
   })
 </script>
 <!-- End open Modals -->
@@ -645,7 +670,19 @@
         else alert('Ingrese fecha de aplicación')
       }
       else alert('Agregar al menos un traslado')
-      
+    })
+
+    $().change(function(){
+      let val = $('#id_cost_center_origin').val();
+      if(!!val){
+        console.log('ori',$(this).find(':selected').text())
+      }
+    })
+    $().change(function(){
+      let val = $('#id_cost_center_destination').val();
+      if(!!val){
+        console.log('des',)
+      }
     })
   })
 </script>

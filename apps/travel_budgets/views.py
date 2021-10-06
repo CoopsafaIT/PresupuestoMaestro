@@ -8,7 +8,8 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
@@ -18,6 +19,7 @@ from apps.main.models import (
     Detallexpresupuestoviaticos,
     Filiales,
     Periodo,
+    ResponsablesPorCentrosCostos,
     Manejodeviaticos,
     Transaccionesviaticos
 )
@@ -32,6 +34,23 @@ from apps.travel_budgets.reports import create_excel_report
 
 @login_required()
 def travel_budget_register(request):
+    if (
+        not request.user.has_perm('ppto_viaticos.puede_ingresar_ppto_viaticos_todos') and
+        not request.user.has_perm('ppto_viaticos.puede_ingresar_ppto_viaticos')
+    ):
+        raise PermissionDenied
+
+    def _get_ceco():
+        if not request.user.has_perm('ppto_viaticos.puede_ingresar_ppto_viaticos_todos'):
+            ceco_assigned = ResponsablesPorCentrosCostos.objects.filter(
+                CodUser=request.user.pk, Estado=True
+            ).values_list('CodCentroCosto', flat=True)
+            return Centroscosto.objects.filter(habilitado=True).filter(
+                pk__in=list(ceco_assigned)
+            )
+        else:
+            return Centroscosto.objects.filter(habilitado=True)
+
     if request.method == 'POST':
         if request.POST.get('method') == 'filter-travel-budget':
             try:
@@ -55,11 +74,10 @@ def travel_budget_register(request):
                 messages.warning(request, f'Exception cached: {e.__str__() }')
             else:
                 periods = Periodo.objects.filter(habilitado=True)
-                cost_centers = Centroscosto.objects.filter(habilitado=True)
                 filials = Filiales.objects.all()
                 ctx = {
                     'periods': periods,
-                    'cost_centers': cost_centers,
+                    'cost_centers': _get_ceco(),
                     'filials': filials,
                     'categories': TRAVEL_CATEGORY,
                     'zones': ZONES,
@@ -145,11 +163,10 @@ def travel_budget_register(request):
                     codperiodo=period
                 )
                 periods = Periodo.objects.filter(habilitado=True)
-                cost_centers = Centroscosto.objects.filter(habilitado=True)
                 filials = Filiales.objects.all()
                 ctx = {
                     'periods': periods,
-                    'cost_centers': cost_centers,
+                    'cost_centers': _get_ceco(),
                     'filials': filials,
                     'categories': TRAVEL_CATEGORY,
                     'zones': ZONES,
@@ -238,11 +255,10 @@ def travel_budget_register(request):
                     codperiodo=period
                 )
                 periods = Periodo.objects.filter(habilitado=True)
-                cost_centers = Centroscosto.objects.filter(habilitado=True)
                 filials = Filiales.objects.all()
                 ctx = {
                     'periods': periods,
-                    'cost_centers': cost_centers,
+                    'cost_centers': _get_ceco(),
                     'filials': filials,
                     'categories': TRAVEL_CATEGORY,
                     'zones': ZONES,
@@ -253,18 +269,18 @@ def travel_budget_register(request):
 
     else:
         periods = Periodo.objects.filter(habilitado=True)
-        cost_centers = Centroscosto.objects.filter(habilitado=True)
         filials = Filiales.objects.all()
         ctx = {
             'periods': periods,
-            'cost_centers': cost_centers,
+            'cost_centers': _get_ceco(),
             'filials': filials,
             'categories': TRAVEL_CATEGORY,
             'zones': ZONES
         }
         if (
             request.session.get('period', None) and
-            request.session.get('cost_center', None)
+            request.session.get('cost_center', None) and
+            request.session.get('cost_center') != '__all__'
         ):
             qs_national_travel_budget = Detallexpresupuestoviaticos.objects.filter(
                 codcentrocosto=request.session.get('cost_center'),
@@ -436,7 +452,10 @@ def generate_excel_report(request, period, cost_center):
     return create_excel_report(qs)
 
 
-@login_required
+@login_required()
+@permission_required(
+    'ppto_viaticos.puede_registrar_egresos_viaticos', raise_exception=True
+)
 def check_out_travel(request):
     if request.is_ajax():
         if request.GET.get('method') == 'reserve':
@@ -625,4 +644,15 @@ def check_out_travel(request):
         ctx['total_reserved'] = totales.get('reservado', '')
         ctx['total_budget'] = totales.get('presupuestado', '')
         ctx['total_available'] = total_available[0].get('disponible', '')
-        return render(request, 'check_out_travel/list.html', ctx)
+    return render(request, 'check_out_travel/list.html', ctx)
+
+
+@login_required()
+def load_travel_distribution(request):
+    if request.method == 'POST':
+        pass
+
+    if request.method == 'GET':
+        pass
+    ctx = {}
+    return render(request, 'load_travel_distribution.html', ctx)

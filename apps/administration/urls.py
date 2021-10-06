@@ -12,7 +12,8 @@ from apps.administration.views import (
     projects,
     projections,
     periods,
-    period
+    period,
+    control_budgeted_cost_centers
 )
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
     path('projections/', projections, name="projections"),
     path('periods/', periods, name="periods"),
     path('period/<int:id>/', period, name="period"),
+    path('control-budgeted-cost-centers/', control_budgeted_cost_centers, name="control_budgeted_cost_centers"),
 ]

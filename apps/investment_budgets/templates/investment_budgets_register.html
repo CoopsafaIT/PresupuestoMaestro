@@ -102,7 +102,7 @@
       $('#id_investment').append('<option value="">--- Seleccione Inversión ---</option>');
       $.each(resp, (key, val) => {
         console.log(val.descinversion);
-        $('#id_investment').append(`<option value='${val.descinversion}'>${val.descinversion}</option>`);
+        $('#id_investment').append(`<option value='${val.codinversion}'>${val.descinversion}</option>`);
       })
       $('#id_investment').trigger("chosen:updated");
     }

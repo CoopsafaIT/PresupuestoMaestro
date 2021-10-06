@@ -4,7 +4,8 @@ import datetime as dt
 from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import F
 from django.core.exceptions import ValidationError
@@ -23,6 +24,7 @@ from apps.main.models import (
     Presupuestos,
     Presupuestocostos,
     Presupuestoindirecto,
+    ResponsablesPorCentrosCostos,
     Tipopresupuesto,
 )
 from ppto_safa.utils import execute_sql_query
@@ -31,6 +33,23 @@ from utils.constants import MONTH
 
 @login_required()
 def budget_register(request):
+    if (
+        not request.user.has_perm('ppto_gastos.puede_ingresar_ppto_gastos_todos') and
+        not request.user.has_perm('ppto_gastos.puede_ingresar_ppto_gastos')
+    ):
+        raise PermissionDenied
+
+    def _get_ceco():
+        if not request.user.has_perm('ppto_gastos.puede_ingresar_ppto_gastos_todos'):
+            ceco_assigned = ResponsablesPorCentrosCostos.objects.filter(
+                CodUser=request.user.pk, Estado=True
+            ).values_list('CodCentroCosto', flat=True)
+            return Centroscosto.objects.filter(habilitado=True).filter(
+                pk__in=list(ceco_assigned)
+            )
+        else:
+            return Centroscosto.objects.filter(habilitado=True)
+
     def validate_aprrove_method():
         period = request.POST.get('period', None)
         cost_center = request.POST.get('cost_center', None)
@@ -215,11 +234,10 @@ def budget_register(request):
                 qs_total_budget = qs_total_budget[0]['totalpresupuestado']
 
                 periods = Periodo.objects.filter(habilitado=True)
-                cost_centers = Centroscosto.objects.filter(habilitado=True)
                 criteria = Criterios.objects.all()
                 ctx = {
                     'periods': periods,
-                    'cost_centers': cost_centers,
+                    'cost_centers': _get_ceco(),
                     'criteria': criteria,
                     'month_projection': month_projection,
                     'qs_total_budget': qs_total_budget,
@@ -267,7 +285,7 @@ def budget_register(request):
                 validate_aprrove_method()
                 period = request.POST.get('period', None)
                 cost_center = request.POST.get('cost_center', None)
-                
+
                 qs = Presupuestos.objects.filter(
                     aprobadoasamblea__isnull=True,
                     codperiodo=period,
@@ -356,10 +374,10 @@ def budget_register(request):
 
     else:
         periods = Periodo.objects.filter(habilitado=True)
-        cost_centers = Centroscosto.objects.filter(habilitado=True)
+
         ctx = {
             'periods': periods,
-            'cost_centers': cost_centers
+            'cost_centers': _get_ceco()
         }
         return render(request, 'budget_register.html', ctx)
 
@@ -568,6 +586,9 @@ def generate_excel_report(request, project, period, cost_center):
 
 
 @login_required()
+@permission_required(
+    'ppto_gastos.puede_crear_traslados_gastos', raise_exception=True
+)
 def transfers_expenses(request):
     def _get_cost_qs(cost_center_origin, cost_center_destination, period):
         qs_cost_origin = Presupuestocostos.objects.extra({

@@ -21,7 +21,7 @@ def generate_excel_file_format(qs):
         ws[f'E{x}'].value = item.periodo.descperiodo
         x = x + 1
 
-    file_name = 'format_income_budget'
+    file_name = 'format_cost_budget'
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
