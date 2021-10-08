@@ -1,0 +1,60 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+
+{% block title %}Reporte Ejecución Presupuestaria {% endblock title %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Reporte Ejecución Presupuestaria</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <h5 class="card-title fs-4 fw-light mb-0">Reporte Ejecución Presupuestaria</h5>
+    </div>
+    <div class="card-body">
+      <form method="get">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label for="id_period">Periodo</label>
+              <select name="period" id="id_period" class="form-control select2-style" style="width: 100%;" required>
+                <option value="">-- Seleccione Periodo --</option>
+                {% for item in periods %}
+                  <option {% if request.GET.period == item.pk %} selected {% endif %}  value="{{item.pk}}">{{item}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="id_cost_center">Centro de Costos</label>
+              <select name="cost_center" id="id_cost_center" class="form-select select2-style" style="width: 100%;" required>
+                <option value="">-- Seleccione Centro Costo --</option>
+                {% for i in cost_centers %}
+                <option {% if request.GET.cost_center == i.pk %} selected {% endif %} 
+                value="{{i.pk}}">{{i}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label for="id_month">Mes</label>
+              <select name="month" id="id_month" class="form-select select2-style" style="width: 100%;" required>
+                {% for i, val in months %}
+                <option {% if request.GET.month == i.pk %} selected {% endif %} 
+                value="{{i}}">{{val}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-safa float-end mt-3">Aceptar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

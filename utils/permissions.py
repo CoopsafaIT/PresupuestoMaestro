@@ -171,6 +171,16 @@ expenses_budget_permissions = [
         "content_type_name": "ppto_gastos",
         "codename": "puede_ingresar_ppto_gastos",
     },
+    {
+        "name": "Puede Ver reportes PPTO. Gastos CECO Asignados",
+        "content_type_name": "ppto_gastos",
+        "codename": "puede_ver_ppto_gastos",
+    },
+    {
+        "name": "Puede Ver reportes PPTO. Gastos Todos CECO ",
+        "content_type_name": "ppto_gastos",
+        "codename": "puede_ver_ppto_gastos_todos",
+    },
 ]
 
 indirect_budget_permissions = [

@@ -58,7 +58,7 @@
         <span class="link_name">Ppto. Maestro</span>
       </a>
       <ul class="sub-menu blank">
-        <li><a class="link_name" href="{% url 'dashboard' %}">Ppto. Maestro</a></li>
+        <li><a class="link_name" href="{% url 'master_budget_dashboard' %}">Ppto. Maestro</a></li>
       </ul>
     </li>
     {% with s1=perms.admin.puede_listar_proyectos %}
@@ -162,6 +162,22 @@
         {% if perms.ppto_gastos.puede_crear_traslados_gastos %}
         <li><a href="{% url 'transfers_expenses' %}">Gastos</a></li>
         {% endif %}
+      </ul>
+    </li>
+    {% endif %}
+
+    {% if perms.ppto_gastos.puede_ver_ppto_gastos_todos or perms.ppto_gastos.puede_ver_ppto_gastos %}
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-pie-chart"></i>
+          <span class="link_name">Reportes</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Reportes</a></li>
+        <li><a href="{% url 'budget_execution_report' %}">Rpt. Ejecución PPTO.</a></li>
       </ul>
     </li>
     {% endif %}

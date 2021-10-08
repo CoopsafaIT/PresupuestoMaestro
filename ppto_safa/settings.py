@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'apps.income_budgets',
     'apps.cost_budgets',
     'apps.security',
+    'apps.master_budget',
+    'apps.master_budget.loan_portfolio',
 ]
 
 MIDDLEWARE = [

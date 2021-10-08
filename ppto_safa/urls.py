@@ -18,6 +18,11 @@ urlpatterns = [
     path('indirect-budgets/', include('apps.indirect_budgets.urls')),
     path('income-budgets/', include('apps.income_budgets.urls')),
     path('cost-budgets/', include('apps.cost_budgets.urls')),
+    path('master-budget/', include('apps.master_budget.urls')),
+    path(
+        'master-budget/loan-portfolio/',
+        include('apps.master_budget.loan_portfolio.urls')
+    ),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT

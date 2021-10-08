@@ -1114,6 +1114,12 @@ class Manejodeviaticos(models.Model):
     comentario = models.CharField(
         db_column="Comentario", max_length=200, blank=True, null=True
     )
+    categoria = models.CharField(
+        db_column="categoria",
+        max_length=2,
+        blank=True,
+        null=True
+    )
     tipoaccion = models.IntegerField(
         db_column="TipoAccion", blank=True, null=True
     )

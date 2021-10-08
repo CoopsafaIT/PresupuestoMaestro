@@ -29,7 +29,11 @@ from apps.travel_budgets.forms import (
 )
 from utils.constants import TRAVEL_CATEGORY, ZONES
 from utils.pagination import pagination
-from apps.travel_budgets.reports import create_excel_report
+from apps.travel_budgets.reports import (
+    create_excel_report,
+    generate_excel_file_format_distribution,
+    load_excel_file
+)
 
 
 @login_required()
@@ -650,9 +654,138 @@ def check_out_travel(request):
 @login_required()
 def load_travel_distribution(request):
     if request.method == 'POST':
-        pass
+        file = load_excel_file(request.FILES['excel-file'])
+        sheet = file.get('sheet')
+        number_rows = file.get('number_rows')
+        messages_exceptions = ''
+        counter_u = 0
+        counter_c = 0
+        counter_e = 0
+        for item in range(2, number_rows):
+            try:
+                qs_travel_budget = Detallexpresupuestoviaticos.objects.get(
+                    pk=sheet[f'A{item}'].value
+                )
+                ceco_filial = Centroscosto.objects.get(
+                    agencia=qs_travel_budget.filial.pk
+                )
+                qs = Manejodeviaticos.objects.filter(
+                    periodo=qs_travel_budget.codperiodo.pk,
+                    centropresupuestado=qs_travel_budget.codcentrocosto.pk,
+                    codcentrocosto=ceco_filial.pk,
+                    categoria=sheet[f'E{item}'].value
+                ).first()
+                amount = sheet[f'H{item}'].value
+                if qs:
+
+                    _upd = Manejodeviaticos.objects.get(pk=qs.pk)
+                    _upd.presupuestado = amount
+                    _upd.presupuestadocontraslado = amount
+                    _upd.reservado = 0
+                    _upd.ejecutado = 0
+                    _upd.periodo = qs_travel_budget.codperiodo
+                    _upd.centropresupuestado = qs_travel_budget.codcentrocosto
+                    _upd.codcentrocosto = ceco_filial
+                    _upd.categoria = sheet[f'E{item}'].value
+                    _upd.fechacreacion = dt.datetime.today()
+                    _upd.usuariocreacion = request.user
+                    _upd.save()
+                    counter_u = counter_u + 1
+                else:
+                    _new = Manejodeviaticos()
+                    _new.presupuestado = amount
+                    _new.presupuestadocontraslado = amount
+                    _new.reservado = 0
+                    _new.ejecutado = 0
+                    _new.periodo = qs_travel_budget.codperiodo
+                    _new.centropresupuestado = qs_travel_budget.codcentrocosto
+                    _new.codcentrocosto = ceco_filial
+                    _new.categoria = sheet[f'E{item}'].value
+                    _new.fechacreacion = dt.datetime.today()
+                    _new.usuariocreacion = request.user
+                    _new.save()
+                    counter_c = counter_c + 1
+            except Centroscosto.DoesNotExist:
+                counter_e = counter_e + 1
+                messages_exceptions = (
+                    f'{messages_exceptions} </br>'
+                    f'Filial: {qs_travel_budget.filial.nombrefilial} '
+                    f'No existe como Centro de Costos. Linea # {item}'
+                )
+            except Detallexpresupuestoviaticos.DoesNotExist:
+                counter_e = counter_e + 1
+                messages_exceptions = (
+                    f'{messages_exceptions} </br>'
+                    f'Identificador: {sheet[f"A{item}"].value} no coindice '
+                    f'Linea # {item}'
+                )
+            except Exception as e:
+                counter_e = counter_e + 1
+                messages_exceptions = (
+                    f'{messages_exceptions} </br>'
+                    f'{e.__str__()}'
+                    f'Linea # {item}'
+                )
+
+        messages.warning(
+            request,
+            (
+                f'Total lineas con errores: {counter_e} </br>'
+                f'{messages_exceptions}'
+            ),
+            extra_tags='safe'
+        )
+        messages.success(
+            request,
+            f'Creadas: {counter_c} </br> Actualizadas: {counter_u}',
+            extra_tags='safe'
+        )
 
     if request.method == 'GET':
-        pass
-    ctx = {}
-    return render(request, 'load_travel_distribution.html', ctx)
+        if request.GET.get('method') == 'filter':
+            request.session['period'] = request.GET.get('period')
+
+        elif request.GET.get('method') == 'download-file':
+            request.session['period'] = request.GET.get('period')
+            qs = Detallexpresupuestoviaticos.objects.filter(
+                tipoviatico=1,
+                habilitado=True,
+                codperiodo=request.session['period']
+            ).order_by(
+                'codcentrocosto__desccentrocosto',
+                'filial__nombrefilial'
+            )
+            return generate_excel_file_format_distribution(qs)
+
+    periods = Periodo.objects.filter(habilitado=True)
+    ctx = {
+        'periods': periods
+    }
+
+    if request.session.get('period'):
+        page = request.GET.get('page', 1)
+        period = request.session.get('period')
+        qs = Manejodeviaticos.objects.extra({
+            'presupuestado': 'CAST(CAST(Presupuestado as DECIMAL(23,2)) as nvarchar(150))',
+            'reservado': 'CAST(CAST(Reservado as DECIMAL(23,2)) as nvarchar(150))',
+            'ejecutado': 'CAST(CAST(Ejecutado as DECIMAL(23,2)) as nvarchar(150))',
+            'disponible': 'CAST(CAST(Disponible as DECIMAL(23,2)) as nvarchar(150))',
+        }).values(
+            'pk',
+            'codmanejoviaticos',
+            'codcentrocosto__desccentrocosto',
+            'centropresupuestado__desccentrocosto',
+            'presupuestado',
+            'presupuestadocontraslado',
+            'reservado',
+            'ejecutado',
+            'disponible',
+            'periodo__descperiodo',
+        ).filter(
+            periodo=period
+        ).order_by('centropresupuestado__desccentrocosto')
+
+        result = pagination(qs, page, page_size=200)
+        ctx['qs'] = result
+
+    return render(request, 'load_travel_distribution/list.html', ctx)
