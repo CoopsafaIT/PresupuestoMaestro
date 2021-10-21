@@ -317,3 +317,6 @@
   display: block !important;
   visibility: visible !important;
 }
+.before-none::before{
+  display: none;
+}

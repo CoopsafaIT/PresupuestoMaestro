@@ -269,6 +269,11 @@ def get_investment_by_account(request, account_id):
 
 @login_required()
 def generate_excel_report(request, period, cost_center):
+    ceco_filter = {}
+    if cost_center != '__all__':
+        ceco_filter = {
+            'codcentrocostoxcuentacontable__codcentrocosto': cost_center
+        }
     qs = list(Detallexpresupuestoinversion.objects.values(
         'codcentrocostoxcuentacontable__codcentrocosto__desccentrocosto',
         'codcentrocostoxcuentacontable__codcuentacontable__desccuentacontable',
@@ -280,9 +285,9 @@ def generate_excel_report(request, period, cost_center):
         'justificacion',
         'presupuestado'
     ).filter(
-        codcentrocostoxcuentacontable__codcentrocosto=cost_center,
         periodo=period,
-        habilitado=True
+        habilitado=True,
+        **ceco_filter
     ))
     return create_excel_report(qs)
 

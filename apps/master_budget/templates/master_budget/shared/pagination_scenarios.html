@@ -1,0 +1,29 @@
+{% load static %}
+{% load humanize %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/pagination.css' %}">
+{% endblock style %}
+<div class="center">
+  <div class="pagination">
+    <a 
+      {% if qs.has_previous %}
+      href="?status={{request.GET.q}}&page={{ qs.previous_page_number }}&category={{request.GET.category}}&parameter={{request.GET.parameter}}"
+      {% else %}
+        href="#"
+        aria-disabled="true" 
+      {% endif %}
+    >&laquo;</a>
+    <a href="#" class="active">{{qs.number|intcomma}}</a>
+    <a 
+      {% if qs.has_next %}
+       href="?status={{request.GET.q}}&page={{ qs.next_page_number }}&category={{request.GET.category}}&parameter={{request.GET.parameter}}"
+      {% else %}
+        href="#" 
+        aria-disabled="true" 
+      {% endif %}
+    >&raquo;</a>
+  </div>
+  <p class="fw-normal">
+    Pagina {{qs.number|intcomma}} de {{qs.paginator.num_pages|intcomma}}.&nbsp; Total registros: {{qs.paginator.count|intcomma}} 
+  </p>
+</div>

@@ -31,7 +31,7 @@ urlpatterns = [
         name='get_investment_by_account'
     ),
     path(
-        'generate-excel-report/<int:period>/<int:cost_center>/',
+        'generate-excel-report/<int:period>/<str:cost_center>/',
         generate_excel_report,
         name='generate_excel_report'
     ),

@@ -1,0 +1,21 @@
+<div class="modal fade" id="deleteProjectionModal" tabindex="-1" aria-labelledby="deleteProjectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light">Borrar Proyección</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" id="deleteProjectionForm">
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="delete">
+          <h4 class="fw-light fs-5">¿Desea borrar parametro de Proyección?</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
