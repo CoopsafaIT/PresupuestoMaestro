@@ -1,0 +1,67 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+
+{% block title %}Editar Categoria de Cartera Crediticia {% endblock title %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item text-white ">
+  <a href="{% url 'categories_loan_portfolio' %}" class="text-white text-decoration-none">/ Categoria de Cartera
+    Crediticia</a>
+</li>
+<li class="breadcrumb-item active text-white before-none" aria-current="page"> / Editar</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-6">
+          <h5 class="card-title fw-light fs-4">Editar Categoria de Cartera Crediticia</h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="post">
+        <input type="hidden" name="method" value="edit">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label for="">Categoria</label>
+              <p>{{qs.name}}</p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group mb-3">
+              <label for="">Prestamos</label>
+              <select name="types_of_loans[]" id="id_types_of_loans_add" class="select-control select2-style" required
+                multiple style="width: 100%;">
+                {% for item in result %}
+                  <option value="{{item.Id}}" {% if item.Id in qs_detail %} selected {% endif %}
+                  >{{item.Nombre}}</option>
+                {% endfor %}
+              
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <button type="submit" class="btn btn-safa float-end">Aceptar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(() => {
+
+  })
+</script>
+{% endblock javascript %}

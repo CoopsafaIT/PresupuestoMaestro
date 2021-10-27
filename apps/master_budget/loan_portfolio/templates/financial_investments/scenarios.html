@@ -1,0 +1,99 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+
+{% block title %}Escenarios Inversiones Financieras {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Inversiones Financieras - Escenarios </li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'financial_investments/scenario_add.html' %}
+<div class="container-fluid pt-3">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-3">
+          <h5 class="card-title fw-light fs-4 mt-1">Escenarios</h5>
+        </div>
+        <di class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-outline-safa"
+            data-bs-toggle="modal"
+            data-bs-target="#addScenarioModal"
+          >Crear Escenario</button>
+        </di>
+        <div class="col-md-7 ">
+          {% include 'master_budget/shared/search_form_scenarios.html' %}
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="w-100"></div>
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-hover-table-sm table-bordered table-stripped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Correlativo</th>
+                  <th>Fecha Creación</th>
+                  <th>Estado</th>
+                  <th>Categoria</th>
+                  <th>Mes Base</th>
+                  <th>Comentario</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in result %}
+                  <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td><a href="{% url 'scenario_financial_investments' item.pk %}" class="text-decoration-none">{{item.correlative}}</a></td>
+                    <td
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Creado por: {{item.created_by}}"
+                    >{{item.created_at|date:'d/m/Y'}}</td>
+                    <td>{{item.is_active|yesno:'Principal,Secundario'}}</td>
+                    <td>{{item.category_id}}</td>
+                    <td>{{item.parameter_id.date_base|date:'d/m/Y'}}</td>
+                    <td>{{item.comment}}</td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="7" class="text-center fs-5">No Data</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'master_budget/shared/pagination_scenarios.html' with qs=result %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+  <script>
+    $(document).ready(()=>{
+      $('.select2-style').select2({
+        language: "es",
+        dropdownParent: $('#addScenarioModal')
+      });
+      $(
+        "#id_parameter option[value= '{{request.GET.parameter}}'] "
+      ).prop('selected', true).trigger("change");
+      $(
+        "#id_category option[value= '{{request.GET.category}}'] "
+      ).prop('selected', true).trigger("change");
+      $(
+        "#id_status option[value= '{{request.GET.status}}'] "
+      ).prop('selected', true).trigger("change");
+    })
+  </script>
+{% endblock javascript %}
+  

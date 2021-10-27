@@ -1,0 +1,412 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="editScenarioModal" tabindex="-1" aria-labelledby="editScenarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light fs-5">
+          Ingresar Datos de Escenario
+          <span
+            class="fw-light fs-5 ps-3 me-3 ms-3"
+            style="border-left: 2px solid rgb(192, 191, 194);"
+          >Categoria: {{qs.category_id.name}}</span>
+          <span
+            class="fw-light fs-5 ps-3"
+            style="border-left: 2px solid rgb(192, 191, 194);"
+          >Fecha Base: {{qs.parameter_id}}</span>
+          <span
+            class="fw-light fs-5 ps-3"
+            style="border-left: 2px solid rgb(192, 191, 194);"
+          >Monto Cierre: {{qs.base_amount|floatformat:'2'|intcomma|default:'0'}}</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="idFormScenarioEdit" action="{% url 'scenario_financial_investments' qs.pk %}?option=">
+          {% csrf_token %}
+          <input type="hidden" name="id" value="{{qs.pk}}">
+          <input type="hidden" name="method" value="update">
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Detalle</th>
+                      <th class="text-center">Ene</th>
+                      <th class="text-center">Feb</th>
+                      <th class="text-center">Mar</th>
+                      <th class="text-center">Abr</th>
+                      <th class="text-center">May</th>
+                      <th class="text-center">Jun</th>
+                      <th class="text-center">Jul</th>
+                      <th class="text-center">Ago</th>
+                      <th class="text-center">Sep</th>
+                      <th class="text-center">Oct</th>
+                      <th class="text-center">Nov</th>
+                      <th class="text-center">Dic</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Aumentos</td>
+                      <td>
+                        <div class="d-grid gap-2 d-flex justify-content-center">
+                          <input 
+                            type="text"
+                            value="{{qs.increases_january}}"
+                            class="form-control validation-input-text increases-monthly"
+                            name="increases_january" id="id_increases_january"
+                            required 
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_february}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_february" id="id_increases_february"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_march}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_march" id="id_increases_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_april}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_april" id="id_increases_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_may}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_may" id="id_increases_may"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_june}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_june" id="id_increases_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_july}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_july" id="id_increases_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_august}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_august" id="id_increases_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_september}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_september" id="id_increases_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_october}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_october" id="id_increases_october"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_november}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_november" id="id_increases_november"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_december}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_december" id="id_increases_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>Disminuciones</td>
+                      <td>
+                        <div class="d-grid gap-2 d-flex justify-content-center">
+                          <input 
+                            type="text"
+                            value="{{qs.decreases_january}}"
+                            class="form-control validation-input-text decreases-monthly"
+                            name="decreases_january" id="id_decreases_january"
+                            required 
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_february}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_february" id="id_decreases_february"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_march}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_march" id="id_decreases_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_april}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_april" id="id_decreases_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_may}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_may" id="id_decreases_may"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_june}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_june" id="id_decreases_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_july}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_july" id="id_decreases_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_august}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_august" id="id_decreases_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_september}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_september" id="id_decreases_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_october}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_october" id="id_decreases_october"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_november}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_november" id="id_decreases_november"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value="{{qs.decreases_december}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_december" id="id_decreases_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        Tasa
+                        <!-- <div class="d-grid gap-2 d-flex justify-content-center align-items-center">
+                          <p class="d-flex align-items-center" >Tasa</p>
+                          <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="fill-rate-monthly-jan">
+                            <i class="bi bi-arrow-right"></i>
+                          </button>
+                        </div> -->
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_january}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_january" id="id_rate_january"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_february}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_february" id="id_rate_february"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_march}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_march" id="id_rate_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_april}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_april" id="id_rate_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_may}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_may" id="id_rate_may"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_june}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_june" id="id_rate_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_july}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_july" id="id_rate_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_august}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_august" id="id_rate_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_september}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_september" id="id_rate_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_october}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_october" id="id_rate_october"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_november}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_november" id="id_rate_november"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.rate_december}}"
+                          class="form-control validation-input-text rate-monthly"
+                          name="rate_december" id="id_rate_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </form>
+        {% include 'financial_investments/scenario_comments.html' %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-outline-safa" id="submitScenarioEdit">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

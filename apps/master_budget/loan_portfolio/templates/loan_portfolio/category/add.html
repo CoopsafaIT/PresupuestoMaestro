@@ -1,0 +1,51 @@
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light">Crear Escenario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="create">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="">Categoria</label>
+                <select
+                  name="category"
+                  id="id_category_add"
+                  class="select-control select2-style"
+                  required
+                  style="width: 100%;">
+                  <option value="">--- Seleccione Categoria ---</option>
+                  {% for i in categories %}
+                    <option value="{{i.Id}}">{{i.Nombre}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group mb-3">
+                <label for="">Prestamos</label>
+                <select
+                  name="types_of_loans[]"
+                  id="id_types_of_loans_add"
+                  class="select-control select2-style"
+                  required
+                  multiple
+                  style="width: 100%;">
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

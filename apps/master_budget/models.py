@@ -254,84 +254,96 @@ class AmountIncreasesMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_february = models.DecimalField(
         db_column="AumentoFeb",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_march = models.DecimalField(
         db_column="AumentoMar",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_april = models.DecimalField(
         db_column="AumentoAbr",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_may = models.DecimalField(
         db_column="AumentoMay",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_june = models.DecimalField(
         db_column="AumentoJun",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_july = models.DecimalField(
         db_column="AumentoJul",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_august = models.DecimalField(
         db_column="AumentoAgo",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_september = models.DecimalField(
         db_column="AumentoSep",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_october = models.DecimalField(
         db_column="AumentoOct",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_november = models.DecimalField(
         db_column="AumentoNov",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     increases_december = models.DecimalField(
         db_column="AumentoDic",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
 
     class Meta:
@@ -344,84 +356,96 @@ class AmountDecreasesMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_february = models.DecimalField(
         db_column="DisminucionesFeb",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_march = models.DecimalField(
         db_column="DisminucionesMar",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_april = models.DecimalField(
         db_column="DisminucionesAbr",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_may = models.DecimalField(
         db_column="DisminucionesMay",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_june = models.DecimalField(
         db_column="DisminucionesJun",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_july = models.DecimalField(
         db_column="DisminucionesJul",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_august = models.DecimalField(
         db_column="DisminucionesAgo",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_september = models.DecimalField(
         db_column="DisminucionesSep",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_october = models.DecimalField(
         db_column="DisminucionesOct",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_november = models.DecimalField(
         db_column="DisminucionesNov",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
     decreases_december = models.DecimalField(
         db_column="DisminucionesDic",
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2
+        decimal_places=2,
+        default=0
     )
 
     class Meta:

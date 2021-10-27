@@ -27,7 +27,7 @@
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Productivos</a></li>
         <li><a href="{% url 'scenarios_loan_portfolio' %}">Cartera Crediticia</a></li>
-        <li><a href="{% url 'budget_register' %}">Inversiones Financieras</a></li>
+        <li><a href="{% url 'scenarios_financial_investments' %}">Inversiones Financieras</a></li>
       </ul>
     </li>
 
@@ -102,6 +102,20 @@
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Admin</a></li>
         <li><a href="{% url 'projection_parameters' %}">Proyección</a></li>
+        <li><a href="{% url 'budget_register' %}">Prestamos</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-sliders"></i>
+          <span class="link_name">Catálogos</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Catálogos</a></li>
+        <li><a href="{% url 'categories_loan_portfolio' %}">Categorias Cartera Cred</a></li>
         <li><a href="{% url 'budget_register' %}">Prestamos</a></li>
       </ul>
     </li>

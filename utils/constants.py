@@ -201,3 +201,67 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'term': 'term_december',
     },
 ]
+
+
+LIST_FINANCIAL_INVESTMENTS_FIELDS = [
+    {
+        'increases': 'increases_january',
+        'decreases': 'decreases_january',
+        'rate': 'rate_january',
+    },
+    {
+        'increases': 'increases_february',
+        'decreases': 'decreases_february',
+        'rate': 'rate_february',
+    },
+    {
+        'increases': 'increases_march',
+        'decreases': 'decreases_march',
+        'rate': 'rate_march',
+    },
+    {
+        'increases': 'increases_april',
+        'decreases': 'decreases_april',
+        'rate': 'rate_april',
+    },
+    {
+        'increases': 'increases_may',
+        'decreases': 'decreases_may',
+        'rate': 'rate_may',
+    },
+    {
+        'increases': 'increases_june',
+        'decreases': 'decreases_june',
+        'rate': 'rate_june',
+    },
+    {
+        'increases': 'increases_july',
+        'decreases': 'decreases_july',
+        'rate': 'rate_july',
+    },
+    {
+        'increases': 'increases_august',
+        'decreases': 'decreases_august',
+        'rate': 'rate_august',
+    },
+    {
+        'increases': 'increases_september',
+        'decreases': 'decreases_september',
+        'rate': 'rate_september',
+    },
+    {
+        'increases': 'increases_october',
+        'decreases': 'decreases_october',
+        'rate': 'rate_october',
+    },
+    {
+        'increases': 'increases_november',
+        'decreases': 'decreases_november',
+        'rate': 'rate_november',
+    },
+    {
+        'increases': 'increases_december',
+        'decreases': 'decreases_december',
+        'rate': 'rate_december',
+    },
+]
