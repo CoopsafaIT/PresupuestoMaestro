@@ -81,7 +81,7 @@
       }
 
       $('#btnAddCommentScenario').click(function(){
-        let url = '{% url "scenario_loan_portfolio_comments" qs.pk %}'
+        let url = '{% url "scenario_financial_investments_comments" qs.pk %}'
         let comment = $('#id_comment_scenario').val()
         if(!!comment){
           loaderShow(true)
@@ -159,12 +159,38 @@
 
   <script>
     $(document).ready(()=>{
-      $('#fill-percentage-arrears-monthly-jan').click(()=>{
-        let val = $('#id_percentage_arrears_january').val()
+      $('#fill-increases-monthly-jan').click(()=>{
+        let val = $('#id_increases_january').val()
         if(!!val === false) return;
-        $('.percentage-arrears-monthly').val(val)
+        $('.increases-monthly').val(val)
       })
 
+      $('#fill-decreases-monthly-jan').click(()=>{
+        let val = $('#id_decreases_january').val()
+        if(!!val === false) return;
+        $('.decreases-monthly').val(val)
+      })
+      $('#fill-rate-monthly-jan').click(()=>{
+        let val = $('#id_rate_january').val()
+        if(!!val === false) return;
+        $('.rate-monthly').val(val)
+      })
+
+      $('#fill-amount_accounts_receivable-monthly-jan').click(()=>{
+        let val = $('#id_amount_accounts_receivable_january').val()
+        if(!!val === false) return;
+        $('.amount_accounts_receivable-monthly').val(val)
+      })
+
+      
+
+      $('.amount_accounts_receivable-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val('0.00')
+          return;
+        }
+      })
       $('.increases-monthly').change(function(){
         let val = $(this).val()
         if(!!val === false || parseFloat(val) < 0) {
@@ -205,6 +231,10 @@
           let toClean = $(input).val()
           $(input).val(toClean.replaceAll(',', ''))
         })
+        $.each($('.amount_accounts_receivable-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
       }
 
       $('#submitScenarioEdit').click(function(){
@@ -215,4 +245,10 @@
     })
   </script>
   <!-- End submit scenario Edit -->
+
+  <script>
+    $(document).ready(()=>{
+      $('#tblEditScenario').find('input[type="text"]').css({'font-size': '0.9rem'})
+    })
+  </script>
 {% endblock javascript %}

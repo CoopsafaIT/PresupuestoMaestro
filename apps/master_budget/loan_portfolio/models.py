@@ -10,6 +10,7 @@ from apps.master_budget.models import (
     AuditDataMixin,
     AmountIncreasesMonthlyMixin,
     AmountDecreasesMonthlyMixin,
+    AmountAccountsReceivableMonthlyMixin,
     CommentMixin,
     CommissionPercentageMonthlyMixin,
     GrowthPercentageMonthlyMixin,
@@ -322,6 +323,7 @@ class FinancialInvestmentsScenario(
     AuditDataMixin,
     AmountIncreasesMonthlyMixin,
     AmountDecreasesMonthlyMixin,
+    AmountAccountsReceivableMonthlyMixin,
     RateMonthlyMixin,
 ):
     id = models.AutoField(primary_key=True, db_column="Id")

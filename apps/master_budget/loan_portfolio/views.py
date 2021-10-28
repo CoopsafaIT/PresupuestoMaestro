@@ -37,32 +37,22 @@ from .calculations import LoanPortfolioCalculations
 
 @login_required()
 def categories_loan_portfolio(request):
-    def _execute_category():
-        query = 'EXEC dbo.sp_pptoMaestroCarteraCredCatObtenerCatalogo'
-        return execute_sql_query(query)
-
     def _execute_type():
         query = 'EXEC dbo.sp_pptoMaestroCarteraCredCatTipoPrestamoObtenerCatalogo'
         return execute_sql_query(query)
 
     def _find_data():
-        category = request.POST.get('category')
+        category = request.POST.get('category', 'No Categoria')
         types_of_loans = request.POST.getlist('types_of_loans[]')
-        category_dict = {}
         types_list = []
-        result_categories = _execute_category()
         result_types = _execute_type()
-        categories = result_categories.get('data')
         types = result_types.get('data')
-        for item in categories:
-            if str(item.get('Id')) == category:
-                category_dict = item
 
         for item in types:
             if str(item.get('Id')) in types_of_loans:
                 types_list.append(item)
 
-        return category_dict, types_list
+        return category, types_list
 
     if request.is_ajax():
         result = _execute_type()
@@ -81,10 +71,10 @@ def categories_loan_portfolio(request):
     if request.method == 'POST':
         category, types_of_loans = _find_data()
         _new_cat = LoanPortfolioCategory()
-        _new_cat.code_core = int(category.get('Id'))
-        _new_cat.name = category.get('Nombre')
+        _new_cat.code_core = 0
+        _new_cat.name = category
         _new_cat.is_active = True
-        _new_cat.identifier = category.get('Identificador')
+        _new_cat.identifier = category.lower()
         _new_cat.created_by = request.user
         _new_cat.updated_by = request.user
         _new_cat.save()
@@ -98,22 +88,9 @@ def categories_loan_portfolio(request):
                 updated_by=request.user
             )
         messages.success(request, 'Categoria agregada con éxito!')
-
-    result = _execute_category()
-    categories = []
-    if not result.get('status') == 'ok':
-        messages.warning(request, 'No se cargaron categorias desde Core')
-    else:
-        categories_result = result.get('data')
-        codes = list(LoanPortfolioCategory.objects.values_list('code_core', flat=True))
-        for key, value in enumerate(categories_result):
-            if int(value.get('Id')) not in codes:
-                categories.append(value)
-
     qs_categories = LoanPortfolioCategory.objects.all()
     ctx = {
-        'qs_categories': qs_categories,
-        'categories': categories
+        'qs_categories': qs_categories
     }
     return render(request, 'loan_portfolio/category/list.html', ctx)
 
@@ -139,6 +116,8 @@ def category_loan_portfolio(request, id):
 
     if request.method == 'POST':
         types_of_loans = _find_data()
+        qs.name = request.POST.get('category')
+        qs.save()
         LoanPortfolioCategoryMap.objects.filter(category_id=qs.pk).delete()
         for item in types_of_loans:
             LoanPortfolioCategoryMap.objects.create(
@@ -538,13 +517,12 @@ def scenarios_financial_investments(request):
                 query = (
                     f"EXEC dbo.sp_pptoMaestroInversionesFinacierasObtenerSaldoActualHist "
                     f"@ParametroId = {_new.parameter_id.pk}, "
-                    f"@TipoInversionId = {_new.category_id.identifier}, "
-                    f"@Estado = '0'"
+                    f"@TipoInversionId = {_new.category_id.identifier}"
                 )
                 result = execute_sql_query(query)
                 if result.get('status') == 'ok':
                     data = result.get('data')
-                    amount = data[0].get('ValorTitulo')
+                    amount = data[0].get('Saldo')
                     _new.base_amount = amount
                     _new.save()
 
@@ -557,6 +535,59 @@ def scenarios_financial_investments(request):
                 )
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
+
+        elif request.POST.get('method') == 'clone':
+            id = request.POST.get('id')
+            comment = request.POST.get('comment')
+            is_active = request.POST.get('is_active')
+            qs_old_esc = get_object_or_404(FinancialInvestmentsScenario, pk=id)
+            _clone = FinancialInvestmentsScenario.objects.get(pk=id)
+            _clone.pk = None
+            _clone.save()
+            if is_active == 'True':
+                FinancialInvestmentsScenario.objects.filter(
+                    parameter_id=_clone.parameter_id.pk,
+                    category_id=_clone.category_id.pk
+                ).update(is_active=False)
+            total = FinancialInvestmentsScenario.objects.filter(
+                period_id=_clone.period_id,
+                category_id=_clone.category_id
+            ).count()
+            _clone.comment = comment
+            _clone.is_active = is_active
+            _clone.created_by = request.user
+            _clone.updated_by = request.user
+            _clone.correlative = _correlative(
+                _clone.category_id.name,
+                _clone.parameter_id.period_id.descperiodo,
+                total
+            )
+            _clone.save()
+            _clone.refresh_from_db()
+            for item in range(1, 13):
+                old_item = FinancialInvestments.objects.filter(
+                    scenario_id=qs_old_esc.pk, month=item
+                ).first()
+                _upd = FinancialInvestments.objects.filter(
+                    scenario_id=_clone.pk, month=item
+                ).first()
+                _upd.amount_initial = old_item.amount_initial
+                _upd.amount_increase = old_item.amount_increase
+                _upd.amount_decrease = old_item.amount_decrease
+                _upd.new_amount = old_item.new_amount
+                _upd.rate = old_item.rate
+                _upd.amount_interest_earned = old_item.amount_interest_earned
+                _upd.amount_accounts_receivable = old_item.amount_accounts_receivable
+                _upd.save()
+            messages.success(
+                request,
+                'Escenario clonado con éxito!'
+            )
+            redirect_url = reverse(
+                'scenario_financial_investments', kwargs={'id': _clone.pk}
+            )
+            full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
+            return redirect(full_redirect_url)
 
     page = request.GET.get('page', '')
     parameter = request.GET.get('parameter')
@@ -634,6 +665,19 @@ def scenario_financial_investments(request, id):
         qs.rate_october = dc(post.get('rate_october').replace(',', ''))
         qs.rate_november = dc(post.get('rate_november').replace(',', ''))
         qs.rate_december = dc(post.get('rate_december').replace(',', ''))
+
+        qs.amount_accounts_receivable_january = dc(post.get('amount_accounts_receivable_january').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_february = dc(post.get('amount_accounts_receivable_february').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_march = dc(post.get('amount_accounts_receivable_march').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_april = dc(post.get('amount_accounts_receivable_april').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_may = dc(post.get('amount_accounts_receivable_may').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_june = dc(post.get('amount_accounts_receivable_june').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_july = dc(post.get('amount_accounts_receivable_july').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_august = dc(post.get('amount_accounts_receivable_august').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_september = dc(post.get('amount_accounts_receivable_september').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_october = dc(post.get('amount_accounts_receivable_october').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_november = dc(post.get('amount_accounts_receivable_november').replace(',', '')) # NOQA
+        qs.amount_accounts_receivable_december = dc(post.get('amount_accounts_receivable_december').replace(',', '')) # NOQA
         qs.save()
 
     if request.method == 'POST':
@@ -650,6 +694,9 @@ def scenario_financial_investments(request, id):
                     base_amount = qs_before.new_amount
                 increases = dc(request.POST.get(fields.get('increases')))
                 decreases = dc(request.POST.get(fields.get('decreases')))
+                amount_accounts_receivable = dc(request.POST.get(
+                    fields.get('amount_accounts_receivable'))
+                )
                 rate = float(request.POST.get(fields.get('rate')))
 
                 _upd = FinancialInvestments.objects.filter(
@@ -661,6 +708,7 @@ def scenario_financial_investments(request, id):
                 _upd.new_amount = base_amount + increases - decreases
                 _upd.rate = rate
                 _upd.amount_interest_earned = _upd.new_amount * dc(rate / 12 / 100)
+                _upd.amount_accounts_receivable = amount_accounts_receivable
                 _upd.save()
 
         elif request.POST.get('method') == 'change-status':
@@ -686,12 +734,11 @@ def scenario_financial_investments(request, id):
             messages.error(request, 'Escenario eliminado')
             return redirect('scenarios_financial_investments')
 
-    form = FinancialInvestmentsScenarioCloneForm()
     qs_detail = FinancialInvestments.objects.filter(scenario_id=qs.pk).order_by('month')
     ctx = {
         'qs': qs,
         'qs_detail': qs_detail,
-        'form': form,
+        'form_clone': FinancialInvestmentsScenarioCloneForm(),
     }
     return render(request, 'financial_investments/scenario.html', ctx)
 

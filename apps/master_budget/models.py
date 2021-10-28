@@ -452,6 +452,108 @@ class AmountDecreasesMonthlyMixin(models.Model):
         abstract = True
 
 
+class AmountAccountsReceivableMonthlyMixin(models.Model):
+    amount_accounts_receivable_january = models.DecimalField(
+        db_column="CuentasXCobrarEne",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_february = models.DecimalField(
+        db_column="CuentasXCobrarFeb",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_march = models.DecimalField(
+        db_column="CuentasXCobrarMar",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_april = models.DecimalField(
+        db_column="CuentasXCobrarAbr",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_may = models.DecimalField(
+        db_column="CuentasXCobrarsMay",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_june = models.DecimalField(
+        db_column="CuentasXCobrarJun",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_july = models.DecimalField(
+        db_column="CuentasXCobrarJul",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_august = models.DecimalField(
+        db_column="CuentasXCobrarAgo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_september = models.DecimalField(
+        db_column="CuentasXCobrarSep",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_october = models.DecimalField(
+        db_column="CuentasXCobrarOct",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_november = models.DecimalField(
+        db_column="CuentasXCobrarNov",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_accounts_receivable_december = models.DecimalField(
+        db_column="CuentasXCobrarDic",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
 class MasterParameters(AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     date_base = models.DateField(null=True, blank=True, db_column="FechaBase")

@@ -29,7 +29,7 @@
           <div class="row mt-4">
             <div class="col-md-12">
               <div class="table-responsive">
-                <table class="table table-sm table-bordered">
+                <table class="table table-sm table-bordered" id="tblEditScenario">
                   <thead>
                     <tr>
                       <th>Detalle</th>
@@ -51,20 +51,26 @@
                     <tr>
                       <td>Aumentos</td>
                       <td>
-                        <div class="d-grid gap-2 d-flex justify-content-center">
-                          <input 
-                            type="text"
-                            value="{{qs.increases_january}}"
-                            class="form-control validation-input-text increases-monthly"
-                            name="increases_january" id="id_increases_january"
-                            required 
-                          />
-                        </div>
+                        <input 
+                          type="text"
+                          value="{{qs.increases_january|intcomma}}"
+                          class="form-control validation-input-text increases-monthly"
+                          name="increases_january" id="id_increases_january"
+                          required 
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary mt-1"
+                          style="width: 100%;"
+                          id="fill-increases-monthly-jan"
+                        >
+                          <i class="bi bi-arrow-right"></i>
+                        </button>
                       </td>
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_february}}"
+                          value="{{qs.increases_february|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_february" id="id_increases_february"
                           required 
@@ -73,7 +79,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_march}}"
+                          value="{{qs.increases_march|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_march" id="id_increases_march"
                           required 
@@ -82,7 +88,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_april}}"
+                          value="{{qs.increases_april|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_april" id="id_increases_april"
                           required 
@@ -91,7 +97,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_may}}"
+                          value="{{qs.increases_may|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_may" id="id_increases_may"
                           required 
@@ -100,7 +106,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_june}}"
+                          value="{{qs.increases_june|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_june" id="id_increases_june"
                           required 
@@ -109,7 +115,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_july}}"
+                          value="{{qs.increases_july|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_july" id="id_increases_july"
                           required 
@@ -118,7 +124,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_august}}"
+                          value="{{qs.increases_august|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_august" id="id_increases_august"
                           required 
@@ -127,7 +133,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_september}}"
+                          value="{{qs.increases_september|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_september" id="id_increases_september"
                           required 
@@ -136,7 +142,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_october}}"
+                          value="{{qs.increases_october|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_october" id="id_increases_october"
                           required 
@@ -145,7 +151,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_november}}"
+                          value="{{qs.increases_november|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_november" id="id_increases_november"
                           required 
@@ -154,7 +160,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.increases_december}}"
+                          value="{{qs.increases_december|intcomma}}"
                           class="form-control validation-input-text increases-monthly"
                           name="increases_december" id="id_increases_december"
                           required 
@@ -165,20 +171,26 @@
                     <tr>
                       <td>Disminuciones</td>
                       <td>
-                        <div class="d-grid gap-2 d-flex justify-content-center">
-                          <input 
-                            type="text"
-                            value="{{qs.decreases_january}}"
-                            class="form-control validation-input-text decreases-monthly"
-                            name="decreases_january" id="id_decreases_january"
-                            required 
-                          />
-                        </div>
+                        <input 
+                          type="text"
+                          value="{{qs.decreases_january|intcomma}}"
+                          class="form-control validation-input-text decreases-monthly"
+                          name="decreases_january" id="id_decreases_january"
+                          required 
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary mt-1"
+                          style="width: 100%;"
+                          id="fill-decreases-monthly-jan"
+                        >
+                          <i class="bi bi-arrow-right"></i>
+                        </button>
                       </td>
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_february}}"
+                          value="{{qs.decreases_february|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_february" id="id_decreases_february"
                           required 
@@ -187,7 +199,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_march}}"
+                          value="{{qs.decreases_march|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_march" id="id_decreases_march"
                           required 
@@ -196,7 +208,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_april}}"
+                          value="{{qs.decreases_april|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_april" id="id_decreases_april"
                           required 
@@ -205,7 +217,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_may}}"
+                          value="{{qs.decreases_may|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_may" id="id_decreases_may"
                           required 
@@ -214,7 +226,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_june}}"
+                          value="{{qs.decreases_june|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_june" id="id_decreases_june"
                           required 
@@ -223,7 +235,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_july}}"
+                          value="{{qs.decreases_july|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_july" id="id_decreases_july"
                           required 
@@ -232,7 +244,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_august}}"
+                          value="{{qs.decreases_august|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_august" id="id_decreases_august"
                           required 
@@ -241,7 +253,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_september}}"
+                          value="{{qs.decreases_september|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_september" id="id_decreases_september"
                           required 
@@ -250,7 +262,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_october}}"
+                          value="{{qs.decreases_october|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_october" id="id_decreases_october"
                           required 
@@ -259,7 +271,7 @@
                       <td>
                         <input 
                           type="text"
-                          value="{{qs.decreases_november}}"
+                          value="{{qs.decreases_november|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_november" id="id_decreases_november"
                           required 
@@ -268,7 +280,7 @@
                       <td>
                         <input
                           type="text"
-                          value="{{qs.decreases_december}}"
+                          value="{{qs.decreases_december|intcomma}}"
                           class="form-control validation-input-text decreases-monthly"
                           name="decreases_december" id="id_decreases_december"
                           required 
@@ -277,15 +289,7 @@
                     </tr>
 
                     <tr>
-                      <td>
-                        Tasa
-                        <!-- <div class="d-grid gap-2 d-flex justify-content-center align-items-center">
-                          <p class="d-flex align-items-center" >Tasa</p>
-                          <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="fill-rate-monthly-jan">
-                            <i class="bi bi-arrow-right"></i>
-                          </button>
-                        </div> -->
-                      </td>
+                      <td>Tasa</td>
                       <td>
                         <input 
                           type="text"
@@ -294,6 +298,14 @@
                           name="rate_january" id="id_rate_january"
                           required 
                         />
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary mt-1"
+                          style="width: 100%;"
+                          id="fill-rate-monthly-jan"
+                        >
+                          <i class="bi bi-arrow-right"></i>
+                        </button>
                       </td>
                       <td>
                         <input 
@@ -391,6 +403,127 @@
                           value="{{qs.rate_december}}"
                           class="form-control validation-input-text rate-monthly"
                           name="rate_december" id="id_rate_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        Cuentas por Cobrar
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_january|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_january" id="id_amount_accounts_receivable_january"
+                          required 
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary mt-1"
+                          style="width: 100%;"
+                          id="fill-amount_accounts_receivable-monthly-jan"
+                        >
+                          <i class="bi bi-arrow-right"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_february|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_february" id="id_amount_accounts_receivable_february"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_march|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_march" id="id_amount_accounts_receivable_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_april|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_april" id="id_amount_accounts_receivable_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_may|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_may" id="id_amount_accounts_receivable_may"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_june|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_june" id="id_amount_accounts_receivable_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_july|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_july" id="id_amount_accounts_receivable_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_august|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_august" id="id_amount_accounts_receivable_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_september|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_september" id="id_amount_accounts_receivable_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_october|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_october" id="id_amount_accounts_receivable_october"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_november|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_november" id="id_amount_accounts_receivable_november"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.amount_accounts_receivable_december|intcomma}}"
+                          class="form-control validation-input-text amount_accounts_receivable-monthly"
+                          name="amount_accounts_receivable_december" id="id_amount_accounts_receivable_december"
                           required 
                         />
                       </td>
