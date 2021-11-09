@@ -1,0 +1,152 @@
+{% load static %}
+{% load humanize %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered border-success table-striped" style="font-size: 0.9rem !important;">
+        <thead>
+          <tr style="background-color: #017224 !important; color: white;">
+            <th class="text-center">{{qs.category_id.name}}</th>
+            <th class="text-center">Ene</th>
+            <th class="text-center">Feb</th>
+            <th class="text-center">Mar</th>
+            <th class="text-center">Abr</th>
+            <th class="text-center">May</th>
+            <th class="text-center">Jun</th>
+            <th class="text-center">Jul</th>
+            <th class="text-center">Ago</th>
+            <th class="text-center">Sep</th>
+            <th class="text-center">Oct</th>
+            <th class="text-center">Nov</th>
+            <th class="text-center">Dic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class=" fw-bold" style="min-width: 180px !important;">Saldo Anterior</td>
+            <td class="text-end">{{qs_detail.0.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.1.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.2.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.3.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.4.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.5.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.6.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.7.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.8.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.9.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.10.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.11.amount_initial|floatformat:2|intcomma}}</td>
+          </tr>
+          <tr>
+            <td class=" fw-bold">Monto Crecimiento</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.0.percent_growth|floatformat:2|intcomma}}% "
+            >{{qs_detail.0.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.1.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.1.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.2.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.2.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.3.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.3.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.4.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.4.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.5.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.5.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.6.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.6.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.7.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.7.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.8.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.8.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.9.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.9.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.10.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.10.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end" 
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Saldo Anterior * {{qs_detail.11.percent_growth|floatformat:2|intcomma}}%"
+            >{{qs_detail.11.amount_growth|floatformat:2|intcomma}}</td>
+          </tr>
+          <tr>
+            <td class=" fw-bold">Nuevo Saldo</td>
+            <td class="text-end">{{qs_detail.0.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.1.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.2.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.3.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.4.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.5.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.6.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.7.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.8.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.9.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.10.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.11.new_amount|floatformat:2|intcomma}}</td>
+          </tr>
+          <tr>
+            <td class=" fw-bold">Tasa</td>
+            <td class="text-end">{{qs_detail.0.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.1.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.2.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.3.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.4.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.5.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.6.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.7.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.8.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.9.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.10.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.11.rate|floatformat:2|intcomma}}</td>
+          </tr>
+          <tr>
+            <td class=" fw-bold">Int.s Totales</td>
+            <td class="text-end">{{qs_detail.0.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.1.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.2.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.3.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.4.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.5.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.6.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.7.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.8.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.9.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.10.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.11.total_interest|floatformat:2|intcomma}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

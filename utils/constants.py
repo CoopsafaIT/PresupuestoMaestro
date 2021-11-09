@@ -277,3 +277,117 @@ LIST_FINANCIAL_INVESTMENTS_FIELDS = [
         'amount_accounts_receivable': 'amount_accounts_receivable_december',
     },
 ]
+
+LIST_SAVINGS_LIABILITIES_FIELDS = [
+    {
+        'growth_percentage': 'growth_percentage_january',
+        'rate': 'rate_january',
+    },
+    {
+        'growth_percentage': 'growth_percentage_february',
+        'rate': 'rate_february',
+    },
+    {
+        'growth_percentage': 'growth_percentage_march',
+        'rate': 'rate_march',
+    },
+    {
+        'growth_percentage': 'growth_percentage_april',
+        'rate': 'rate_april',
+    },
+    {
+        'growth_percentage': 'growth_percentage_may',
+        'rate': 'rate_may',
+    },
+    {
+        'growth_percentage': 'growth_percentage_june',
+        'rate': 'rate_june',
+    },
+    {
+        'growth_percentage': 'growth_percentage_july',
+        'rate': 'rate_july',
+    },
+    {
+        'growth_percentage': 'growth_percentage_august',
+        'rate': 'rate_august',
+    },
+    {
+        'growth_percentage': 'growth_percentage_september',
+        'rate': 'rate_september',
+    },
+    {
+        'growth_percentage': 'growth_percentage_october',
+        'rate': 'rate_october',
+    },
+    {
+        'growth_percentage': 'growth_percentage_november',
+        'rate': 'rate_november',
+    },
+    {
+        'growth_percentage': 'growth_percentage_december',
+        'rate': 'rate_december',
+    },
+]
+
+LIST_LIABILITIES_LOANS_FIELDS = [
+    {
+        'growth_percentage': 'growth_percentage_january',
+        'rate': 'rate_january',
+        'term': 'term_january',
+    },
+    {
+        'growth_percentage': 'growth_percentage_february',
+        'rate': 'rate_february',
+        'term': 'term_february',
+    },
+    {
+        'growth_percentage': 'growth_percentage_march',
+        'rate': 'rate_march',
+        'term': 'term_march',
+    },
+    {
+        'growth_percentage': 'growth_percentage_april',
+        'rate': 'rate_april',
+        'term': 'term_april',
+    },
+    {
+        'growth_percentage': 'growth_percentage_may',
+        'rate': 'rate_may',
+        'term': 'term_may',
+    },
+    {
+        'growth_percentage': 'growth_percentage_june',
+        'rate': 'rate_june',
+        'term': 'term_june',
+    },
+    {
+        'growth_percentage': 'growth_percentage_july',
+        'rate': 'rate_july',
+        'term': 'term_july',
+    },
+    {
+        'growth_percentage': 'growth_percentage_august',
+        'rate': 'rate_august',
+        'term': 'term_august',
+    },
+    {
+        'growth_percentage': 'growth_percentage_september',
+        'rate': 'rate_september',
+        'term': 'term_september',
+    },
+    {
+        'growth_percentage': 'growth_percentage_october',
+        'rate': 'rate_october',
+        'term': 'term_october',
+    },
+    {
+        'growth_percentage': 'growth_percentage_november',
+        'rate': 'rate_november',
+        'term': 'term_november',
+    },
+    {
+        'growth_percentage': 'growth_percentage_december',
+        'rate': 'rate_december',
+        'term': 'term_december',
+    },
+]

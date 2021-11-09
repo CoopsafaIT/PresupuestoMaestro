@@ -23,6 +23,10 @@ urlpatterns = [
         'master-budget/loan-portfolio/',
         include('apps.master_budget.loan_portfolio.urls')
     ),
+    path(
+        'master-budget/passives/',
+        include('apps.master_budget.passives.urls')
+    ),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT

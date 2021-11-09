@@ -11,8 +11,11 @@ from .views import (
 )
 urlpatterns = [
     path('categories/', categories_loan_portfolio, name="categories_loan_portfolio"),
-    path('categories/edit/<int:id>/', category_loan_portfolio, name="category_loan_portfolio"),
-
+    path(
+        'categories/edit/<int:id>/',
+        category_loan_portfolio,
+        name="category_loan_portfolio"
+    ),
     path('scenarios/', scenarios_loan_portfolio, name="scenarios_loan_portfolio"),
     path(
         'scenario/detail/<int:id>/',

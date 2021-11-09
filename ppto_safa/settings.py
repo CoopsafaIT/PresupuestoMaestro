@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'apps.security',
     'apps.master_budget',
     'apps.master_budget.loan_portfolio',
+    'apps.master_budget.passives',
 ]
 
 MIDDLEWARE = [
