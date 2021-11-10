@@ -458,7 +458,6 @@ def scenario_liabilities_loans(request, id):
         qs.growth_percentage_october = dc(post.get('growth_percentage_october').replace(',', '')) # NOQA
         qs.growth_percentage_november = dc(post.get('growth_percentage_november').replace(',', '')) # NOQA
         qs.growth_percentage_december = dc(post.get('growth_percentage_december').replace(',', '')) # NOQA
-
         qs.rate_january = dc(post.get('rate_january').replace(',', ''))
         qs.rate_february = dc(post.get('rate_february').replace(',', ''))
         qs.rate_march = dc(post.get('rate_march').replace(',', ''))
@@ -471,7 +470,6 @@ def scenario_liabilities_loans(request, id):
         qs.rate_october = dc(post.get('rate_october').replace(',', ''))
         qs.rate_november = dc(post.get('rate_november').replace(',', ''))
         qs.rate_december = dc(post.get('rate_december').replace(',', ''))
-
         qs.term_january = dc(post.get('term_january').replace(',', ''))
         qs.term_february = dc(post.get('term_february').replace(',', ''))
         qs.term_march = dc(post.get('term_march').replace(',', ''))

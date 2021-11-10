@@ -273,7 +273,7 @@
           let toClean = $(input).val()
           $(input).val(toClean.replaceAll(',', ''))
         })
-      } 
+      }
 
       $('#submitScenarioEdit').click(function(){
         let total = 100;
@@ -285,6 +285,16 @@
           alert(`Debe aún distribuir ${total.toFixed(2)}% en crecimiento!`)
           return;
         }
+
+        $.each($('.term-monthly'), function(key, input){
+          let val = $(input).val()
+          if(!!val === false || parseFloat(val) <= 0){
+            alert('Plazo debe ser un número mayor a cero')
+            return
+          }
+        })
+
+
         clean_data()
         $('#idFormScenarioEdit').submit()
         $(this).hide()
