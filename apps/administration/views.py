@@ -24,7 +24,7 @@ from apps.administration.forms import (
 )
 from utils.pagination import pagination
 from utils.constants import PROJECTION_SP
-from utils.sql import execute_sql_query
+from utils.sql import execute_sql_query, execute_sql_query_no_return
 
 
 @login_required
@@ -417,3 +417,29 @@ def control_budgeted_cost_centers(request):
             ctx['data'] = pagination(qs=result.get('data'), page=page)
 
     return render(request, 'control_budgeted_cost_centers.html', ctx)
+
+
+@login_required
+@permission_required(
+    'admin.puede_inicializar_ppto', raise_exception=True
+)
+def budget_init(request):
+    if request.method == 'POST':
+        period = get_object_or_404(Periodo, pk=request.POST.get('period'))
+        query = f"EXEC [dbo].[InicializarPresupuestos] @Periodo = '{period.descperiodo}'"
+        result = execute_sql_query_no_return(query)
+        if result.get('status') == 'ok':
+            messages.success(
+                request,
+                'Inicialización de Presupuestos realizado con éxito'
+            )
+        else:
+            messages.warning(
+                request,
+                f'No se pudo realizar inicialización: {result.get("data","")}'
+            )
+    periods = Periodo.objects.filter(habilitado=True, cerrado=False)
+    ctx = {
+        'periods': periods
+    }
+    return render(request, 'budget_init.html', ctx)

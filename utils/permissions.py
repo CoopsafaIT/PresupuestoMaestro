@@ -19,6 +19,11 @@ admin_permissions = [
         "codename": "puede_ingresar_proyeccion",
     },
     {
+        "name": "Puede Inicializar Presupuestos",
+        "content_type_name": "admin",
+        "codename": "puede_inicializar_ppto",
+    },
+    {
         "name": "Puede Listar Proyectos",
         "content_type_name": "admin",
         "codename": "puede_listar_proyectos",

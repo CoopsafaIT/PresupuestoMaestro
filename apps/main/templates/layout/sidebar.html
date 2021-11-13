@@ -105,6 +105,9 @@
         {% if perms.admin.puede_editar_indice_inflacionario %}
         <li><a href="{% url 'inflationary_index' %}">Indice Inflacionario</a></li>
         {% endif %}
+        {% if perms.admin.puede_inicializar_ppto %}
+        <li><a href="{% url 'budget_init' %}">Inicializar Presupuestos</a></li>
+        {% endif %}
         {% if perms.admin.puede_listar_puestos_trabajo %}
         <li><a href="{% url 'job_positions' %}">Puestos</a></li>
         {% endif %}

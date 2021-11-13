@@ -13,12 +13,14 @@ from apps.administration.views import (
     projections,
     periods,
     period,
+    budget_init,
     control_budgeted_cost_centers
 )
 
 urlpatterns = [
     path('inflationary-index/', inflationary_index, name="inflationary_index"),
     path('cost-centers/', cost_centers, name="cost_centers"),
+    path('budget-init/', budget_init, name="budget_init"),
     path('investment-accounts/', investment_accounts, name="investment_accounts"),
     path('investment-account/<int:id>/', investment_account, name="investment_account"),
     path('investments/', investments, name="investments"),
