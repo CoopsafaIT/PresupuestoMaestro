@@ -177,7 +177,7 @@ def scenario_savings_liabilities(request, id):
 
     def _calculate_interest_generated(amount_initial, new_amount, rate):
         total_amount = (amount_initial + new_amount) / 2
-        rate_monthly = rate / 12
+        rate_monthly = (rate/100) / 12
         return total_amount * dc(rate_monthly)
 
     def _save_scenario():
@@ -241,13 +241,13 @@ def scenario_savings_liabilities(request, id):
                 _upd.new_amount = _upd.amount_initial + _upd.amount_growth
                 _upd.rate = rate
                 _upd.total_interest = _calculate_interest_generated(
-                    _upd.amount_initial, _upd.amount_growth, _upd.rate
+                    _upd.amount_initial, _upd.new_amount, _upd.rate
                 )
                 _upd.save()
 
         elif request.POST.get('method') == 'change-status':
             if not qs.is_active:
-                FinancialInvestmentsScenario.objects.filter(
+                SavingsLiabilitiesScenario.objects.filter(
                     parameter_id=qs.parameter_id.pk,
                     category_id=qs.category_id.pk
                 ).update(is_active=False)
