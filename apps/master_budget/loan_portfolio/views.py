@@ -405,17 +405,22 @@ def scenario_loan_portfolio(request, id):
                     _upd.amount_initial, _upd.amount_growth, _upd.rate
                 )
                 _upd.principal_payments = abs(_upd.level_quota) - abs(_upd.total_interest)
-                _upd.new_amount = calculations.new_amount(
-                    _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
-                )
+                if item == 12:
+                    _upd.new_amount = calculations.new_amount(
+                        _upd.amount_initial, _upd.amount_growth, 0
+                    )
+                else:
+                    _upd.new_amount = calculations.new_amount(
+                        _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
+                    )
                 _upd.commission_amount = calculations.commission_amount(
                     qs.annual_growth_amount, dc(_upd.percent_growth), dc(_upd.commission_percentage)
                 )
                 _upd.amount_arrears = calculations.amount_arrears(
-                    _upd.new_amount, _upd.percentage_arrears
+                    _upd.total_interest, _upd.percentage_arrears
                 )
                 _upd.default_interest = calculations.default_interest(
-                    _upd.total_interest, _upd.rate
+                    _upd.amount_arrears, _upd.rate
                 )
                 _upd.save()
             messages.success(

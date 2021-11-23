@@ -1,0 +1,94 @@
+{% load static %}
+{% load humanize %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered border-success table-striped" style="font-size: 0.9rem !important;">
+        <thead>
+          <tr style="background-color: #017224 !important; color: white;">
+            <th class="text-center">Concepto</th>
+            <th class="text-center">Monto Acumulado</th>
+            <th class="text-center">Depreciación Acumulada</th>
+            <th class="text-center">Valor Neto</th>
+            <th class="text-center">Depreciación del Periodo</th>
+            <th class="text-center">Bajas</th>
+            <th class="text-center">Aumentos</th>
+            <th class="text-center">Monto Presupuestado </th>
+            <th class="text-center">Depreciación Presupuestada</th>
+            <th class="text-center">Gasto Depreciación</th>
+            <th class="text-center">Monto Neto Proyectado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in qs_details %}
+            <tr>
+              <td class="fw-bold">{{item.category_id.name}}</td>
+              <td><span class="float-end">{{item.total_accumulated_balance|intcomma}}</span>
+              </td>
+              <td><span class="float-end">{{item.accumulated_depreciation_balance|intcomma}}</span>
+              </td>
+              <td><span class="float-end">{{item.total_net_balance|intcomma}}</span>
+              </td>
+              <td><span class="float-end">{{item.depreciation_balance|intcomma}}</span>
+              </td>
+              <td style="cursor: pointer;"
+                class="add_amount_increases_decreases"
+                data-amount="{{item.amount_decreases}}"
+                data-category="{{item.category_id.name}}"
+                data-pk="{{item.pk}}"
+                data-comment="{{item.comment_decreases|default:''}}"
+                data-type="decreases"
+                {% if item.comment_decreases %}
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="{{item.comment_decreases}}"
+                {% endif %}
+              >
+                <span class="float-end">{{item.amount_decreases|intcomma}}</span>
+              </td>
+              <td
+                style="cursor: pointer;"
+                class="add_amount_increases_decreases"
+                data-amount="{{item.amount_increases}}"
+                data-category="{{item.category_id.name}}"
+                data-pk="{{item.pk}}"
+                data-comment="{{item.comment_increases|default:''}}"
+                data-type="increases"
+                {% if item.comment_increases %}
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="{{item.comment_increases}}"
+                {% endif %}
+                >
+                <span class="float-end">{{item.amount_increases|intcomma}}</span>
+              </td>
+              <td class="table-primary"><span class="float-end">{{item.new_total_balance|intcomma}}</span>
+              </td>
+              <td class="table-danger"><span class="float-end">{{item.new_depreciation_balance|intcomma}}</span>
+              </td>
+              <td class="table-warning"><span class="float-end">{{item.depreciation_expense|intcomma}}</span>
+              </td>
+              <td class="fw-bold"><span class="float-end">{{item.total_net_balance_budgeted|intcomma}}</span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="fw-bold">
+            <td>Total</td>
+            <td><span class="float-end">{{qs_sum.sum_saldo_total_acumulado|intcomma}}</span></td>
+            <td><span class="float-end">{{qs_sum.sum_saldo_depreciacion_acumulado|intcomma}}</span></td>
+            <td><span class="float-end">{{qs_sum.sum_total_neto|intcomma}}</span></td>
+            <td><span class="float-end">{{qs_sum.sum_depreciacion|intcomma}}</span></td>
+            <td><span class="float-end">{{qs_sum.sum_disminucion|intcomma}}</span></td>
+            <td><span class="float-end">{{qs_sum.sum_monto_aumento|intcomma}}</span></td>
+            <td class="table-primary"><span class="float-end">{{qs_sum.sum_nuevo_saldo|intcomma}}</span></td>
+            <td class="table-danger"><span class="float-end">{{qs_sum.sum_nueva_depreciacion|intcomma}}</span></td>
+            <td class="table-warning"><span class="float-end">{{qs_details.0.sum_total_depreciation_expense|intcomma}}</span></td>
+            <td><span class="float-end">{{qs_details.0.sum_total_net_balance_budgeted|intcomma}}</span></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

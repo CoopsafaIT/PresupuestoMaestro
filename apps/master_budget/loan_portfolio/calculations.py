@@ -1,7 +1,7 @@
 from decimal import Decimal as dc
 import numpy_financial as npf
 
-
+ 
 class LoanPortfolioCalculations():
 
     @staticmethod
@@ -34,6 +34,6 @@ class LoanPortfolioCalculations():
         return dc(new_amount) * dc(percentage_arrears / 100)
 
     @staticmethod
-    def default_interest(total_interest, rate):
-        total_interest = float(total_interest)
-        return (total_interest)*rate*30/36000
+    def default_interest(amount_arrears, rate):
+        amount_arrears = float(amount_arrears)
+        return (amount_arrears)*rate*30/36000

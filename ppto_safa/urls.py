@@ -27,6 +27,10 @@ urlpatterns = [
         'master-budget/passives/',
         include('apps.master_budget.passives.urls')
     ),
+    path(
+        'master-budget/non-performing-assets/',
+        include('apps.master_budget.non_performing_assets.urls')
+    ),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT

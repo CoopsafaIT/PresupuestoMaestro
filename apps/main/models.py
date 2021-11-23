@@ -481,7 +481,6 @@ class Detallexpresupuestoinversion(models.Model):
 def post_save_investment(sender, instance, created, **kwargs):
     qs = instance
     if qs.numero_meses_depreciacion is None:
-        print('num meses is none')
         investment = Inversiones.objects.filter(descinversion=qs.descproducto).first()
         if hasattr(investment, 'meses_depreciacion'):
             Detallexpresupuestoinversion.objects.filter(pk=qs.pk).update(
