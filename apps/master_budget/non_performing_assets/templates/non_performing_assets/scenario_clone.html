@@ -5,7 +5,7 @@
         <h5 class="modal-title fw-light">Clonar Escenario</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="POST" action="{% url 'scenarios_financial_investments' %}">
+      <form method="POST" action="{% url 'scenarios_non_performing_assets' %}">
         <div class="modal-body">
           {% csrf_token %}
           <input type="hidden" name="id" value="{{qs.pk}}">

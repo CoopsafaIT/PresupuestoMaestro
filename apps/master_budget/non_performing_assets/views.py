@@ -8,7 +8,6 @@ from django.db.models import Q
 
 from apps.master_budget.models import MasterParameters
 from utils.constants import STATUS_SCENARIO
-from utils.pagination import pagination
 from apps.main.models import Detallexpresupuestoinversion
 from .models import (
     NonPerformingAssetsScenario,
@@ -33,11 +32,15 @@ def scenarios_non_performing_assets(request):
         accounts_list = NonPerformingAssetsCategoryMapAccounts.objects.filter(
             category_id=qs_category.pk
         ).values_list('account_id', flat=True)
+        qs_budgeted_for_scenario = BudgetedNonProductiveAssets.objects.filter(
+            scenario_id=created.pk
+        ).values_list('budgeted_asset_id', flat=True)
+
         qs = Detallexpresupuestoinversion.objects.extra({
             'presupuestado': 'SUM(Presupuestado)',
             'monto_depreciacion_anual': 'SUM(MontoDepreciacionAnual)',
         }).filter(
-            periodo=created.period_id.pk,
+            pk__in=qs_budgeted_for_scenario,
             habilitado=True,
             codcentrocostoxcuentacontable__codcuentacontable__in=accounts_list
         ).values('presupuestado', 'monto_depreciacion_anual')
@@ -132,7 +135,79 @@ def scenarios_non_performing_assets(request):
                 full_redirect_url = f'{redirect_url}?option='
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
-            pass
+            id = request.POST.get('id')
+            comment = request.POST.get('comment')
+            is_active = request.POST.get('is_active')
+            qs_old_esc = get_object_or_404(NonPerformingAssetsScenario, pk=id)
+            _clone = NonPerformingAssetsScenario.objects.get(pk=id)
+            _clone.pk = None
+            _clone.save()
+            if is_active == 'True':
+                NonPerformingAssetsScenario.objects.filter(
+                    parameter_id=_clone.parameter_id.pk
+                ).update(is_active=False)
+            _clone.comment = comment
+            _clone.is_active = is_active
+            _clone.created_by = request.user
+            _clone.updated_by = request.user
+            _clone.correlative = _correlative(
+                _clone.parameter_id.period_id.descperiodo,
+                NonPerformingAssetsScenario.objects.filter(
+                    period_id=_clone.period_id
+                ).count()
+            )
+            _clone.save()
+            _clone.refresh_from_db()
+            messages.success(
+                request, 'Escenario clonado con éxito!'
+            )
+
+            qs_budgeted_for_scenario = BudgetedNonProductiveAssets.objects.filter(
+                scenario_id=qs_old_esc.pk
+            ).values_list('budgeted_asset_id', flat=True)
+            qs_budgeted = Detallexpresupuestoinversion.objects.filter(
+                pk__in=qs_budgeted_for_scenario
+            )
+            _add_budgeted(_clone, qs_budgeted)
+            result = execute_sql_query(
+                (
+                    f"[dbo].[sp_pptoMaestroBienesCapitalActivosFijosObtenerSaldoHist] "
+                    f"@ParametroId = {_clone.parameter_id.pk}"
+                )
+            )
+            if result.get('status') == 'ok':
+                for category in result.get('data'):
+                    qs_category = NonPerformingAssetsCategory.objects.filter(
+                        identifier=category.get('CategoriaId')
+                    ).first()
+                    old_category = NonPerformingAssetsXCategory.objects.filter(
+                        scenario_id=qs_old_esc.pk, category_id=qs_category.pk
+                    ).first()
+                    sum_category = _sum_budgeted_by_category(_clone, qs_category)
+                    NonPerformingAssetsXCategory.objects.create(
+                        category_id=qs_category,
+                        scenario_id=_clone,
+                        total_accumulated_balance=category.get('Saldo'),
+                        accumulated_depreciation_balance=category.get('DepreciacionAcu'), # NOQA
+                        depreciation_balance=category.get('Depreciacion'),
+                        total_net_balance=category.get('ValorNeto'),
+                        new_total_balance=sum_category.get('presupuestado', 0),
+                        new_depreciation_balance=sum_category.get('monto_depreciacion_anual', 0), # NOQA
+                        comment_increases=old_category.comment_increases,
+                        comment_decreases=old_category.comment_decreases,
+                        amount_increases=old_category.amount_increases,
+                        amount_decreases=old_category.amount_decreases
+                    )
+            else:
+                messages.danger(
+                    request,
+                    'No se pudo extraer información Historica'
+                )
+            redirect_url = reverse(
+                    'scenario_non_performing_assets', kwargs={'id': _new.pk}
+                )
+            full_redirect_url = f'{redirect_url}?option='
+            return redirect(full_redirect_url)
 
     page = request.GET.get('page', '')
     parameter = request.GET.get('parameter')
@@ -143,7 +218,7 @@ def scenarios_non_performing_assets(request):
     if not not status:
         filters['is_active'] = status
     qs = NonPerformingAssetsScenario.objects.filter(**filters).exclude(deleted=True).order_by( # NOQA
-        '-parameter_id__is_active'
+        '-parameter_id__is_active', 'correlative'
     )
     parameters = MasterParameters.objects.filter(is_active=True).order_by(
         '-is_active', 'period_id'
