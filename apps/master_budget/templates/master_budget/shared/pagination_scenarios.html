@@ -7,7 +7,7 @@
   <div class="pagination">
     <a 
       {% if qs.has_previous %}
-      href="?status={{request.GET.q}}&page={{ qs.previous_page_number }}&category={{request.GET.category}}&parameter={{request.GET.parameter}}"
+      href="?status={{request.GET.status}}&page={{ qs.previous_page_number }}&category={{request.GET.category}}&parameter={{request.GET.parameter}}"
       {% else %}
         href="#"
         aria-disabled="true" 
@@ -16,7 +16,7 @@
     <a href="#" class="active">{{qs.number|intcomma}}</a>
     <a 
       {% if qs.has_next %}
-       href="?status={{request.GET.q}}&page={{ qs.next_page_number }}&category={{request.GET.category}}&parameter={{request.GET.parameter}}"
+       href="?status={{request.GET.status}}&page={{ qs.next_page_number }}&category={{request.GET.category}}&parameter={{request.GET.parameter}}"
       {% else %}
         href="#" 
         aria-disabled="true" 

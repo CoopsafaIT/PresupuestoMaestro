@@ -1,5 +1,6 @@
 import datetime as dt
 
+from decimal import Decimal as dc
 from django.shortcuts import (
     render,
     redirect,
@@ -153,6 +154,28 @@ def cost_budget_register(request):
             result = try_convert_float(value)
             if type(result).__name__ == 'str':
                 result = 0
+
+            total = dict(Presupuestocostos.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).aggregate(
+                total_ejecutado_diciembre=Sum('ejecutadodiciembre'),
+                porcentaje=Sum('porcentaje'),
+                totalpresupuestado=Sum('total'),
+                proyeccion=Sum('proyeccion')
+            ))
+
+            Presupuestocostos.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).update(
+                porcentaje=F('ejecutadodiciembre') / dc(
+                    total['total_ejecutado_diciembre']
+                )*100,
+                fechamodificacion=dt.datetime.today(),
+                usuariomodificacion=request.user
+            )
+
             Presupuestocostos.objects.filter(
                 codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
                 periodo=period

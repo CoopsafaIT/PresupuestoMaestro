@@ -12,9 +12,15 @@ urlpatterns = [
         views.scenario_non_performing_assets,
         name="scenario_non_performing_assets"
     ),
+
     path(
-        'non-performing-assets/scenario/detail/comments/<int:id>/',
-        views.scenario_non_performing_assets_comments,
-        name="scenario_non_performing_assets_comments"
+        'others-assets/scenarios/',
+        views.scenarios_others_assets,
+        name="scenarios_others_assets"
+    ),
+    path(
+        'others-assets/scenario/detail/<int:id>/',
+        views.scenario_others_assets,
+        name="scenario_others_assets"
     ),
 ]

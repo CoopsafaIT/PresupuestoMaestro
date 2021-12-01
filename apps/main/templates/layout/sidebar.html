@@ -52,6 +52,7 @@
         {% endif %}
       </ul>
     </li>
+    {% if perms.ppto_maestro.puede_ver_menu_ppto_maestro %}
     <li>
       <a href="{% url 'master_budget_dashboard' %}" class="institutional-golden-color">
         <i class="bi bi-cpu"></i>
@@ -61,6 +62,7 @@
         <li><a class="link_name" href="{% url 'master_budget_dashboard' %}">Ppto. Maestro</a></li>
       </ul>
     </li>
+    {% endif %}
     {% with s1=perms.admin.puede_listar_proyectos %}
     {% with s2=perms.admin.puede_ingresar_proyeccion %}
     {% with s3=perms.admin.puede_listar_periodos %}

@@ -8,7 +8,8 @@ from utils.initial_data import (
     SAVINGS_LIABILITIES_CATEGORY,
     LIABILITIES_LOANS_CATEGORY,
     NON_PERFORMING_ASSETS_CATEGORY,
-    NON_PERFORMING_ASSETS_CATEGORY_PER_ACCOUNTS
+    NON_PERFORMING_ASSETS_CATEGORY_PER_ACCOUNTS,
+    OTHERS_ASSETS_CATEGORY
 )
 
 
@@ -81,6 +82,21 @@ class Command(BaseCommand):
                 print(
                     f'Non Perforning Assets Category Updated, identifier: {obj.identifier}'
                 )
+        
+        for item in OTHERS_ASSETS_CATEGORY:
+            obj, created = non_performing_models.OtherAssetsCategory.objects.update_or_create( # NOQA
+                identifier=item.pop('identifier'),
+                defaults=item,
+            )
+            if created:
+                print(
+                    f'Others Assets Category Created, identifier: {obj.identifier}'
+                )
+            else:
+                print(
+                    f'Others Assets Category Updated, identifier: {obj.identifier}'
+                )
+        
         _insert_non_performing_assets_category_map_account()
 
         self.stdout.write(self.style.SUCCESS("Command execution ended Successfully!!"))

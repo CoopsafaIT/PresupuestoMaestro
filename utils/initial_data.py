@@ -56,3 +56,27 @@ NON_PERFORMING_ASSETS_CATEGORY_PER_ACCOUNTS = [
     {"account_id": "834", "category_identifier": "5"},
     {"account_id": "19539", "category_identifier": "6"}
 ]
+
+
+OTHERS_ASSETS_CATEGORY = [
+    {
+        "name": "Otros Activos",
+        "is_active": True,
+        "identifier": "EXEC [dbo].[sp_pptoMaestroBienesCapitalActivosOtrosActivosObtenerSaldoHist] @ParametroId = " # NOQA
+    },
+    {
+        "name": "Activos Eventuales",
+        "is_active": True,
+        "identifier": "EXEC [dbo].[sp_pptoMaestroBienesCapitalActivosEventualesObtenerSaldoHist] @ParametroId = " # NOQA
+    },
+    {
+        "name": "Cargos Diferidos",
+        "is_active": True,
+        "identifier": "EXEC [dbo].[sp_pptoMaestroBienesCapitalActivosCargosDiferidosObtenerSaldoHist] @ParametroId = " # NOQA
+    },
+    {
+        "name": "Activos Monetarios",
+        "is_active": True,
+        "identifier": "EXEC [dbo].[sp_pptoMaestroBienesCapitalActivosMonetariosObtenerSaldoHist] @ParametroId = " # NOQA
+    },
+]

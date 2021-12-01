@@ -391,3 +391,11 @@ LIST_LIABILITIES_LOANS_FIELDS = [
         'term': 'term_december',
     },
 ]
+
+
+OTHERS_ASSETS_CRITERIA = (
+    (1, 'Mismo Valor'),
+    (2, 'Porcentaje de Aumento'),
+    (3, 'Porcentaje de Disminución'),
+    (4, 'Nuevo Valor'),
+)

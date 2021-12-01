@@ -3,23 +3,29 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Sum
 # from decimal import Decimal as dc
 
 from apps.master_budget.models import MasterParameters
-from utils.constants import STATUS_SCENARIO
+from utils.constants import STATUS_SCENARIO, OTHERS_ASSETS_CRITERIA
 from apps.main.models import Detallexpresupuestoinversion
 from .models import (
     NonPerformingAssetsScenario,
     NonPerformingAssetsXCategory,
     BudgetedNonProductiveAssets,
     NonPerformingAssetsCategory,
-    NonPerformingAssetsCategoryMapAccounts
+    NonPerformingAssetsCategoryMapAccounts,
+
+    OtherAssetsScenario,
+    OtherAssetsCategory,
+    OtherAssets
 )
 from .forms import (
     NonPerformingAssetsScenarioForm,
-    ScenarioCloneForm
+    ScenarioCloneForm,
+    OthersAssetsScenarioForm
 )
+from .request_get import QueryGetParms
 from utils.pagination import pagination
 from utils.sql import execute_sql_query
 
@@ -63,9 +69,7 @@ def scenarios_non_performing_assets(request):
                 )
 
     def _correlative(period, total):
-        return (
-            f'ESC-{period}-{total}'
-        )
+        return f'ESC-{period}-{total}'
 
     if request.method == "POST":
         if request.POST.get('method') == 'create':
@@ -208,22 +212,15 @@ def scenarios_non_performing_assets(request):
                 )
             full_redirect_url = f'{redirect_url}?option='
             return redirect(full_redirect_url)
-
-    page = request.GET.get('page', '')
-    parameter = request.GET.get('parameter')
-    status = request.GET.get('status')
-    filters = {}
-    if not not parameter:
-        filters['parameter_id'] = parameter
-    if not not status:
-        filters['is_active'] = status
+    query_parms = QueryGetParms(request.GET)
+    filters = query_parms.get_query_filters()
     qs = NonPerformingAssetsScenario.objects.filter(**filters).exclude(deleted=True).order_by( # NOQA
         '-parameter_id__is_active', 'correlative'
     )
     parameters = MasterParameters.objects.filter(is_active=True).order_by(
         '-is_active', 'period_id'
     )
-    result = pagination(qs, page=page)
+    result = pagination(qs, page=query_parms.get_page())
     ctx = {
         'parameters': parameters,
         'status': STATUS_SCENARIO,
@@ -367,9 +364,13 @@ def scenario_non_performing_assets(request, id):
         Q(presupuestado__icontains=q)
     ).order_by('-presupuestado')
     result = pagination(qs=qs_budgeted, page=page, page_size=40)
+    global_non_performing_assets = scenario_global_non_performing_assets(
+        qs.parameter_id.pk
+    )
     ctx = {
         'qs': qs,
         'qs_details': qs_details,
+        'global_non_performing_assets': global_non_performing_assets,
         'qs_budgeted_for_scenario': qs_budgeted_for_scenario,
         'qs_sum': qs_sum[0],
         'result': result,
@@ -378,5 +379,239 @@ def scenario_non_performing_assets(request, id):
     return render(request, 'non_performing_assets/scenario.html', ctx)
 
 
-def scenario_non_performing_assets_comments(request, id):
-    pass
+@login_required()
+def scenarios_others_assets(request):
+    form = OthersAssetsScenarioForm()
+
+    def _correlative(period, total):
+        return f'ESC-{period}-{total}'
+
+    if request.POST:
+        if request.POST.get('method') == 'create':
+            form = OthersAssetsScenarioForm(request.POST)
+            if not form.is_valid():
+                messages.warning(
+                    request,
+                    f'Formulario no válido: {form.errors.as_text()}'
+                )
+            else:
+                if request.POST.get('is_active') == 'True':
+                    OtherAssetsScenario.objects.filter(
+                        parameter_id=request.POST.get('parameter_id')
+                    ).update(is_active=False)
+                _new = form.save()
+                _new.period_id = _new.parameter_id.period_id
+                _new.created_by = request.user
+                _new.updated_by = request.user
+                _new.save()
+                _new.correlative = _correlative(
+                    _new.parameter_id.period_id.descperiodo,
+                    OtherAssetsScenario.objects.filter(
+                        period_id=_new.period_id
+                    ).count()
+                )
+                _new.save()
+                messages.success(
+                    request,
+                    'Escenario creado con éxito!'
+                )
+                for qs_category in OtherAssetsCategory.objects.filter(
+                    is_active=True
+                ):
+                    query = f"{qs_category.identifier} '{_new.parameter_id.pk}'"
+                    result = execute_sql_query(query)
+                    if result.get('status') == 'ok':
+                        for item in result.get('data'):
+                            OtherAssets.objects.create(
+                                scenario_id=_new,
+                                category_id=qs_category,
+                                category=item.get('CategoriaId', 0),
+                                category_name=item.get('Categoria', ''),
+                                previous_balance=item.get('Saldo', 0),
+                                percentage=0,
+                                new_balance=0
+                            )
+                    else:
+                        messages.danger(
+                            request,
+                            f'No se pudo extraer información Historica de '
+                            f'categoria: {qs_category}'
+                        )
+                redirect_url = reverse(
+                    'scenario_others_assets', kwargs={'id': _new.pk}
+                )
+                full_redirect_url = f'{redirect_url}?option='
+                return redirect(full_redirect_url)
+        elif request.POST.get('method') == 'clone':
+            id = request.POST.get('id')
+            comment = request.POST.get('comment')
+            is_active = request.POST.get('is_active')
+            qs_old_esc = get_object_or_404(OtherAssetsScenario, pk=id)
+            _clone = OtherAssetsScenario.objects.get(pk=id)
+            _clone.pk = None
+            _clone.save()
+            if is_active == 'True':
+                OtherAssetsScenario.objects.filter(
+                    parameter_id=_clone.parameter_id.pk
+                ).update(is_active=False)
+            _clone.comment = comment
+            _clone.is_active = is_active
+            _clone.created_by = request.user
+            _clone.updated_by = request.user
+            _clone.correlative = _correlative(
+                _clone.parameter_id.period_id.descperiodo,
+                OtherAssetsScenario.objects.filter(
+                    period_id=_clone.period_id
+                ).count()
+            )
+            _clone.save()
+            _clone.refresh_from_db()
+            for item_category in OtherAssets.objects.filter(scenario_id=qs_old_esc.pk):
+                _new = OtherAssets.objects.get(pk=item_category.pk)
+                _new.pk = None
+                _new.save()
+                _new.scenario_id = _clone
+                _new.save()
+            messages.success(request, 'Escenario clonado con éxito!')
+            redirect_url = reverse(
+                'scenario_others_assets', kwargs={'id': _clone.pk}
+            )
+            full_redirect_url = f'{redirect_url}?option='
+            return redirect(full_redirect_url)
+
+
+    query_parms = QueryGetParms(request.GET)
+    filters = query_parms.get_query_filters()
+    qs = OtherAssetsScenario.objects.filter(**filters).exclude(deleted=True).order_by(
+        '-parameter_id__is_active', 'correlative'
+    )
+    parameters = MasterParameters.objects.filter(is_active=True).order_by(
+        '-is_active', 'period_id'
+    )
+    result = pagination(qs, page=query_parms.get_page())
+    ctx = {
+        'parameters': parameters,
+        'status': STATUS_SCENARIO,
+        'result': result,
+        'form': form
+    }
+    return render(request, 'others_assets/scenarios.html', ctx)
+
+
+@login_required()
+def scenario_others_assets(request, id):
+    qs = get_object_or_404(OtherAssetsScenario, pk=id)
+    if request.method == 'POST':
+        if request.POST.get('method') == 'criteria':
+            item = get_object_or_404(OtherAssets, pk=request.POST.get('pk'))
+            item.comment = request.POST.get('comment', '')
+            item.percentage = request.POST.get('percentage').replace(',', '')
+            item.new_balance = request.POST.get('new_balance').replace(',', '')
+            item.criteria = request.POST.get('criteria')
+            item.save()
+            messages.success(
+                request, "Actualización realizada con éxito!"
+            )
+        elif request.POST.get('method') == 'change-status':
+            if not qs.is_active:
+                OtherAssetsScenario.objects.filter(
+                    parameter_id=qs.parameter_id.pk
+                ).update(is_active=False)
+            qs.is_active = not qs.is_active
+            qs.save()
+            message = (
+                f'Escenario actualizado a : '
+                f'{"Principal" if qs.is_active else "Secundario"}'
+                f' con éxito!!'
+            )
+            messages.success(request, message)
+        elif request.POST.get('method') == 'delete':
+            qs.is_active = False
+            qs.deleted = True
+            qs.updated_by = request.user
+            qs.save()
+            messages.error(request, 'Escenario eliminado')
+            return redirect('scenarios_others_assets')
+
+    qs_details = OtherAssets.objects.filter(scenario_id=qs.pk).order_by(
+        'category_id', 'category'
+    )
+    global_non_performing_assets = scenario_global_non_performing_assets(
+        qs.parameter_id.pk
+    )
+    ctx = {
+        'qs': qs,
+        'global_non_performing_assets': global_non_performing_assets,
+        'qs_details': qs_details,
+        'others_assets_criteria': OTHERS_ASSETS_CRITERIA,
+        'form_clone': ScenarioCloneForm()
+    }
+    return render(request, 'others_assets/scenario.html', ctx)
+
+
+def scenario_global_non_performing_assets(parameter_id):
+
+    def _new_total_net_balance(data):
+        total_subtract = (
+            data.get('sum_depreciacion', 0) +
+            data.get('sum_disminucion', 0) +
+            data.get('sum_nueva_depreciacion', 0)
+        )
+        total_add = (
+            data.get('sum_total_neto', 0) +
+            data.get('sum_monto_aumento', 0) +
+            data.get('sum_nuevo_saldo', 0)
+        )
+        return total_add - total_subtract
+
+    global_non_performing_assets = []
+    non_performing_assets_scenario = NonPerformingAssetsScenario.objects.filter(
+        parameter_id=parameter_id, is_active=True
+    ).first()
+    non_others_assets_scenario = OtherAssetsScenario.objects.filter(
+        parameter_id=parameter_id, is_active=True
+    ).first()
+
+    if non_performing_assets_scenario:
+        non_performing_assets = NonPerformingAssetsXCategory.objects.filter(
+            scenario_id=non_performing_assets_scenario.pk
+        ).extra({
+            'sum_saldo_total_acumulado': 'SUM(SaldoTotalAcumulado)',
+            'sum_saldo_depreciacion_acumulado': 'SUM(SaldoDepreciacionAcumulado)',
+            'sum_depreciacion': 'SUM(SaldoDepreciacion)',
+            'sum_total_neto': 'SUM(SaldoTotalNeto)',
+            'sum_monto_aumento': 'SUM(MontoAumento)',
+            'sum_disminucion': 'SUM(MontoDisminucion)',
+            'sum_nuevo_saldo': 'SUM(NuevoSaldoTotal)',
+            'sum_nueva_depreciacion': 'SUM(NuevoSaldoDepreciacion)',
+        }).values(
+            'sum_saldo_total_acumulado', 'sum_saldo_depreciacion_acumulado',
+            'sum_depreciacion', 'sum_total_neto',
+            'sum_monto_aumento', 'sum_disminucion',
+            'sum_nuevo_saldo', 'sum_nueva_depreciacion'
+        )
+        non_performing_assets = non_performing_assets[0]
+
+        global_non_performing_assets.append({
+            'name': 'Activos Fijos Netos',
+            'previous_total_net_balance': non_performing_assets.get('sum_total_neto', 0),
+            'new_total_net_balance': _new_total_net_balance(non_performing_assets)
+        })
+
+    if non_others_assets_scenario:
+        others_assets = OtherAssets.objects.values('category_id__name').filter(
+            scenario_id=non_others_assets_scenario.pk
+        ).order_by('category_id').annotate(
+            total_previous=Sum('previous_balance'),
+            total_budgeted=Sum('new_balance')
+        )
+        for other_assets in others_assets:
+            global_non_performing_assets.append({
+                'name': other_assets.get('category_id__name'),
+                'previous_total_net_balance': other_assets.get('total_previous'),
+                'new_total_net_balance': other_assets.get('total_budgeted')
+            })
+
+    print(global_non_performing_assets)
+
+    return global_non_performing_assets
