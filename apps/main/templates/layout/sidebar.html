@@ -40,7 +40,6 @@
         {% if perms.ppto_personal.puede_ingresar_ppto_personal or perms.ppto_personal.puede_ingresar_ppto_personal_todos %}
         <li><a href="{% url 'staff_budgets_register' %}">Personal</a></li>
         {% endif %}
-        
         {% if perms.ppto_indirecto.puede_ingresar_ppto_indirecto %}
         <li><a href="{% url 'indirect_budget_register' %}">Indirecto</a></li>
         {% endif %}

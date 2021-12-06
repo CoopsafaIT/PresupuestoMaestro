@@ -107,7 +107,7 @@ def scenarios_non_performing_assets(request):
                 _add_budgeted(_new, qs_budgeted)
                 result = execute_sql_query(
                     (
-                        f"[dbo].[sp_pptoMaestroBienesCapitalActivosFijosObtenerSaldoHist] "
+                        f"EXEC [dbo].[sp_pptoMaestroBienesCapitalActivosFijosObtenerSaldoHist] " # NOQA
                         f"@ParametroId = {_new.parameter_id.pk}"
                     )
                 )
@@ -208,7 +208,7 @@ def scenarios_non_performing_assets(request):
                     'No se pudo extraer información Historica'
                 )
             redirect_url = reverse(
-                    'scenario_non_performing_assets', kwargs={'id': _new.pk}
+                    'scenario_non_performing_assets', kwargs={'id': _clone.pk}
                 )
             full_redirect_url = f'{redirect_url}?option='
             return redirect(full_redirect_url)

@@ -1,0 +1,44 @@
+{% load static %}
+{% load humanize %}
+<div class="row">
+  <div class="col-md-12" style="max-height: 400px!important;overflow-y: scroll;">
+    <table class="table table-hover table-bordered border-success table-striped" style="font-size: 0.9rem !important;">
+      <thead>
+        <tr style="background-color: #017224 !important; color: white;">
+          <th class="text-center">Centro Costo</th>
+          <th>Ene</th>
+          <th>Feb</th>
+          <th>Mar</th>
+          <th>Abr</th>
+          <th>May</th>
+          <th>Jun</th>
+          <th>Jul</th>
+          <th>Ago</th>
+          <th>Sep</th>
+          <th>Oct</th>
+          <th>Nov</th>
+          <th>Dic</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in details %}
+          <tr>
+            <td>{{item.cost_center_id.desccentrocosto}}</td>
+            <td><span class="float-end">{{item.amount_temp_january|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_february|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_march|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_april|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_may|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_june|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_july|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_august|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_september|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_october|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_november|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_december|intcomma}}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

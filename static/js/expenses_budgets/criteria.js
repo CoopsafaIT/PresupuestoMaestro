@@ -3,7 +3,7 @@ $(document).ready(() => {
   $(document).on('keyup', '.percentaje_ppto', function () {
     let criteria = $(this).closest('tr').find('.budget_table_select').val()
     let value = parseFloat($(this).val())
-    let dicAmount = parseFloat($(this).data('dic').replace(',', ''))
+    let dicAmount = parseFloat($(this).data('dic'))
     let div = value / 100
     let amount = dicAmount * div
 
@@ -18,11 +18,11 @@ $(document).ready(() => {
 
   $('.budget_table_select').change(function () {
     let criteria = $(this).val();
-    let novAmount = parseFloat($(this).data('nov').replace(',', ''))
-    let dicAmount = parseFloat($(this).data('dic').replace(',', ''))
+    let novAmount = parseFloat($(this).data('nov').replaceAll(',', ''));
+    let dicAmount = parseFloat($(this).data('dic').replaceAll(',', ''));
     let value = parseFloat(
       $(this).children(":selected").attr("data-valor")
-    ).toFixed(2)
+    ).toFixed(2);
 
     if (criteria === '1') {
       let amount = dicAmount * value / 100;

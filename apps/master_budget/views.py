@@ -30,7 +30,7 @@ def master_budget_dashboard(request):
 def projection_parameters(request):
     form = MasterParametersForm()
     if request.is_ajax():
-        year = dt.date.today().year - 1
+        year = dt.date.today().year
         period = Periodo.objects.filter(descperiodo=year).first()
         query = (
             f'EXEC dbo.sp_pptoMaestroCarteraCredCatObtenerFechasCierreHist '

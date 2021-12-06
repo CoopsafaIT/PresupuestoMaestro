@@ -119,7 +119,8 @@ def staff_budgets_register(request):
     }
     if (
         request.session.get('period', None) and
-        request.session.get('cost_center', None)
+        request.session.get('cost_center', None) and
+        request.session.get('cost_center') != '__all__'
     ):
         qs = Detallexpresupuestopersonal.objects.filter(
             codcentrocosto=request.session.get('cost_center'),

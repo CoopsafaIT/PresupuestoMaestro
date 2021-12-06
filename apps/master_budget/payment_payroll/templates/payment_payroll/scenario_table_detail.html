@@ -1,0 +1,93 @@
+{% load static %}
+{% load humanize %}
+<div class="row" >
+  <div class="col-md-12" style="max-height: 400px!important;overflow-y: scroll;">
+    <table class="table table-hover table-bordered border-success table-striped" style="font-size: 0.9rem !important;">
+      <thead>
+        <tr style="background-color: #017224 !important; color: white;">
+          <th class="text-center">Centro Costo</th>
+          <th class="text-center">{{qs.parameter_id}}</th>
+          <th class="text-center">Ene</th>
+          <th class="text-center">Feb</th>
+          <th class="text-center">Mar</th>
+          <th class="text-center">Abr</th>
+          <th class="text-center">May</th>
+          <th class="text-center">Jun</th>
+          <th class="text-center">Jul</th>
+          <th class="text-center">Ago</th>
+          <th class="text-center">Sep</th>
+          <th class="text-center">Oct</th>
+          <th class="text-center">Nov</th>
+          <th class="text-center">Dic</th>
+          <th class="text-center">Totales</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in details %}
+          <tr>
+            <td>{{item.cost_center_id.desccentrocosto}}</td>
+            <td
+              style="cursor: pointer;"
+              class="adjusted_salary"
+              data-ceco="{{item.cost_center_id.desccentrocosto}}"
+              data-amount-adjusted="{{item.adjusted_permanent_amount}}"
+              data-amount-perm="{{item.permanent_amount_initial|intcomma}}"
+              data-pk="{{item.pk}}"
+            >
+              <span class="float-end">{{item.adjusted_permanent_amount|intcomma}}</span>
+            </td>
+            <td><span class="float-end">{{item.amount_january|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_february|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_march|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_april|intcomma}}</span></td> 
+            <td><span class="float-end">{{item.amount_may|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_june|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_july|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_august|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_september|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_october|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_november|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_december|intcomma}}</span></td>
+            <td></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="text-center"><b>Totales</b></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr style="background-color: #017224 !important; color: white;">
+          <td class="text-center">Centro Costo</td>
+          <td class="text-center">{{qs.parameter_id}}</td>
+          <td class="text-center">Ene</td>
+          <td class="text-center">Feb</td>
+          <td class="text-center">Mar</td>
+          <td class="text-center">Abr</td>
+          <td class="text-center">May</td>
+          <td class="text-center">Jun</td>
+          <td class="text-center">Jul</td>
+          <td class="text-center">Ago</td>
+          <td class="text-center">Sep</td>
+          <td class="text-center">Oct</td>
+          <td class="text-center">Nov</td>
+          <td class="text-center">Dic</td>
+          <td class="text-center"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
