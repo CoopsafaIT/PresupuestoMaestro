@@ -97,6 +97,18 @@ class PaymentPayroll(
         null=True,
         blank=True
     )
+    permanent_staff_number = models.IntegerField(
+        db_column="CantidadEmpleadosPermanentes",
+        blank=True,
+        null=True,
+        default=0
+    )
+    temp_staff_number = models.IntegerField(
+        db_column="CantidadEmpleadosTemporales",
+        blank=True,
+        null=True,
+        default=0
+    )
     permanent_amount_initial = models.DecimalField(
         db_column="MontoPermanenteInicial",
         max_digits=23,
@@ -125,3 +137,37 @@ class PaymentPayroll(
     class Meta:
         default_permissions = []
         db_table = 'pptoMaestroPagoPlanilla'
+
+    @property
+    def sum_ceco_perm(self):
+        sum_total = 0
+        sum_total = sum_total + self.amount_january
+        sum_total = sum_total + self.amount_february
+        sum_total = sum_total + self.amount_march
+        sum_total = sum_total + self.amount_april
+        sum_total = sum_total + self.amount_may
+        sum_total = sum_total + self.amount_june
+        sum_total = sum_total + self.amount_july
+        sum_total = sum_total + self.amount_august
+        sum_total = sum_total + self.amount_september
+        sum_total = sum_total + self.amount_october
+        sum_total = sum_total + self.amount_november
+        sum_total = sum_total + self.amount_december
+        return sum_total
+
+    @property
+    def sum_ceco_temp(self):
+        sum_total = 0
+        sum_total = sum_total + self.amount_temp_january
+        sum_total = sum_total + self.amount_temp_february
+        sum_total = sum_total + self.amount_temp_march
+        sum_total = sum_total + self.amount_temp_april
+        sum_total = sum_total + self.amount_temp_may
+        sum_total = sum_total + self.amount_temp_june
+        sum_total = sum_total + self.amount_temp_july
+        sum_total = sum_total + self.amount_temp_august
+        sum_total = sum_total + self.amount_temp_september
+        sum_total = sum_total + self.amount_temp_october
+        sum_total = sum_total + self.amount_temp_november
+        sum_total = sum_total + self.amount_temp_december
+        return sum_total

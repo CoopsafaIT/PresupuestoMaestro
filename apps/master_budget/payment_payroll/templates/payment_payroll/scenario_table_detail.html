@@ -1,12 +1,12 @@
 {% load static %}
 {% load humanize %}
-<div class="row" >
+<div class="row">
   <div class="col-md-12" style="max-height: 400px!important;overflow-y: scroll;">
     <table class="table table-hover table-bordered border-success table-striped" style="font-size: 0.9rem !important;">
       <thead>
         <tr style="background-color: #017224 !important; color: white;">
           <th class="text-center">Centro Costo</th>
-          <th class="text-center">{{qs.parameter_id}}</th>
+          <th class="text-center">Base</th>
           <th class="text-center">Ene</th>
           <th class="text-center">Feb</th>
           <th class="text-center">Mar</th>
@@ -25,7 +25,24 @@
       <tbody>
         {% for item in details %}
           <tr>
-            <td>{{item.cost_center_id.desccentrocosto}}</td>
+            <td
+              style="cursor: pointer;"
+              class="edit_scenario_percentage_ceco"
+              data-ceco-pk="{{item.cost_center_id.pk}}"
+              data-ceco="{{item.cost_center_id.desccentrocosto}}"
+              data-percentage_increase_january = "{{item.percentage_increase_january}}"
+              data-percentage_increase_february = "{{item.percentage_increase_february}}"
+              data-percentage_increase_march = "{{item.percentage_increase_march}}"
+              data-percentage_increase_april = "{{item.percentage_increase_april}}"
+              data-percentage_increase_may = "{{item.percentage_increase_may}}"
+              data-percentage_increase_june = "{{item.percentage_increase_june}}"
+              data-percentage_increase_july = "{{item.percentage_increase_july}}"
+              data-percentage_increase_august = "{{item.percentage_increase_august}}"
+              data-percentage_increase_september = "{{item.percentage_increase_september}}"
+              data-percentage_increase_october = "{{item.percentage_increase_october}}"
+              data-percentage_increase_november = "{{item.percentage_increase_november}}"
+              data-percentage_increase_december = "{{item.percentage_increase_december}}"
+            ><b>{{item.cost_center_id.desccentrocosto}}</b></td>
             <td
               style="cursor: pointer;"
               class="adjusted_salary"
@@ -48,31 +65,31 @@
             <td><span class="float-end">{{item.amount_october|intcomma}}</span></td>
             <td><span class="float-end">{{item.amount_november|intcomma}}</span></td>
             <td><span class="float-end">{{item.amount_december|intcomma}}</span></td>
-            <td></td>
+            <td><span class="float-end fw-bold">{{item.sum_ceco_perm|intcomma}}</span></td>
           </tr>
         {% endfor %}
       </tbody>
       <tfoot>
         <tr>
-          <td class="text-center"><b>Totales</b></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td><b>Totales</b></td>
+          <td>{{qs_sum_perm.sum_base_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_ene_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_feb_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_mar_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_abr_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_may_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_jul_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_jun_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_ago_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_sep_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_oct_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_nov_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_dic_perm|intcomma}}</td>
+          <td>{{sum_total_perm|intcomma}}</td>
         </tr>
         <tr style="background-color: #017224 !important; color: white;">
           <td class="text-center">Centro Costo</td>
-          <td class="text-center">{{qs.parameter_id}}</td>
+          <td class="text-center">Base</td>
           <td class="text-center">Ene</td>
           <td class="text-center">Feb</td>
           <td class="text-center">Mar</td>

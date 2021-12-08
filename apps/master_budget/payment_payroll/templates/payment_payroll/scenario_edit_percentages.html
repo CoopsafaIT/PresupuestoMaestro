@@ -1,0 +1,158 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="editScenarioPercentageModal" tabindex="-1" aria-labelledby="editScenarioPercentageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light">Porcentaje mensual de aumento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="idFormScenarioEditPercentage">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="edit-percentage">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered table-stripped">
+                  <thead>
+                    <tr>
+                      <th>Ene</th>
+                      <th>Feb</th>
+                      <th>Mar</th>
+                      <th>Abr</th>
+                      <th>May</th>
+                      <th>Jun</th>
+                      <th>Jul</th>
+                      <th>Ago</th>
+                      <th>Sep</th>
+                      <th>Oct</th>
+                      <th>Nov</th>
+                      <th>Dic</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_january}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_january" id="id_percentage_increase_january"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_february}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_february" id="id_percentage_increase_february"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_march}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_march" id="id_percentage_increase_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_april}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_april" id="id_percentage_increase_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_may}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_may" id="id_percentage_increase_may"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_june}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_june" id="id_percentage_increase_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_july}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_july" id="id_percentage_increase_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_august}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_august" id="id_percentage_increase_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_september}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_september" id="id_percentage_increase_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_october}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_october" id="id_percentage_increase_october"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_november}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_november" id="id_percentage_increase_november"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_increase_december}}"
+                          class="form-control validation-input-text"
+                          name="percentage_increase_december" id="id_percentage_increase_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-outline-safa" id="submitScenarioEditPercentage">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -24,4 +24,5 @@
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
     "peacock.color": "#007fff",
+    "workbench.editor.wrapTabs": true,
 }

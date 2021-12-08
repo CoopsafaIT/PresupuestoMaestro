@@ -108,10 +108,7 @@ def scenarios_payment_payroll(request):
                 )
                 _add_budgeted(_new, qs_budgeted)
                 result = execute_sql_query(
-                    (
-                        f"EXEC [dbo].[sp_pptoMaestroPlanillasObtenerSaldoHist] "
-                        f"@ParametroId = {_new.parameter_id.pk}"
-                    )
+                    "EXEC [dbo].[sp_pptoMaestroPlanillasObtenerSaldoHist]"
                 )
                 if result.get('status') == 'ok':
                     for item in result.get('data'):
@@ -121,33 +118,37 @@ def scenarios_payment_payroll(request):
                         _new_detail = PaymentPayroll()
                         _new_detail.scenario_id = _new
                         _new_detail.cost_center_id = qs_cost_center
-                        _new_detail.permanent_amount_initial = item.get('SueldoPermanente')
-                        _new_detail.adjusted_permanent_amount = item.get('SueldoPermanente') # NOQA
-                        _new_detail.amount_initial_temp = item.get('SueldoContrato')
-                        _new_detail.amount_january = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 1) # NOQA
-                        _new_detail.amount_february = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 2) # NOQA
-                        _new_detail.amount_march = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 3) # NOQA
-                        _new_detail.amount_april = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 4) # NOQA
-                        _new_detail.amount_may = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 5) # NOQA
-                        _new_detail.amount_june = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 6) # NOQA
-                        _new_detail.amount_july = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 7) # NOQA
-                        _new_detail.amount_august = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 8) # NOQA
-                        _new_detail.amount_september = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 9) # NOQA
-                        _new_detail.amount_october = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 10) # NOQA
-                        _new_detail.amount_november = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 11) # NOQA
-                        _new_detail.amount_december = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 12) # NOQA
-                        _new_detail.amount_temp_january = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 1, 1) # NOQA
-                        _new_detail.amount_temp_february = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 2, 1) # NOQA
-                        _new_detail.amount_temp_march = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 3, 1) # NOQA
-                        _new_detail.amount_temp_april = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 4, 1) # NOQA
-                        _new_detail.amount_temp_may = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 5, 1) # NOQA
-                        _new_detail.amount_temp_june = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 6, 1) # NOQA
-                        _new_detail.amount_temp_july = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 7, 1) # NOQA
-                        _new_detail.amount_temp_august = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 8, 1) # NOQA
-                        _new_detail.amount_temp_september = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 9, 1) # NOQA
-                        _new_detail.amount_temp_october = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 10, 1) # NOQA
-                        _new_detail.amount_temp_november = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 11, 1) # NOQA
-                        _new_detail.amount_temp_december = _monthly_salary(qs_cost_center, item.get('SueldoPermanente'), 12, 1) # NOQA
+                        _new_detail.permanent_staff_number = item.get('CantidadPermanentes') # NOQA
+                        _new_detail.permanent_amount_initial = item.get('SueldoPermanentes') # NOQA
+                        _new_detail.adjusted_permanent_amount = item.get('SueldoPermanentes') # NOQA
+                        _new_detail.temp_staff_number = item.get('CantidadPorContrato')
+                        _new_detail.amount_initial_temp = item.get('SueldoPorContrato')
+
+                        _new_detail.amount_january = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 1) # NOQA
+                        _new_detail.amount_february = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 2) # NOQA
+                        _new_detail.amount_march = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 3) # NOQA
+                        _new_detail.amount_april = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 4) # NOQA
+                        _new_detail.amount_may = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 5) # NOQA
+                        _new_detail.amount_june = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 6) # NOQA
+                        _new_detail.amount_july = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 7) # NOQA
+                        _new_detail.amount_august = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 8) # NOQA
+                        _new_detail.amount_september = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 9) # NOQA
+                        _new_detail.amount_october = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 10) # NOQA
+                        _new_detail.amount_november = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 11) # NOQA
+                        _new_detail.amount_december = _monthly_salary(qs_cost_center, item.get('SueldoPermanentes'), 12) # NOQA
+
+                        _new_detail.amount_temp_january = _monthly_salary(qs_cost_center, 0, 1, 1) # NOQA
+                        _new_detail.amount_temp_february = _monthly_salary(qs_cost_center, 0, 2, 1) # NOQA
+                        _new_detail.amount_temp_march = _monthly_salary(qs_cost_center, 0, 3, 1) # NOQA
+                        _new_detail.amount_temp_april = _monthly_salary(qs_cost_center, 0, 4, 1) # NOQA
+                        _new_detail.amount_temp_may = _monthly_salary(qs_cost_center, 0, 5, 1) # NOQA
+                        _new_detail.amount_temp_june = _monthly_salary(qs_cost_center, 0, 6, 1) # NOQA
+                        _new_detail.amount_temp_july = _monthly_salary(qs_cost_center, 0, 7, 1) # NOQA
+                        _new_detail.amount_temp_august = _monthly_salary(qs_cost_center, 0, 8, 1) # NOQA
+                        _new_detail.amount_temp_september = _monthly_salary(qs_cost_center, 0, 9, 1) # NOQA
+                        _new_detail.amount_temp_october = _monthly_salary(qs_cost_center, 0, 10, 1) # NOQA
+                        _new_detail.amount_temp_november = _monthly_salary(qs_cost_center, 0, 11, 1) # NOQA
+                        _new_detail.amount_temp_december = _monthly_salary(qs_cost_center, 0, 12, 1) # NOQA
                         _new_detail.save()
                 else:
                     messages.danger(
@@ -155,7 +156,7 @@ def scenarios_payment_payroll(request):
                     )
 
                 redirect_url = reverse(
-                    'scenario_non_performing_assets', kwargs={'id': _new.pk}
+                    'scenario_payment_payroll', kwargs={'id': _new.pk}
                 )
                 full_redirect_url = f'{redirect_url}?option='
                 return redirect(full_redirect_url)
@@ -342,7 +343,233 @@ def scenario_payment_payroll(request, id):
                         qs_row.amount_temp_december = _monthly_salary(budgeted_temp, 0, 12, 1) # NOQA
                         qs_row.save()
 
+            messages.success(request, 'Actualización realizada con éxito!')
+
+        elif request.POST.get('method') == 'edit-percentage':
+            qs.percentage_increase_january = request.POST.get('percentage_increase_january').replace(',', '') # NOQA
+            qs.percentage_increase_february = request.POST.get('percentage_increase_february').replace(',', '') # NOQA
+            qs.percentage_increase_march = request.POST.get('percentage_increase_march').replace(',', '') # NOQA
+            qs.percentage_increase_april = request.POST.get('percentage_increase_april').replace(',', '') # NOQA
+            qs.percentage_increase_may = request.POST.get('percentage_increase_may').replace(',', '') # NOQA
+            qs.percentage_increase_june = request.POST.get('percentage_increase_june').replace(',', '') # NOQA
+            qs.percentage_increase_july = request.POST.get('percentage_increase_july').replace(',', '') # NOQA
+            qs.percentage_increase_august = request.POST.get('percentage_increase_august').replace(',', '') # NOQA
+            qs.percentage_increase_september = request.POST.get('percentage_increase_september').replace(',', '') # NOQA
+            qs.percentage_increase_october = request.POST.get('percentage_increase_october').replace(',', '') # NOQA
+            qs.percentage_increase_november = request.POST.get('percentage_increase_november').replace(',', '') # NOQA
+            qs.percentage_increase_december = request.POST.get('percentage_increase_december').replace(',', '') # NOQA
+            qs.save()
+            qs_list = PaymentPayroll.objects.filter(scenario_id=id)
+            for qs_item in qs_list:
+                qs_item.amount_january = qs_item.amount_january + (
+                    qs_item.amount_january * dc(qs.percentage_increase_january) / 100
+                )
+                qs_item.amount_february = qs_item.amount_february + (
+                    qs_item.amount_february * dc(qs.percentage_increase_february) / 100
+                )
+                qs_item.amount_march = qs_item.amount_march + (
+                    qs_item.amount_march * dc(qs.percentage_increase_march) / 100
+                )
+                qs_item.amount_april = qs_item.amount_april + (
+                    qs_item.amount_april * dc(qs.percentage_increase_april) / 100
+                )
+                qs_item.amount_may = qs_item.amount_may + (
+                    qs_item.amount_may * dc(qs.percentage_increase_may) / 100
+                )
+                qs_item.amount_june = qs_item.amount_june + (
+                    qs_item.amount_june * dc(qs.percentage_increase_june) / 100
+                )
+                qs_item.amount_july = qs_item.amount_july + (
+                    qs_item.amount_july * dc(qs.percentage_increase_july) / 100
+                )
+                qs_item.amount_august = qs_item.amount_august + (
+                    qs_item.amount_august * dc(qs.percentage_increase_august) / 100
+                )
+                qs_item.amount_september = qs_item.amount_september + (
+                    qs_item.amount_september * dc(qs.percentage_increase_september) / 100
+                )
+                qs_item.amount_october = qs_item.amount_october + (
+                    qs_item.amount_october * dc(qs.percentage_increase_october) / 100
+                )
+                qs_item.amount_november = qs_item.amount_november + (
+                    qs_item.amount_november * dc(qs.percentage_increase_november) / 100
+                )
+                qs_item.amount_december = qs_item.amount_december + (
+                    qs_item.amount_december * dc(qs.percentage_increase_december) / 100
+                )
+
+                qs_item.amount_temp_january = qs_item.amount_temp_january + (
+                    qs_item.amount_temp_january * dc(qs.percentage_increase_january) / 100
+                )
+                qs_item.amount_temp_february = qs_item.amount_temp_february + (
+                    qs_item.amount_temp_february * dc(qs.percentage_increase_february) / 100 # NOQA
+                )
+                qs_item.amount_temp_march = qs_item.amount_temp_march + (
+                    qs_item.amount_temp_march * dc(qs.percentage_increase_march) / 100
+                )
+                qs_item.amount_temp_april = qs_item.amount_temp_april + (
+                    qs_item.amount_temp_april * dc(qs.percentage_increase_april) / 100
+                )
+                qs_item.amount_temp_may = qs_item.amount_temp_may + (
+                    qs_item.amount_temp_may * dc(qs.percentage_increase_may) / 100
+                )
+                qs_item.amount_temp_june = qs_item.amount_temp_june + (
+                    qs_item.amount_temp_june * dc(qs.percentage_increase_june) / 100
+                )
+                qs_item.amount_temp_july = qs_item.amount_temp_july + (
+                    qs_item.amount_temp_july * dc(qs.percentage_increase_july) / 100
+                )
+                qs_item.amount_temp_august = qs_item.amount_temp_august + (
+                    qs_item.amount_temp_august * dc(qs.percentage_increase_august) / 100
+                )
+                qs_item.amount_temp_september = qs_item.amount_temp_september + (
+                    qs_item.amount_temp_september * dc(qs.percentage_increase_september) / 100 # NOQA
+                )
+                qs_item.amount_temp_october = qs_item.amount_temp_october + (
+                    qs_item.amount_temp_october * dc(qs.percentage_increase_october) / 100
+                )
+                qs_item.amount_temp_november = qs_item.amount_temp_november + (
+                    qs_item.amount_temp_november * dc(qs.percentage_increase_november) / 100 # NOQA
+                )
+                qs_item.amount_temp_december = qs_item.amount_temp_december + (
+                    qs_item.amount_temp_december * dc(qs.percentage_increase_december) / 100 # NOQA
+                )
+                qs_item.save()
+            messages.success(request, 'Actualización realizada con éxito!')
+        elif request.POST.get('method') == 'edit-percentage-ceco':
+            _row = PaymentPayroll.objects.filter(
+                scenario_id=qs.pk, cost_center_id=request.POST.get('ceco_id')
+            ).first()
+            _row.percentage_increase_january = request.POST.get('percentage_increase_january') # NOQA
+            _row.percentage_increase_february = request.POST.get('percentage_increase_february') # NOQA
+            _row.percentage_increase_march = request.POST.get('percentage_increase_march') # NOQA
+            _row.percentage_increase_april = request.POST.get('percentage_increase_april') # NOQA
+            _row.percentage_increase_may = request.POST.get('percentage_increase_may') # NOQA
+            _row.percentage_increase_june = request.POST.get('percentage_increase_june') # NOQA
+            _row.percentage_increase_july = request.POST.get('percentage_increase_july') # NOQA
+            _row.percentage_increase_august = request.POST.get('percentage_increase_august') # NOQA
+            _row.percentage_increase_september = request.POST.get('percentage_increase_september') # NOQA
+            _row.percentage_increase_october = request.POST.get('percentage_increase_october') # NOQA
+            _row.percentage_increase_november = request.POST.get('percentage_increase_november') # NOQA
+            _row.percentage_increase_december = request.POST.get('percentage_increase_december') # NOQA
+            _row.amount_january = _row.amount_january + (
+                _row.amount_january * dc(_row.percentage_increase_january) / 100
+            )
+            _row.amount_february = _row.amount_february + (
+                _row.amount_february * dc(_row.percentage_increase_february) / 100
+            )
+            _row.amount_march = _row.amount_march + (
+                _row.amount_march * dc(_row.percentage_increase_march) / 100
+            )
+            _row.amount_april = _row.amount_april + (
+                _row.amount_april * dc(_row.percentage_increase_april) / 100
+            )
+            _row.amount_may = _row.amount_may + (
+                _row.amount_may * dc(_row.percentage_increase_may) / 100
+            )
+            _row.amount_june = _row.amount_june + (
+                _row.amount_june * dc(_row.percentage_increase_june) / 100
+            )
+            _row.amount_july = _row.amount_july + (
+                _row.amount_july * dc(_row.percentage_increase_july) / 100
+            )
+            _row.amount_august = _row.amount_august + (
+                _row.amount_august * dc(_row.percentage_increase_august) / 100
+            )
+            _row.amount_september = _row.amount_september + (
+                _row.amount_september * dc(_row.percentage_increase_september) / 100
+            )
+            _row.amount_october = _row.amount_october + (
+                _row.amount_october * dc(_row.percentage_increase_october) / 100
+            )
+            _row.amount_november = _row.amount_november + (
+                _row.amount_november * dc(_row.percentage_increase_november) / 100
+            )
+            _row.amount_december = _row.amount_december + (
+                _row.amount_december * dc(_row.percentage_increase_december) / 100
+            )
+
+            _row.amount_temp_january = _row.amount_temp_january + (
+                _row.amount_temp_january * dc(_row.percentage_increase_january) / 100
+            )
+            _row.amount_temp_february = _row.amount_temp_february + (
+                _row.amount_temp_february * dc(_row.percentage_increase_february) / 100 # NOQA
+            )
+            _row.amount_temp_march = _row.amount_temp_march + (
+                _row.amount_temp_march * dc(_row.percentage_increase_march) / 100
+            )
+            _row.amount_temp_april = _row.amount_temp_april + (
+                _row.amount_temp_april * dc(_row.percentage_increase_april) / 100
+            )
+            _row.amount_temp_may = _row.amount_temp_may + (
+                _row.amount_temp_may * dc(_row.percentage_increase_may) / 100
+            )
+            _row.amount_temp_june = _row.amount_temp_june + (
+                _row.amount_temp_june * dc(_row.percentage_increase_june) / 100
+            )
+            _row.amount_temp_july = _row.amount_temp_july + (
+                _row.amount_temp_july * dc(_row.percentage_increase_july) / 100
+            )
+            _row.amount_temp_august = _row.amount_temp_august + (
+                _row.amount_temp_august * dc(_row.percentage_increase_august) / 100
+            )
+            _row.amount_temp_september = _row.amount_temp_september + (
+                _row.amount_temp_september * dc(_row.percentage_increase_september) / 100 # NOQA
+            )
+            _row.amount_temp_october = _row.amount_temp_october + (
+                _row.amount_temp_october * dc(_row.percentage_increase_october) / 100
+            )
+            _row.amount_temp_november = _row.amount_temp_november + (
+                _row.amount_temp_november * dc(_row.percentage_increase_november) / 100 # NOQA
+            )
+            _row.amount_temp_december = _row.amount_temp_december + (
+                _row.amount_temp_december * dc(_row.percentage_increase_december) / 100 # NOQA
+            )
+            _row.save()
+            messages.success(request, 'Actualización realizada con éxito!')
+
     details = PaymentPayroll.objects.filter(scenario_id=id)
+    qs_sum_perm = details.extra({
+        'sum_base_perm': 'SUM(MontoPermanenteAjustado)',
+        'sum_ene_perm': 'SUM(MontoEne)', 'sum_feb_perm': 'SUM(MontoFeb)',
+        'sum_mar_perm': 'SUM(MontoMar)', 'sum_abr_perm': 'SUM(MontoAbr)',
+        'sum_may_perm': 'SUM(MontoMay)', 'sum_jul_perm': 'SUM(MontoJun)',
+        'sum_jun_perm': 'SUM(MontoJul)', 'sum_ago_perm': 'SUM(MontoAgo)',
+        'sum_sep_perm': 'SUM(MontoSep)', 'sum_oct_perm': 'SUM(MontoOct)',
+        'sum_nov_perm': 'SUM(MontoNov)', 'sum_dic_perm': 'SUM(MontoDic)',
+    }).values(
+        'sum_base_perm', 'sum_ene_perm', 'sum_feb_perm',
+        'sum_mar_perm', 'sum_abr_perm', 'sum_may_perm',
+        'sum_jul_perm', 'sum_jun_perm', 'sum_ago_perm',
+        'sum_sep_perm', 'sum_oct_perm', 'sum_nov_perm',
+        'sum_dic_perm'
+    )
+
+    qs_sum_temp = details.extra({
+        'sum_base_temp': 'SUM(MontoInicialTemporal)',
+        'sum_ene_temp': 'SUM(MontoTemporalEne)', 'sum_feb_temp': 'SUM(MontoTemporalFeb)',
+        'sum_mar_temp': 'SUM(MontoTemporalMar)', 'sum_abr_temp': 'SUM(MontoTemporalAbr)',
+        'sum_may_temp': 'SUM(MontoTemporalMay)', 'sum_jul_temp': 'SUM(MontoTemporalJun)',
+        'sum_jun_temp': 'SUM(MontoTemporalJul)', 'sum_ago_temp': 'SUM(MontoTemporalAgo)',
+        'sum_sep_temp': 'SUM(MontoTemporalSep)', 'sum_oct_temp': 'SUM(MontoTemporalOct)',
+        'sum_nov_temp': 'SUM(MontoTemporalNov)', 'sum_dic_temp': 'SUM(MontoTemporalDic)',
+    }).values(
+        'sum_base_temp', 'sum_ene_temp', 'sum_feb_temp',
+        'sum_mar_temp', 'sum_abr_temp', 'sum_may_temp',
+        'sum_jul_temp', 'sum_jun_temp', 'sum_ago_temp',
+        'sum_sep_temp', 'sum_oct_temp', 'sum_nov_temp',
+        'sum_dic_temp'
+    )
+    sum_total_perm = 0
+    sum_total_temp = 0
+    qs_sum_perm = qs_sum_perm[0]
+    qs_sum_temp = qs_sum_temp[0]
+    for item, value in enumerate(qs_sum_perm):
+        sum_total_perm = sum_total_perm + qs_sum_perm[value]
+
+    for item, value in enumerate(qs_sum_temp):
+        sum_total_temp = sum_total_temp + qs_sum_temp[value]
+
     budgeted = Detallexpresupuestopersonal.objects.filter(
         periodo=qs.period_id.pk
     )
@@ -353,6 +580,10 @@ def scenario_payment_payroll(request, id):
     ctx = {
         'qs': qs,
         'details': details,
+        'qs_sum_perm': qs_sum_perm,
+        'qs_sum_temp': qs_sum_temp,
+        'sum_total_perm': sum_total_perm,
+        'sum_total_temp': sum_total_temp,
         'budgeted': budgeted,
         'qs_budgeted_for_scenario': qs_budgeted_for_scenario
     }

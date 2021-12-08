@@ -16,6 +16,8 @@
 {% include 'payment_payroll/scenario_clone.html' %}
 {% include 'payment_payroll/scenario_edit.html' %}
 {% include 'payment_payroll/scenario_delete.html' %}
+{% include 'payment_payroll/scenario_edit_percentages.html' %}
+{% include 'payment_payroll/scenario_edit_percentages_ceco.html' %}
 {% include 'payment_payroll/scenario_edit_permanent_amount_initial.html' %}
 <div class="container-fluid mt-1">
   <div class="card card-template">
@@ -49,6 +51,7 @@
             >Eliminar
             </button>
             <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+            <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalScenarioEditPercentage">Aumentos</button>
             <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalScenarioEdit">Editar</button>
           </div>
         </div>
@@ -129,6 +132,12 @@
           alert('Debe seleccionar los items que desea agregar o quitar del escenario!!')
         }
       })
+      $('#submitScenarioEditPercentage').click(function(){
+        $('#idFormScenarioEditPercentage').submit();
+      })
+      $('#submitScenarioEditPercentageCeco').click(function(){
+        $('#idFormScenarioEditPercentageCeco').submit();
+      })
     })
   </script>
   <script>
@@ -145,6 +154,37 @@
         
         $('#editAmountSalaryScenarioModal').modal('show');
       })
+      $('.edit_scenario_percentage_ceco').click(function(){
+        let pk = $(this).data('ceco-pk')
+        let ceco = $(this).data('ceco')
+        let percentage_increase_january = $(this).data('percentage_increase_january')
+        let percentage_increase_february = $(this).data('percentage_increase_february')
+        let percentage_increase_march = $(this).data('percentage_increase_march')
+        let percentage_increase_april = $(this).data('percentage_increase_april')
+        let percentage_increase_may = $(this).data('percentage_increase_may')
+        let percentage_increase_june = $(this).data('percentage_increase_june')
+        let percentage_increase_july = $(this).data('percentage_increase_july')
+        let percentage_increase_august = $(this).data('percentage_increase_august')
+        let percentage_increase_september = $(this).data('percentage_increase_september')
+        let percentage_increase_october = $(this).data('percentage_increase_october')
+        let percentage_increase_november = $(this).data('percentage_increase_november')
+        let percentage_increase_december = $(this).data('percentage_increase_december')
+        $("#id_percentage_increase_ceco_january").val(percentage_increase_january);
+        $("#id_percentage_increase_ceco_february").val(percentage_increase_february);
+        $("#id_percentage_increase_ceco_march").val(percentage_increase_march);
+        $("#id_percentage_increase_ceco_april").val(percentage_increase_april);
+        $("#id_percentage_increase_ceco_may").val(percentage_increase_may);
+        $("#id_percentage_increase_ceco_june").val(percentage_increase_june);
+        $("#id_percentage_increase_ceco_july").val(percentage_increase_july);
+        $("#id_percentage_increase_ceco_august").val(percentage_increase_august);
+        $("#id_percentage_increase_ceco_september").val(percentage_increase_september);
+        $("#id_percentage_increase_ceco_october").val(percentage_increase_october);
+        $("#id_percentage_increase_ceco_november").val(percentage_increase_november);
+        $("#id_percentage_increase_ceco_december").val(percentage_increase_december);
+        $('#id_percentage_increase_ceco').val(pk)
+        $('#title_increase_ceco').text(`Editar aumento selectivo de Ceco: ${ceco}`)
+        $('#editScenarioPercentageCecoModal').modal('show');
+      })
     })
   </script>
 
@@ -159,6 +199,7 @@
       if('{{request.GET.option}}' === 'open_calculations_modal') openEditModal()
       $('#openModalScenarioEdit').click(openEditModal)
       $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalScenarioEditPercentage').click(()=> $('#editScenarioPercentageModal').modal('show'))
       $('#openModalChangeScenario').click(()=> {
         let url = $('#openModalChangeScenario').data('url')
         let text = $('#openModalChangeScenario').data('text')

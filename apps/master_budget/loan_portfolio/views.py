@@ -414,10 +414,12 @@ def scenario_loan_portfolio(request, id):
                         _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
                     )
                 _upd.commission_amount = calculations.commission_amount(
-                    qs.annual_growth_amount, dc(_upd.percent_growth), dc(_upd.commission_percentage)
+                    qs.annual_growth_amount,
+                    dc(_upd.percent_growth),
+                    dc(_upd.commission_percentage)
                 )
                 _upd.amount_arrears = calculations.amount_arrears(
-                    _upd.total_interest, _upd.percentage_arrears
+                    _upd.new_amount, _upd.percentage_arrears
                 )
                 _upd.default_interest = calculations.default_interest(
                     _upd.amount_arrears, _upd.rate
