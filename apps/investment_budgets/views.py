@@ -578,6 +578,7 @@ def transfers_investment(request):
         origin = json.loads(request.POST.get('origin'))
         investment_destination = request.POST.get('investment_destination')
         period = request.POST.get('period_origin')
+        date_transaction = request.POST.get('date_transaction')
         qs_destination = get_object_or_404(
             Detallexpresupuestoinversion,
             pk=investment_destination
@@ -605,7 +606,7 @@ def transfers_investment(request):
             transc.montoorigendespues = float(qs_origin.presupuestadocontraslado)
             transc.montodestinodespues = float(qs_destination.presupuestadocontraslado) + increases_in # NOQA
             transc.fechacreacion = dt.datetime.today()
-            transc.fecha = dt.datetime.today()
+            transc.fecha = date_transaction
             transc.save()
 
         total_budget = float(qs_destination.presupuestadocontraslado) + total_amount
