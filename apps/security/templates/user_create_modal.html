@@ -27,6 +27,21 @@
             </div>
             {% endfor %}
 
+            <div class="col-md-6">
+              <div class="group mb-3">
+                <label for="id_user_validate_ad">Validación</label>
+                <select
+                  name="user_validate_ad"
+                  class="form-select"
+                  style="width: 100%;"
+                  id="id_user_validate_ad"
+                >
+                  {% for key, value in status %}
+                    <option value="{{key}}">{{value}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
             <div class="col-md-12">
               <div class="group mb-3">
                 <label for="id_groups">Roles</label>

@@ -18,7 +18,7 @@
         <div class="card-header">
           <div class="row mb-2">
             <div class="col-md-12 d-flex align-items-center">
-              <h1 class="card-title fs-4 fw-light mb-0">Editar Usuario</h1>
+              <h1 class="card-title fs-4 fw-light mb-0">Establecer Contraseña a usuario: {{user}}</h1>
             </div>
           </div>
         </div>
@@ -41,38 +41,6 @@
                 </div>
               </div>
               {% endfor %}
-              <div class="col-md-6">
-                <div class="group mb-3">
-                  <label for="id_user_validate_ad">Validación</label>
-                  <select
-                    name="user_validate_ad"
-                    class="form-select"
-                    style="width: 100%;"
-                    id="id_user_validate_ad"
-                  >
-                    {% for key, value in status %}
-                      <option 
-                        {% if key == user.profile.user_validate_ad %}selected{% endif %}
-                        value="{{key}}">{{value}}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <div class="col-md-12">
-                <div class="group mb-3">
-                  <label for="id_groups">Roles</label>
-                  <select name="groups[]" class="form-select select2-style-roles" multiple="multiple"
-                    style="width: 100%;" id="id_groups">
-                    {% for group in groups %}
-                    <option
-                      value="{{group.pk}}"
-                      {% if group in user.groups.all %} selected {% endif %}
-                    >{{group.name}}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
             </div>
             <button type="submit" class="btn btn-safa">Aceptar</button>
           </form>

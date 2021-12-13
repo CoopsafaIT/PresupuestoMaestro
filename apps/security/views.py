@@ -16,7 +16,9 @@ from django.contrib import messages
 from django.db.models import Q
 
 from apps.main.models import ResponsablesPorCentrosCostos
+from .models import UserProfile
 from apps.security.forms import UserRegisterForm, UseEditForm
+from .forms import AdminResetPassword
 from ppto_safa.settings import (
     VALIDATE_AD,
     LOGIN_REDIRECT_URL,
@@ -26,6 +28,7 @@ from ppto_safa.settings import (
 )
 from apps.security.forms import ResponsablesPorCentrosCostosForm
 from utils.pagination import pagination
+from utils.constants import STATUS_LOGIN_VALIDATION
 
 
 def login(request):
@@ -71,7 +74,7 @@ def login(request):
             password = request.POST.get("password", "")
             user_query = User.objects.get(first_name=first_name)
             username = user_query.username
-            if VALIDATE_AD:
+            if VALIDATE_AD and user_query.profile.user_validate_ad:
                 ad_result = _validate_active_directory(username, password)
                 if ad_result.get('status') is not True:
                     messages.warning(
@@ -81,6 +84,11 @@ def login(request):
                     return render(request, "login.html", {})
                 user_query.set_password(password)
                 user_query.save()
+
+            if VALIDATE_AD and not user_query.profile.user_validate_ad:
+                if _authenticate(username, password) is not True:
+                    messages.warning(request, "Credenciales invalidas!")
+                    return render(request, "login.html", {})
 
             if _authenticate(username, password) is not True:
                 messages.warning(request, "Credenciales invalidas!")
@@ -116,6 +124,12 @@ def users(request):
                 raise ValidationError(f'{ form.errors.as_text() }')
 
             user = form.save()
+            user.refresh_from_db()
+
+            profile = UserProfile.objects.get(pk=user.pk)
+            profile.user_validate_ad = request.POST.get('user_validate_ad')
+            profile.save()
+
             for group_id in request.POST.getlist('groups[]'):
                 group = Group.objects.get(id=group_id)
                 group.user_set.add(user)
@@ -136,13 +150,14 @@ def users(request):
     users = User.objects.filter(
         Q(username__icontains=q) | Q(email__icontains=q) |
         Q(first_name__icontains=q) | Q(last_name__icontains=q)
-    )
+    ).order_by('-is_active', '-date_joined')
     groups = Group.objects.all()
     result = pagination(qs=users, page=page)
     ctx = {
         'users': result,
         'groups': groups,
         'form': form,
+        'status': STATUS_LOGIN_VALIDATION
     }
     return render(request, 'users.html', ctx)
 
@@ -190,6 +205,11 @@ def user(request, id):
                 user.last_name = form.cleaned_data.get('last_name')
                 user.email = form.cleaned_data.get('email')
                 user.save()
+
+                profile = UserProfile.objects.get(pk=user.pk)
+                profile.user_validate_ad = request.POST.get('user_validate_ad')
+                profile.save()
+
                 user.groups.clear()
                 for group_id in request.POST.getlist('groups[]'):
                     group = Group.objects.get(id=group_id)
@@ -215,8 +235,37 @@ def user(request, id):
         'form': form,
         'user': user,
         'groups': groups,
+        'status': STATUS_LOGIN_VALIDATION
     }
     return render(request, 'user.html', ctx)
+
+
+@login_required()
+@permission_required(
+    'security.puede_editar_usuarios', raise_exception=True
+)
+def user_reset_pwd(request, id):
+    user = get_object_or_404(User, pk=id)
+    form = AdminResetPassword(user)
+    if request.method == 'POST':
+        form = AdminResetPassword(user, request.POST)
+        if not form.is_valid():
+            messages.warning(
+                request,
+                f'Formulario no válido: {form.errors.as_text()}'
+            )
+        else:
+            form.save()
+            messages.success(
+                request, 'Contraseña establecida con éxito!'
+            )
+            return redirect(users)
+
+    ctx = {
+        'form': form,
+        'user': user
+    }
+    return render(request, 'user_reset_pwd.html', ctx)
 
 
 @login_required()

@@ -57,6 +57,13 @@ STAFF_POSITIONS = {
 }
 
 
+STATUS_LOGIN_VALIDATION = (
+    ('', '-- Seleccione Estado --'),
+    (True, 'Validar credenciales con Active Directory'),
+    (False, 'Validar con contraseña interna')
+)
+
+
 STATUS = (
     ('', '-- Seleccione Estado --'),
     (True, 'Activo'),
