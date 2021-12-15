@@ -25,4 +25,6 @@
     "python.linting.enabled": true,
     "peacock.color": "#007fff",
     "workbench.editor.wrapTabs": true,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs":"active"
 }

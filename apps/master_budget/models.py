@@ -1,8 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from apps.main.models import Periodo
-from utils.constants import STATUS
+from utils.constants import (
+    STATUS,
+    TYPE_COMPLEMENTARY_PROJECTION,
+    MONTH_CHOICES
+)
 
 
 class CommentMixin(models.Model):
@@ -838,3 +844,75 @@ class MasterParameters(AuditDataMixin):
 
     def __str__(self):
         return self.date_base.strftime("%d/%m/%Y")
+
+
+@receiver(post_save, sender=MasterParameters)
+def post_save_master_parameters(sender, instance, created, **kwargs):
+    # if created:
+    #     pass
+    catalog_list = CatalogLossesEarnings.objects.all()
+    for catalog in catalog_list:
+        for month in range(1, 13):
+            if not LossesEarningsComplementaryProjection.objects.filter(
+                category_id=catalog.pk, period_id=instance.period_id.pk, month=month
+            ).exists():
+                LossesEarningsComplementaryProjection.objects.create(
+                    category_id=catalog, period_id=instance.period_id, month=month
+                )
+
+
+class CatalogLossesEarnings(models.Model):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    type = models.CharField(
+        db_column="Tipo", max_length=1, null=True,
+        blank=True, choices=TYPE_COMPLEMENTARY_PROJECTION
+    )
+    method = models.CharField(
+        db_column="Metodo", max_length=1, null=True, blank=True
+    )
+    level_one = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel1"
+    )
+    level_two = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel2"
+    )
+    level_three = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel3"
+    )
+    level_four = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel4"
+    )
+    order = models.IntegerField(
+        null=True, blank=True, db_column="Orden"
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroPerdidasGananciasCatalogo"
+        ordering = ("type", "order", )
+
+
+class LossesEarningsComplementaryProjection(models.Model):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    period_id = models.ForeignKey(
+        Periodo, models.DO_NOTHING, null=True, blank=True, db_column="PeriodoId"
+    )
+    category_id = models.ForeignKey(
+        CatalogLossesEarnings, models.DO_NOTHING, db_column="CategoriaId"
+    )
+    month = models.IntegerField(
+        null=True, blank=True, db_column="Mes", choices=MONTH_CHOICES
+    )
+    amount = models.DecimalField(
+        db_column="Saldo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroPerdidasGananciasProyeccionComplementaria"
+        ordering = ("category_id", "-month",)

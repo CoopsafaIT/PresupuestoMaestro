@@ -406,3 +406,9 @@ OTHERS_ASSETS_CRITERIA = (
     (3, 'Porcentaje de Disminución'),
     (4, 'Nuevo Valor'),
 )
+
+
+TYPE_COMPLEMENTARY_PROJECTION = (
+    ('I', 'Ingresos'),
+    ('P', 'Perdidas'),
+)
