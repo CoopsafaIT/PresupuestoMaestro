@@ -1,0 +1,74 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+
+{% block title %}Reporte de Perdidas y Ganancias proyección complementaria {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Reporte de Perdidas y Ganancias proyección complementaria</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-12">
+          <h5 class="card-title fw-light fs-4">Reporte de Perdidas y Ganancias proyección complementaria</h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Periodo</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in data %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <!-- <td>{{item.PeriodoId}}</td> -->
+                  <td>{{item.DescPeriodo}}</td>
+                  <td class="text-center">
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <a
+                        href="{% url 'profit_loss_report_complementary_projection_detail' item.PeriodoId  %}?type=G"
+                        class="btn btn-sm btn-outline-safa me-2 px-3"
+                      > Proyección Ganancias
+                      </a>
+                      <a 
+                      href="{% url 'profit_loss_report_complementary_projection_detail' item.PeriodoId  %}?type=P"
+                        class="btn btn-sm btn-outline-danger me-2 px-3"
+                      > Proyección Perdidas
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center fs-5">No Data</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+
+<script>
+  $(document).ready(()=>{
+  })
+</script>
+{% endblock javascript %}

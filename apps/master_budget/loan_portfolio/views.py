@@ -188,7 +188,9 @@ def scenarios_loan_portfolio(request):
                 result = execute_sql_query(query)
                 if result.get('status') == 'ok':
                     data = result.get('data')
-                    amount = data[0].get('SaldoCartera')
+                    amount = 0
+                    if type(data) == list and len(data) > 0:
+                        amount = data[0].get('SaldoCartera')
                     _new.base_amount = amount
                     _new.annual_growth_percentage = 0
                     _new.annual_growth_amount = 0

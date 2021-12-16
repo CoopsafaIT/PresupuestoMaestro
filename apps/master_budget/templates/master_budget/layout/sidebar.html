@@ -70,14 +70,17 @@
         <li><a class="link_name" href="{% url 'scenarios_payment_payroll' %}">Planilla</a></li>
       </ul>
     </li>
-
     <li>
-      <a href="{% url 'dashboard' %}" class="institutional-golden-color">
-        <i class="bi bi-file-bar-graph"></i>
-        <span class="link_name">Reportes</span>
-      </a>
-      <ul class="sub-menu blank">
-        <li><a class="link_name" href="{% url 'dashboard' %}">Reportes</a></li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-file-bar-graph"></i>
+          <span class="link_name">Reportes</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Reportes </a></li>
+        <li><a href="{% url 'profit_loss_report_complementary_projection' %}">P&G Proyección Compl.</a></li>
       </ul>
     </li>
 
@@ -119,10 +122,6 @@
         <li><a href="{% url 'budget_register' %}">Prestamos</a></li>
       </ul>
     </li>
-
-    
-
-
     <li>
       <div class="profile-details">
         <div class="profile-content">
