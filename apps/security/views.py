@@ -37,13 +37,8 @@ def login(request):
         conn.protocol_version = 3
         conn.set_option(ldap.OPT_REFERRALS, 0)
         try:
-            print(f'{LDAP_LOGIN}\\{username}')
-            print(password)
-            print(f'{LDAP_LOGIN}\\{username}')
-            print(f'{password}')
             conn.simple_bind_s(f'{LDAP_LOGIN}\\{username}', password)
         except ldap.INVALID_CREDENTIALS as e:
-            print(e)
             return {'status': False, 'message': "Invalid credentials"}
         except ldap.SERVER_DOWN:
             return {'status': False, 'message': "Server down"}

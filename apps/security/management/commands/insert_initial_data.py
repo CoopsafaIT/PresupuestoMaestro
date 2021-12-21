@@ -7,6 +7,7 @@ from apps.master_budget import models as master_budget_models
 from utils.initial_data import (
     FINANCIAL_INVESTMENT,
     SAVINGS_LIABILITIES_CATEGORY,
+    LIABILITIES_LOANS_CATEGORY,
     NON_PERFORMING_ASSETS_CATEGORY,
     NON_PERFORMING_ASSETS_CATEGORY_PER_ACCOUNTS,
     OTHERS_ASSETS_CATEGORY,
@@ -93,6 +94,20 @@ class Command(BaseCommand):
                     f'Savings Liabilities Category Updated, identifier: {obj.identifier}'
                 )
 
+        for item in LIABILITIES_LOANS_CATEGORY:
+            obj, created = passives_models.LiabilitiesLoansCategory.objects.update_or_create( # NOQA
+                identifier=item.pop('identifier'),
+                defaults=item,
+            )
+            if created:
+                print(
+                    f'Liabilities Loans Category Created, identifier: {obj.identifier}'
+                )
+            else:
+                print(
+                    f'Savings Liabilities Category Updated, identifier: {obj.identifier}'
+                )
+
         for item in NON_PERFORMING_ASSETS_CATEGORY:
             obj, created = non_performing_models.NonPerformingAssetsCategory.objects.update_or_create( # NOQA
                 identifier=item.pop('identifier'),
@@ -122,6 +137,6 @@ class Command(BaseCommand):
                 )
 
         _insert_non_performing_assets_category_map_account()
-        _insert_initial_catalog_complementary_projection()
+        # _insert_initial_catalog_complementary_projection()
 
         self.stdout.write(self.style.SUCCESS("Command execution ended Successfully!!"))

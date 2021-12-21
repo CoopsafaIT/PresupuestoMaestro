@@ -454,8 +454,25 @@ def scenario_loan_portfolio(request, id):
             return redirect('scenarios_loan_portfolio')
 
     qs_detail = LoanPortfolio.objects.filter(scenario_id=qs.pk).order_by('month')
+    qs_sum = LoanPortfolio.objects.filter(scenario_id=qs.pk).extra({
+        'MontoInicial': 'SUM(MontoInicial)',
+        'MontoCrecimiento': 'SUM(MontoCrecimiento)',
+        'MontoNuevo': 'SUM(MontoNuevo)',
+        'CuotaNivelada': 'SUM(CuotaNivelada)',
+        'InteresesTotales': 'SUM(InteresesTotales)',
+        'PagosCapital': 'SUM(PagosCapital)',
+        'MontoMora': 'SUM(MontoMora)',
+        'InteresesMoratorios': 'SUM(InteresesMoratorios)',
+        'MontoComision': 'SUM(MontoComision)',
+    }).values(
+        'MontoInicial', 'MontoCrecimiento', 'MontoNuevo',
+        'CuotaNivelada', 'InteresesTotales', 'PagosCapital',
+        'MontoMora', 'InteresesMoratorios', 'MontoComision'
+    )
+
     ctx = {
         'qs': qs,
+        'qs_sum': qs_sum[0],
         'qs_detail': qs_detail,
         'form_clone': ScenarioCloneForm()
     }
@@ -744,8 +761,20 @@ def scenario_financial_investments(request, id):
             return redirect('scenarios_financial_investments')
 
     qs_detail = FinancialInvestments.objects.filter(scenario_id=qs.pk).order_by('month')
+    qs_sum = FinancialInvestments.objects.filter(scenario_id=qs.pk).extra({
+        'MontoInicial': 'SUM(MontoInicial)',
+        'MontoAumento': 'SUM(MontoAumento)',
+        'MontoNuevo': 'SUM(MontoNuevo)',
+        'MontoDisminucion': 'SUM(MontoDisminucion)',
+        'MontoInteresGanado': 'SUM(MontoInteresGanado)',
+        'MontoCuentasPorCobrar': 'SUM(MontoCuentasPorCobrar)'
+    }).values(
+        'MontoInicial', 'MontoAumento', 'MontoNuevo',
+        'MontoDisminucion', 'MontoInteresGanado', 'MontoCuentasPorCobrar'
+    )
     ctx = {
         'qs': qs,
+        'qs_sum': qs_sum[0],
         'qs_detail': qs_detail,
         'form_clone': FinancialInvestmentsScenarioCloneForm(),
     }

@@ -685,7 +685,6 @@ def transfers_expenses(request):
         cost_transfer = request.POST.get('cost_transfer')
         indirect_transfer = request.POST.get('indirect_transfer')
         expenses_transfer = request.POST.get('expenses_transfer')
-
         if not not expenses_transfer:
             expenses_transfer = json.loads(expenses_transfer)
             budget_origin_qs = get_object_or_404(
@@ -696,7 +695,6 @@ def transfers_expenses(request):
             )
             amount = Decimal(expenses_transfer.get('amount'))
             per_month = Decimal(amount / 12)
-
             budget_origin_qs.montooriginal = budget_origin_qs.montooriginal - amount
             budget_origin_qs.enero = budget_origin_qs.enero - per_month
             budget_origin_qs.febrero = budget_origin_qs.febrero - per_month
@@ -738,6 +736,7 @@ def transfers_expenses(request):
             history.codorigengastos = budget_origin_qs
             history.coddestinogastos = budget_destination_qs
             history.montoorigengastos = amount
+            history.montodestino = amount
             history.codusuario = request.user
             history.fechacreacion = now
             history.save()
@@ -776,6 +775,7 @@ def transfers_expenses(request):
             history.codorigenindirecto = budget_origin_qs
             history.coddestinoindirecto = budget_destination_qs
             history.montoorigenindirecto = amount
+            history.montodestino = amount
             history.codusuario = request.user
             history.fechacreacion = now
             history.save()
@@ -813,6 +813,7 @@ def transfers_expenses(request):
             history.codorigencostos = budget_origin_qs
             history.coddestinocostos = budget_destination_qs
             history.montoorigencostos = amount
+            history.montodestino = amount
             history.codusuario = request.user
             history.fechacreacion = now
             history.save()

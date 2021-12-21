@@ -152,7 +152,6 @@ def indirect_budget_register(request):
             period = request.POST.get('period')
             value = request.POST.get('value', '0').replace(',', '')
             result = try_convert_float(value)
-            print(result)
             if type(result).__name__ == 'str':
                 result = 0
 

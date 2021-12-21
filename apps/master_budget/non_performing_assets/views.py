@@ -612,6 +612,4 @@ def scenario_global_non_performing_assets(parameter_id):
                 'new_total_net_balance': other_assets.get('total_budgeted')
             })
 
-    print(global_non_performing_assets)
-
     return global_non_performing_assets
