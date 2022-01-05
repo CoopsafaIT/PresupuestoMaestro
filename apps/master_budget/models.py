@@ -7,7 +7,8 @@ from apps.main.models import Periodo
 from utils.constants import (
     STATUS,
     TYPE_COMPLEMENTARY_PROJECTION,
-    MONTH_CHOICES
+    MONTH_CHOICES,
+    SURPLUS_DISTRIBUTION_CRITERIA,
 )
 
 
@@ -848,8 +849,6 @@ class MasterParameters(AuditDataMixin):
 
 @receiver(post_save, sender=MasterParameters)
 def post_save_master_parameters(sender, instance, created, **kwargs):
-    # if created:
-    #     pass
     catalog_list = CatalogLossesEarnings.objects.all()
     for catalog in catalog_list:
         for month in range(1, 13):
@@ -916,3 +915,46 @@ class LossesEarningsComplementaryProjection(models.Model):
         default_permissions = []
         db_table = "pptoMaestroPerdidasGananciasProyeccionComplementaria"
         ordering = ("category_id", "-month",)
+
+
+class SurplusDistributionCategory(models.Model):
+    """Model definition for SurplusDistribution."""
+    id = models.AutoField(primary_key=True, db_column="Id")
+
+    class Meta:
+        """Meta definition for SurplusDistribution."""
+        default_permissions = []
+        db_table = "pptoMaestroDistribucionExcedentesCategoria"
+
+
+class SurplusDistribution(models.Model):
+    """Model definition for SurplusDistribution."""
+    id = models.AutoField(primary_key=True, db_column="Id")
+    # period_id = models.ForeignKey(
+    #     Periodo, models.DO_NOTHING, null=True, blank=True, db_column="PeriodoId"
+    # )
+    # title = models.CharField(db_column="Titulo", null=True, blank=True, max_length=50)
+    # criteria = models.CharField(
+    #     db_column="Criterio",
+    #     null=True,
+    #     blank=True,
+    #     choices=SURPLUS_DISTRIBUTION_CRITERIA
+    # )
+    # percentage = models.FloatField(
+    #     db_column="Porcentaje", null=True, blank=True, default=0
+    # )
+    # value = models.DecimalField(
+    #     db_column="Valor",
+    #     null=True,
+    #     blank=True,
+    #     max_digits=23,
+    #     decimal_places=2,
+    #     default=0
+    # )
+    # type = ''
+
+
+    class Meta:
+        """Meta definition for SurplusDistribution."""
+        default_permissions = []
+        db_table = "pptoMaestroDistribucionExcedentes"

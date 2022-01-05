@@ -708,10 +708,11 @@ def transfers_expenses(request):
             budget_origin_qs.octubre = budget_origin_qs.octubre - per_month
             budget_origin_qs.noviembre = budget_origin_qs.noviembre - per_month
             budget_origin_qs.diciembre = budget_origin_qs.diciembre - per_month
-            budget_origin_qs.diciembre = budget_origin_qs.diciembre - per_month
             budget_origin_qs.fechamodificacion = now
             budget_origin_qs.usuariomodificacion = request.user.pk
             budget_origin_qs.save()
+            print(budget_origin_qs.pk)
+            print(budget_destination_qs.pk)
 
             budget_destination_qs.montooriginal = budget_destination_qs.montooriginal + amount # NOQA
             budget_destination_qs.enero = budget_destination_qs.enero + per_month
@@ -725,7 +726,6 @@ def transfers_expenses(request):
             budget_destination_qs.septiembre = budget_destination_qs.septiembre + per_month
             budget_destination_qs.octubre = budget_destination_qs.octubre + per_month
             budget_destination_qs.noviembre = budget_destination_qs.noviembre + per_month
-            budget_destination_qs.diciembre = budget_destination_qs.diciembre + per_month
             budget_destination_qs.diciembre = budget_destination_qs.diciembre + per_month
             budget_destination_qs.fechamodificacion = now
             budget_destination_qs.usuariomodificacion = request.user.pk

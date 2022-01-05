@@ -407,8 +407,9 @@ def control_budgeted_cost_centers(request):
             f"inner join PresupuestoSafa.dbo.Proyectos PR on PR.CodProyecto = "
             f"A.CodProyecto INNER JOIN PresupuestoSafa.dbo.CentrosCosto CC on "
             f"C.CodCentroCosto = cc.CodCentroCosto Where  CodTipoPresupuesto=1 and "
-            f"A.CodPeriodo = {period} group by cc.DescCentroCosto,PR.DescProyecto , "
-            f"CC.CodCentroCosto order by DescCentroCosto"
+            f"A.CodPeriodo = {period} and C.Habilitado=1 "
+            f"group by cc.DescCentroCosto,PR.DescProyecto ,CC.CodCentroCosto "
+            f"order by DescCentroCosto"
         )
         result = execute_sql_query(query)
         if result.get('status') == 'ok':

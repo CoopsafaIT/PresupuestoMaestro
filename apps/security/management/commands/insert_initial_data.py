@@ -137,6 +137,6 @@ class Command(BaseCommand):
                 )
 
         _insert_non_performing_assets_category_map_account()
-        # _insert_initial_catalog_complementary_projection()
+        _insert_initial_catalog_complementary_projection()
 
         self.stdout.write(self.style.SUCCESS("Command execution ended Successfully!!"))

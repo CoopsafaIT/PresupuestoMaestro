@@ -412,3 +412,9 @@ TYPE_COMPLEMENTARY_PROJECTION = (
     ('I', 'Ingresos'),
     ('P', 'Perdidas'),
 )
+
+
+SURPLUS_DISTRIBUTION_CRITERIA = (
+    (1, 'Porcentaje'),
+    (2, 'Monto'),
+)
