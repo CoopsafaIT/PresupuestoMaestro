@@ -1,7 +1,7 @@
 from decimal import Decimal as dc
 import numpy_financial as npf
 
-
+ 
 class LoanPortfolioCalculations():
 
     @staticmethod
@@ -24,8 +24,10 @@ class LoanPortfolioCalculations():
         return float(amount_initial) + float(amount_growth) - float(principal_payments)
 
     @staticmethod
-    def commission_amount(amount_growth, commission_percentage):
-        return amount_growth * (commission_percentage / 100)
+    def commission_amount(annual_growth_amount, percent_growth, commission_percentage):
+        month_growth = annual_growth_amount * (percent_growth/100)
+        percentage = commission_percentage / 100
+        return month_growth * percentage
 
     @staticmethod
     def amount_arrears(new_amount, percentage_arrears):
@@ -33,4 +35,5 @@ class LoanPortfolioCalculations():
 
     @staticmethod
     def default_interest(amount_arrears, rate):
-        return float(amount_arrears) * (rate*30/36000)
+        amount_arrears = float(amount_arrears)
+        return (amount_arrears)*rate*30/36000

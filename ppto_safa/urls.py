@@ -2,7 +2,11 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
-from django.conf.urls import handler404, handler500, handler403
+from django.conf.urls import (
+    handler404,
+    handler500,
+    handler403
+)
 
 from apps.main.views import error_500, error_404, error_403
 
@@ -26,6 +30,14 @@ urlpatterns = [
     path(
         'master-budget/passives/',
         include('apps.master_budget.passives.urls')
+    ),
+    path(
+        'master-budget/non-performing-assets/',
+        include('apps.master_budget.non_performing_assets.urls')
+    ),
+    path(
+        'master-budget/payment-payroll/',
+        include('apps.master_budget.payment_payroll.urls')
     ),
 ] + static(
     settings.MEDIA_URL,

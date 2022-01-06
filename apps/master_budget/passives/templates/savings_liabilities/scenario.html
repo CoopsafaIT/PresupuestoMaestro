@@ -38,7 +38,7 @@
               id="openModalChangeScenario"
               type="button"
               class="btn btn-outline-dark btn-sm float-end"
-              data-url="{% url 'scenario_loan_portfolio' qs.pk %}"
+              data-url="{% url 'scenario_savings_liabilities' qs.pk %}"
               data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
             >
             {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
@@ -46,7 +46,7 @@
             <button
               id="openModalDeleteScenario"
               type="button" 
-              data-url="{% url 'scenario_loan_portfolio' qs.pk %}"
+              data-url="{% url 'scenario_savings_liabilities' qs.pk %}"
               class="btn btn-outline-dark btn-sm float-end"
             >Eliminar
             </button>

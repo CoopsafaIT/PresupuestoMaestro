@@ -1,0 +1,91 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="editScenarioModal" tabindex="-1" aria-labelledby="editScenarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+      </div>
+      <div class="modal-body">
+        <form method="post" id="idFormScenarioEdit">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="edit-budgeted">
+          <input type="hidden" name="remove" id="remove_budgeted_object">
+          <input type="hidden" name="add" id="add_budgeted_object">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered table-stripped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Centro Costo</th>
+                      <th class="text-center">Mes</th>
+                      <th class="text-center">Puesto</th>
+                      <th class="text-center">Sueldo</th>
+                      <th class="text-center">Cantidad</th>
+                      <th class="text-center">Tipo</th>
+                      <th class="text-center">Justificación</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in budgeted %}
+                      <tr {% if item.pk in qs_budgeted_for_scenario %} class="table-success" {% endif %}>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{item.codcentrocosto}}</td>
+                        <td>{{item.mes}} {% if item.tipo == 1 %}  
+                          <i class="bi bi-chevron-right text-danger"></i>
+                          {{item.mesfin}}{% endif %}
+                        </td>
+                        <td>{{item.codpuesto}}</td>
+                        <td>
+                            {% if item.tipo == 2 %}
+                            {{item.codpuesto.sueldopermanente|intcomma}}
+                            {% else %}
+                            {{item.codpuesto.sueldotemporal|intcomma}}
+                            {% endif %}
+                        </td>
+                        <td>{{item.cantidad}}</td>
+                        <td>{% if item.tipo == 1 %} Temporal {% else %} Permanente {% endif %}</td>
+                        <td>{{item.justificacion|default:''}}</td>
+                        <td>
+                          {% if item.pk in qs_budgeted_for_scenario %}
+                            <input
+                              type="checkbox"
+                              class="btn-check items_remove"
+                              name="items_remove"
+                              id="remove__{{item.pk}}"
+                              autocomplete="off"
+                              data-value="{{item.pk}}"
+                              value="{{item.pk}}"
+                            >
+                            <label data-bs-toggle="tooltip" data-bs-placement="top" title="Quitar de escenario" class="btn btn-outline-danger" for="remove__{{item.pk}}"><i class="bi bi-x-lg"></i></label>
+                          {% else %}  
+                            <input
+                              type="checkbox"
+                              class="btn-check items_add"
+                              name="items_add"
+                              id="add__{{item.pk}}"
+                              autocomplete="off"
+                              data-value="{{item.pk}}"
+                              value="{{item.pk}}"
+                            >
+                            <label data-bs-toggle="tooltip" data-bs-placement="top" title="Incluir en escenario" class="btn btn-outline-primary" for="add__{{item.pk}}"><i class="bi bi-plus-lg"></i></label>
+                          {% endif %}  
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-outline-safa" id="submitScenarioEdit">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

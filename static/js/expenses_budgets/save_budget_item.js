@@ -44,11 +44,12 @@ $(document).ready(() => {
 
     if (resp.data[0].estado == 1) {
       $(`*[data-td="td-id-${resp.data[0].pk}"]`).addClass('td-border-success');
+      $(`.item-secondary-${resp.data[0].pk}`).removeClass('btn-secondary').addClass('btn-success')
     }
   }
 
   const handleSaveError = (e) => {
     console.log(e);
-    alert("No se pudo guardar correctamente linea presupuestaria")
+    alert("No se pudo guardar correctamente linea presupuestaria");
   }
 })

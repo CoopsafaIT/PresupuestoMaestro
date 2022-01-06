@@ -1,0 +1,183 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="editScenarioPercentageCecoModal" tabindex="-1" aria-labelledby="editScenarioPercentageCecoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="title_increase_ceco">Porcentaje mensual de aumento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="idFormScenarioEditPercentageCeco">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="edit-percentage-ceco">
+          <input type="hidden" name="ceco_id" value="" id="id_percentage_increase_ceco">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered table-stripped">
+                  <thead>
+                    <tr>
+                      <th>Ene</th>
+                      <th>Feb</th>
+                      <th>Mar</th>
+                      <th>Abr</th>
+                      <th>May</th>
+                      <th>Jun</th>
+                      <th>Jul</th>
+                      <th>Ago</th>
+                      <th>Sep</th>
+                      <th>Oct</th>
+                      <th>Nov</th>
+                      <th>Dic</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_january" 
+                          id="id_percentage_increase_ceco_january"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_february" 
+                          id="id_percentage_increase_ceco_february"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_march" 
+                          id="id_percentage_increase_ceco_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_april" 
+                          id="id_percentage_increase_ceco_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_may" 
+                          id="id_percentage_increase_ceco_may"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_june" 
+                          id="id_percentage_increase_ceco_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_july" 
+                          id="id_percentage_increase_ceco_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_august" 
+                          id="id_percentage_increase_ceco_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_september" 
+                          id="id_percentage_increase_ceco_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_october" 
+                          id="id_percentage_increase_ceco_october"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_november" 
+                          id="id_percentage_increase_ceco_november"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          step="any"
+                          value="0"
+                          class="form-control"
+                          name="percentage_increase_december" 
+                          id="id_percentage_increase_ceco_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-outline-safa" id="submitScenarioEditPercentageCeco">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

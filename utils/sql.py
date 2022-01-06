@@ -19,6 +19,23 @@ def execute_sql_query(query):
         cursor.close()
 
 
+def execute_sql_query_no_return(query):
+    try:
+        cursor = connection.cursor()
+        cursor.execute(query)
+        return {
+            'status': 'ok',
+            'data': ''
+        }
+    except Exception as e:
+        return {
+            'status': 'error',
+            'data': e.__str__()
+        }
+    finally:
+        cursor.close()
+
+
 def dictfetchall(cursor):
     columns = [col[0] for col in cursor.description]
     return [

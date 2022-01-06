@@ -1,6 +1,6 @@
 {% load static %}
 <form method="GET">
-<div class="row">
+<div class="row align-items-end justify-content-end">
   <div class="col-md-4">
     <div class="form-group">
       <select name="parameter" id="id_parameter" class="form-select">
@@ -11,6 +11,8 @@
       </select>
     </div>
   </div>
+  
+  {% if categories %}
   <div class="col-md-3">
     <div class="form-group">
       <select name="category" id="id_category" class="form-select">
@@ -21,6 +23,8 @@
       </select>
     </div>
   </div>
+  {% endif %}
+    
   <div class="col-md-3">
     <div class="form-group">
       <select name="status" id="id_status" class="form-select">

@@ -1,0 +1,56 @@
+{% load static %}
+{% load humanize %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered border-success" style="font-size: 0.9rem !important;">
+        <thead>
+          <tr style="background-color: #017224 !important; color: white;">
+            <th class="text-center">Concepto</th>
+            <th class="text-center">Cuenta</th>
+            <th class="text-center">Saldo a {{qs.parameter_id.date_base|date:'Y-m-d'}}</th>
+            <th class="text-center">Criterio</th>
+            <th class="text-center">Procentaje</th>
+            <th class="text-center">Nuevo Saldo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in qs_details %}
+            <tr>
+              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %} fw-bold">
+                {{item.category_id.name}}
+              </td>
+              <td
+                data-criteria="{{item.criteria}}"
+                data-comment="{{item.comment|default:''}}"
+                data-pk="{{item.pk}}"
+                data-category-name="{{item.category_name}}"
+                data-previous-balance="{{item.previous_balance}}"
+                data-previous-balance-commas="{{item.previous_balance|intcomma}}"
+                data-percentage="{{item.percentage}}"
+                data-new-balance="{{item.new_balance}}"
+                data-new-balance-commas="{{item.new_balance|intcomma}}"
+                style="cursor: pointer;"
+                class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %} fw-bold add_criteria"
+              >
+                {{item.category_name}}
+              </td>
+              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %}">
+                <span class="float-end">{{item.previous_balance|intcomma}}</span>
+              </td>
+              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %}">
+                <span class="float-end">{{item.get_criteria_display|default:''}}</span>
+              </td>
+              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %}">
+                <span class="float-end">{{item.percentage|intcomma}}</span>
+              </td>
+              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %}">
+                <span class="float-end">{{item.new_balance|intcomma}}</span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

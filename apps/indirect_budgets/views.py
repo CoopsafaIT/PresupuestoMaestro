@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Sum, F
 from openpyxl.utils.exceptions import InvalidFileException
+from decimal import Decimal as dc
 
 from apps.main.models import (
     Periodo,
@@ -134,7 +135,7 @@ def indirect_budget_register(request):
                         usuariomodificacion=request.user
                     )
 
-                messages.success(                    
+                messages.success(
                     request,
                     'Recalculo realizado con éxito'
                 )
@@ -153,6 +154,26 @@ def indirect_budget_register(request):
             result = try_convert_float(value)
             if type(result).__name__ == 'str':
                 result = 0
+
+            total = dict(Presupuestoindirecto.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).aggregate(
+                total_ejecutado_diciembre=Sum('ejecutadodiciembre'),
+                porcentaje=Sum('porcentaje'),
+                totalpresupuestado=Sum('total'),
+                proyeccion=Sum('proyeccion')
+            ))
+
+            Presupuestoindirecto.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).update(
+                porcentaje=F('ejecutadodiciembre') /dc(
+                    total['total_ejecutado_diciembre']
+                )*100
+            )
+
             Presupuestoindirecto.objects.filter(
                 codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
                 periodo=period

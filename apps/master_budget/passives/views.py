@@ -177,7 +177,7 @@ def scenario_savings_liabilities(request, id):
 
     def _calculate_interest_generated(amount_initial, new_amount, rate):
         total_amount = (amount_initial + new_amount) / 2
-        rate_monthly = rate / 12
+        rate_monthly = (rate/100) / 12
         return total_amount * dc(rate_monthly)
 
     def _save_scenario():
@@ -241,13 +241,13 @@ def scenario_savings_liabilities(request, id):
                 _upd.new_amount = _upd.amount_initial + _upd.amount_growth
                 _upd.rate = rate
                 _upd.total_interest = _calculate_interest_generated(
-                    _upd.amount_initial, _upd.amount_growth, _upd.rate
+                    _upd.amount_initial, _upd.new_amount, _upd.rate
                 )
                 _upd.save()
 
         elif request.POST.get('method') == 'change-status':
             if not qs.is_active:
-                FinancialInvestmentsScenario.objects.filter(
+                SavingsLiabilitiesScenario.objects.filter(
                     parameter_id=qs.parameter_id.pk,
                     category_id=qs.category_id.pk
                 ).update(is_active=False)
@@ -266,11 +266,21 @@ def scenario_savings_liabilities(request, id):
             qs.updated_by = request.user
             qs.save()
             messages.error(request, 'Escenario eliminado')
-            return redirect('scenarios_financial_investments')
+            return redirect('scenarios_savings_liabilities')
 
     qs_detail = SavingsLiabilities.objects.filter(scenario_id=qs.pk).order_by('month')
+    qs_sum = SavingsLiabilities.objects.filter(scenario_id=qs.pk).extra({
+        'MontoInicial': 'SUM(MontoInicial)',
+        'MontoCrecimiento': 'SUM(MontoCrecimiento)',
+        'MontoTotalCrecimiento': 'SUM(MontoTotalCrecimiento)',
+        'InteresesGenerado': 'SUM(InteresesGenerado)',
+    }).values(
+        'MontoInicial', 'MontoCrecimiento',
+        'MontoTotalCrecimiento', 'InteresesGenerado',
+    )
     ctx = {
         'qs': qs,
+        'qs_sum': qs_sum[0],
         'qs_detail': qs_detail,
         'form_clone': ScenarioCloneForm(),
     }
@@ -497,20 +507,24 @@ def scenario_liabilities_loans(request, id):
                 fields = LIST_LIABILITIES_LOANS_FIELDS[item-1]
                 if item == 1:
                     base_amount = qs.base_amount
+                    principal_payments_before = 0
                 else:
                     qs_before = LiabilitiesLoans.objects.get(
                         scenario_id=qs.pk, month=item-1
                     )
-                    base_amount = qs_before.new_amount + qs_before.principal_payments
+                    base_amount = qs_before.new_amount
+                    principal_payments_before = qs_before.principal_payments
 
                 growth_percentage = float(request.POST.get(fields.get('growth_percentage'))) # NOQA
                 rate = float(request.POST.get(fields.get('rate')))
                 term = float(request.POST.get(fields.get('term')))
-
+                print(principal_payments_before)
                 _upd = LiabilitiesLoans.objects.filter(scenario_id=qs.pk, month=item).first() # NOQA
                 _upd.amount_initial = base_amount
                 _upd.percent_growth = growth_percentage
-                _upd.amount_growth = annual_growth_amount * dc(growth_percentage / 100)
+                _upd.amount_growth = (
+                    annual_growth_amount * dc(growth_percentage / 100)
+                ) + principal_payments_before
                 _upd.rate = rate
                 _upd.term = term
                 _upd.level_quota = calculations.level_quota(
@@ -520,7 +534,10 @@ def scenario_liabilities_loans(request, id):
                     _upd.amount_initial, _upd.amount_growth, _upd.rate
                 )
                 _upd.principal_payments = abs(_upd.level_quota) - abs(_upd.total_interest)
-                _upd.new_amount = _upd.amount_initial + _upd.amount_growth - _upd.principal_payments # NOQA
+                if item == 12:
+                    _upd.new_amount = _upd.amount_initial + _upd.amount_growth - 0
+                else:
+                    _upd.new_amount = _upd.amount_initial + _upd.amount_growth - _upd.principal_payments # NOQA
                 _upd.save()
 
         elif request.POST.get('method') == 'change-status':
@@ -547,9 +564,21 @@ def scenario_liabilities_loans(request, id):
             return redirect('scenarios_liabilities_loans')
 
     qs_detail = LiabilitiesLoans.objects.filter(scenario_id=qs.pk).order_by('month')
+    qs_sum = LiabilitiesLoans.objects.filter(scenario_id=qs.pk).extra({
+        'MontoInicial': 'SUM(MontoInicial)',
+        'MontoCrecimiento': 'SUM(MontoCrecimiento)',
+        'PagosCapital': 'SUM(PagosCapital)',
+        'MontoTotalCrecimiento': 'SUM(MontoTotalCrecimiento)',
+        'CuotaNivelada': 'SUM(CuotaNivelada)',
+        'InteresesPagados': 'SUM(InteresesPagados)',
+    }).values(
+        'MontoInicial', 'MontoCrecimiento', 'PagosCapital',
+        'MontoTotalCrecimiento', 'CuotaNivelada', 'InteresesPagados'
+    )
     ctx = {
         'qs': qs,
         'qs_detail': qs_detail,
+        'qs_sum': qs_sum[0],
         'form_clone': ScenarioCloneForm(),
     }
     return render(request, 'liabilities_loans/scenario.html', ctx)

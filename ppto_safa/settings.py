@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+
     'apps.administration',
     'apps.main',
     'apps.expenses_budgets',
@@ -40,6 +41,9 @@ INSTALLED_APPS = [
     'apps.master_budget',
     'apps.master_budget.loan_portfolio',
     'apps.master_budget.passives',
+    'apps.master_budget.non_performing_assets',
+    'apps.master_budget.payment_payroll',
+
 ]
 
 MIDDLEWARE = [

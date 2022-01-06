@@ -1,0 +1,42 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="globalNonPerformingAssetsScenarioModal" tabindex="-1" aria-labelledby="globalNonPerformingAssetsScenarioModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light">Detalle Global Activos Improductivos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered table-stripped">
+                <thead>
+                  <tr>
+                    <th class="text-center">Categoria</th>
+                    <th class="text-center">Saldo a {{qs.parameter_id}}</th>
+                    <th class="text-center">Saldo Proyectado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in global_non_performing_assets %}
+                  <tr>
+                    <td class="text-center">{{item.name}}</td>
+                    <td><span class="float-end">{{item.previous_total_net_balance|intcomma}}</span></td>
+                    <td><span class="float-end">{{item.new_total_net_balance|intcomma}}</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

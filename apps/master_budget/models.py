@@ -1,8 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from apps.main.models import Periodo
-from utils.constants import STATUS
+from utils.constants import (
+    STATUS,
+    TYPE_COMPLEMENTARY_PROJECTION,
+    MONTH_CHOICES,
+    SURPLUS_DISTRIBUTION_CRITERIA,
+)
 
 
 class CommentMixin(models.Model):
@@ -554,6 +561,252 @@ class AmountAccountsReceivableMonthlyMixin(models.Model):
         abstract = True
 
 
+class PercentageIncreasesMonthlyMixin(models.Model):
+    percentage_increase_january = models.FloatField(
+        db_column="PorcentajeincrementoEne", null=True, blank=True, default=0
+    )
+    percentage_increase_february = models.FloatField(
+        db_column="PorcentajeincrementoFeb", null=True, blank=True, default=0
+    )
+    percentage_increase_march = models.FloatField(
+        db_column="PorcentajeincrementoMar", null=True, blank=True, default=0
+    )
+    percentage_increase_april = models.FloatField(
+        db_column="PorcentajeincrementoAbr", null=True, blank=True, default=0
+    )
+    percentage_increase_may = models.FloatField(
+        db_column="PorcentajeincrementoMay", null=True, blank=True, default=0
+    )
+    percentage_increase_june = models.FloatField(
+        db_column="PorcentajeincrementoJun", null=True, blank=True, default=0
+    )
+    percentage_increase_july = models.FloatField(
+        db_column="PorcentajeincrementoJul", null=True, blank=True, default=0
+    )
+    percentage_increase_august = models.FloatField(
+        db_column="PorcentajeincrementoAgo", null=True, blank=True, default=0
+    )
+    percentage_increase_september = models.FloatField(
+        db_column="PorcentajeincrementoSep", null=True, blank=True, default=0
+    )
+    percentage_increase_october = models.FloatField(
+        db_column="PorcentajeincrementoOct", null=True, blank=True, default=0
+    )
+    percentage_increase_november = models.FloatField(
+        db_column="PorcentajeincrementoNov", null=True, blank=True, default=0
+    )
+    percentage_increase_december = models.FloatField(
+        db_column="PorcentajeincrementoDic", null=True, blank=True, default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
+class AmountMonthlyMixin(models.Model):
+    amount_january = models.DecimalField(
+        db_column="MontoEne",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_february = models.DecimalField(
+        db_column="MontoFeb",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_march = models.DecimalField(
+        db_column="MontoMar",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_april = models.DecimalField(
+        db_column="MontoAbr",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_may = models.DecimalField(
+        db_column="MontoMay",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_june = models.DecimalField(
+        db_column="MontoJun",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_july = models.DecimalField(
+        db_column="MontoJul",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_august = models.DecimalField(
+        db_column="MontoAgo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_september = models.DecimalField(
+        db_column="MontoSep",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_october = models.DecimalField(
+        db_column="MontoOct",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_november = models.DecimalField(
+        db_column="MontoNov",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_december = models.DecimalField(
+        db_column="MontoDic",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
+class AmountMonthlyMixinTemporal(models.Model):
+    amount_temp_january = models.DecimalField(
+        db_column="MontoTemporalEne",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_february = models.DecimalField(
+        db_column="MontoTemporalFeb",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_march = models.DecimalField(
+        db_column="MontoTemporalMar",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_april = models.DecimalField(
+        db_column="MontoTemporalAbr",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_may = models.DecimalField(
+        db_column="MontoTemporalMay",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_june = models.DecimalField(
+        db_column="MontoTemporalJun",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_july = models.DecimalField(
+        db_column="MontoTemporalJul",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_august = models.DecimalField(
+        db_column="MontoTemporalAgo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_september = models.DecimalField(
+        db_column="MontoTemporalSep",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_october = models.DecimalField(
+        db_column="MontoTemporalOct",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_november = models.DecimalField(
+        db_column="MontoTemporalNov",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_temp_december = models.DecimalField(
+        db_column="MontoTemporalDic",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
 class MasterParameters(AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     date_base = models.DateField(null=True, blank=True, db_column="FechaBase")
@@ -592,3 +845,116 @@ class MasterParameters(AuditDataMixin):
 
     def __str__(self):
         return self.date_base.strftime("%d/%m/%Y")
+
+
+@receiver(post_save, sender=MasterParameters)
+def post_save_master_parameters(sender, instance, created, **kwargs):
+    catalog_list = CatalogLossesEarnings.objects.all()
+    for catalog in catalog_list:
+        for month in range(1, 13):
+            if not LossesEarningsComplementaryProjection.objects.filter(
+                category_id=catalog.pk, period_id=instance.period_id.pk, month=month
+            ).exists():
+                LossesEarningsComplementaryProjection.objects.create(
+                    category_id=catalog, period_id=instance.period_id, month=month
+                )
+
+
+class CatalogLossesEarnings(models.Model):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    type = models.CharField(
+        db_column="Tipo", max_length=1, null=True,
+        blank=True, choices=TYPE_COMPLEMENTARY_PROJECTION
+    )
+    method = models.CharField(
+        db_column="Metodo", max_length=1, null=True, blank=True
+    )
+    level_one = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel1"
+    )
+    level_two = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel2"
+    )
+    level_three = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel3"
+    )
+    level_four = models.CharField(
+        null=True, blank=True, max_length=200, db_column="Nivel4"
+    )
+    order = models.IntegerField(
+        null=True, blank=True, db_column="Orden"
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroPerdidasGananciasCatalogo"
+        ordering = ("type", "order", )
+
+
+class LossesEarningsComplementaryProjection(models.Model):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    period_id = models.ForeignKey(
+        Periodo, models.DO_NOTHING, null=True, blank=True, db_column="PeriodoId"
+    )
+    category_id = models.ForeignKey(
+        CatalogLossesEarnings, models.DO_NOTHING, db_column="CategoriaId"
+    )
+    month = models.IntegerField(
+        null=True, blank=True, db_column="Mes", choices=MONTH_CHOICES
+    )
+    amount = models.DecimalField(
+        db_column="Saldo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroPerdidasGananciasProyeccionComplementaria"
+        ordering = ("category_id", "-month",)
+
+
+class SurplusDistributionCategory(models.Model):
+    """Model definition for SurplusDistribution."""
+    id = models.AutoField(primary_key=True, db_column="Id")
+
+    class Meta:
+        """Meta definition for SurplusDistribution."""
+        default_permissions = []
+        db_table = "pptoMaestroDistribucionExcedentesCategoria"
+
+
+class SurplusDistribution(models.Model):
+    """Model definition for SurplusDistribution."""
+    id = models.AutoField(primary_key=True, db_column="Id")
+    # period_id = models.ForeignKey(
+    #     Periodo, models.DO_NOTHING, null=True, blank=True, db_column="PeriodoId"
+    # )
+    # title = models.CharField(db_column="Titulo", null=True, blank=True, max_length=50)
+    # criteria = models.CharField(
+    #     db_column="Criterio",
+    #     null=True,
+    #     blank=True,
+    #     choices=SURPLUS_DISTRIBUTION_CRITERIA
+    # )
+    # percentage = models.FloatField(
+    #     db_column="Porcentaje", null=True, blank=True, default=0
+    # )
+    # value = models.DecimalField(
+    #     db_column="Valor",
+    #     null=True,
+    #     blank=True,
+    #     max_digits=23,
+    #     decimal_places=2,
+    #     default=0
+    # )
+    # type = ''
+
+
+    class Meta:
+        """Meta definition for SurplusDistribution."""
+        default_permissions = []
+        db_table = "pptoMaestroDistribucionExcedentes"

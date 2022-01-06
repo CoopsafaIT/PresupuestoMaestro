@@ -19,6 +19,11 @@ admin_permissions = [
         "codename": "puede_ingresar_proyeccion",
     },
     {
+        "name": "Puede Inicializar Presupuestos",
+        "content_type_name": "admin",
+        "codename": "puede_inicializar_ppto",
+    },
+    {
         "name": "Puede Listar Proyectos",
         "content_type_name": "admin",
         "codename": "puede_listar_proyectos",
@@ -264,6 +269,14 @@ checkout_permissions = [
     },
 ]
 
+master_budget = [
+    {
+        "name": "Puede Menu de Presupuesto Maestro",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_ver_menu_ppto_maestro",
+    },
+]
+
 all_permissions = (
     admin_permissions
     + security_permissions
@@ -278,4 +291,5 @@ all_permissions = (
     + investment_budget_permissions
     + transfers_permissions
     + checkout_permissions
+    + master_budget
 )

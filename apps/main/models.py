@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db import models
+
 from utils.constants import ZONES, MONTH_CHOICES_REVERSE
 
 
@@ -481,7 +482,6 @@ class Detallexpresupuestoinversion(models.Model):
 def post_save_investment(sender, instance, created, **kwargs):
     qs = instance
     if qs.numero_meses_depreciacion is None:
-        print('num meses is none')
         investment = Inversiones.objects.filter(descinversion=qs.descproducto).first()
         if hasattr(investment, 'meses_depreciacion'):
             Detallexpresupuestoinversion.objects.filter(pk=qs.pk).update(

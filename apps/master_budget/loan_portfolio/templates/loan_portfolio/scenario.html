@@ -292,9 +292,9 @@
   <script>
     $(document).ready(()=>{
       const clean_data = ()=>{
-        let anual_percentage = $('#id_annual_growth_percentage').val()
+        // let anual_percentage = $('#id_annual_growth_percentage').val()
         let anual_amount = $('#id_annual_growth_amount').val()
-        $('#id_annual_growth_percentage').val(anual_percentage.replaceAll(',', ''))
+        // $('#id_annual_growth_percentage').val(anual_percentage.replaceAll(',', ''))
         $('#id_annual_growth_amount').val(anual_amount.replaceAll(',', ''))
 
         $.each($('.commission-percentage-monthly'), function(key, input){

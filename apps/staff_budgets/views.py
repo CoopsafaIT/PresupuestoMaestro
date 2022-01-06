@@ -23,6 +23,7 @@ from apps.main.models import (
     Puestos,
     Manejopersonal,
 )
+from apps.master_budget.payment_payroll.models import BudgetedPaymentPayroll
 from apps.staff_budgets.reports import create_excel_report
 from apps.staff_budgets.forms import StaffCUForm
 from utils.pagination import pagination
@@ -119,7 +120,8 @@ def staff_budgets_register(request):
     }
     if (
         request.session.get('period', None) and
-        request.session.get('cost_center', None)
+        request.session.get('cost_center', None) and
+        request.session.get('cost_center') != '__all__'
     ):
         qs = Detallexpresupuestopersonal.objects.filter(
             codcentrocosto=request.session.get('cost_center'),
@@ -206,6 +208,12 @@ def staff_budgets_update(request, id):
 def staff_budgets_delete(request, id):
     if request.method == 'POST':
         try:
+            if BudgetedPaymentPayroll.objects.filter(budgeted_id=id).exists():
+                BudgetedPaymentPayroll.objects.filter(budgeted_id=id).delete()
+                messages.warning(
+                    request,
+                    'Se ha eliminado personal presupuestado de Escenario'
+                )    
             Detallexpresupuestopersonal.objects.filter(pk=id).delete()
             messages.success(
                 request,

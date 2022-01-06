@@ -1,0 +1,20 @@
+<div class="modal fade" id="updateCtaScenarioModal" tabindex="-1" aria-labelledby="updateCtaScenarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="method" value="update-cta">
+        <div class="modal-body">
+          <h5 class="fw-light">¿ Desea actualizar montos de cuentas contables de personal ?</h5>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-safa">Si, actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

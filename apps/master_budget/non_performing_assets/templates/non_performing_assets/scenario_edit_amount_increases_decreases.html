@@ -1,0 +1,46 @@
+<div class="modal fade" id="editAmountIncreasesDecreasesScenarioModal" 
+  tabindex="-1" aria-labelledby="addScenarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="title_increases_decreases"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="amount-increases-decreases">
+          <input type="hidden" name="pk" value="" id="pk_increases_decreases">
+          <input type="hidden" name="type" value="" id="type_increases_decreases">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_amount_increases_decreases">Monto</label>
+                <input type="text" name="amount" class="form-control validation-number-input-text" id="id_amount_increases_decreases" required />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_comment_increases_decreases">Comentario</label>
+                <textarea
+                  name="comment"
+                  required
+                  id="id_comment_increases_decreases"
+                  class="form-control mb-2"
+                  placeholder="Ingrese comentario..."
+                  rows="2"
+                  style="resize: none;"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

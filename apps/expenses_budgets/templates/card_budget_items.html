@@ -24,7 +24,7 @@
             <tbody>
               {% for budget_item in qs_budget %}
               <tr class="tr-meses" data-id='{{budget_item.pk}}' id="{{budget_item.pk}}">
-                <td class="font_size_min {% if budget_item.estado %} td-border-success{% endif %}"
+                <td class="font_size_min {% if budget_item.estado == 1 %} td-border-success{% endif %}"
                   data-td='td-id-{{budget_item.pk}}'>
                   <span>{{budget_item.codcentroscostoxcuentacontable.codcuentacontable}}</span>
                 </td>
@@ -40,8 +40,8 @@
                 <td style="width: 200px">
                   <select class="budget_table_select criterio_ppto select2-style"
                     data-id="{{budget_item.saldonoviembre|floatformat:2|intcomma}}"
-                    data-nov="{{budget_item.saldonoviembre|floatformat:2|intcomma}}"
-                    data-dic="{{budget_item.saldodiciembre|floatformat:2|intcomma}}" 
+                    data-nov="{{budget_item.saldonoviembre|floatformat:2}}"
+                    data-dic="{{budget_item.saldodiciembre|floatformat:2}}" 
                     id="id_criterio{{budget_item.pk}}"
                     name="criterios">
                     <option value="">-- Seleccione Criterio --</option>
@@ -56,7 +56,7 @@
 
                 <td class="text-center">
                   <input class="budget_table_input_v2 {{budget_item.pk}} percentaje_ppto validation-input-text"
-                    data-dic="{{budget_item.saldodiciembre|floatformat:2|intcomma}}" readonly type="text" value="0" />
+                    data-dic="{{budget_item.saldodiciembre|floatformat:2}}" readonly type="text" value="0" />
                 </td>
 
                 <td class="text-center">
@@ -71,9 +71,16 @@
 
                 <td class="text-center">
                   {% if budget_item.aprobadoasamblea == None %}
-                  <a class="btn btn-success btn-sm save_budget_item" data-id="{{budget_item.pk}}"
-                    id="{{budget_item.pk}}">Presupuestar
-                  </a>
+                    {% if budget_item.estado == 1 %}
+                      <a class="btn btn-success btn-sm save_budget_item" data-id="{{budget_item.pk}}"
+                        id="{{budget_item.pk}}">Presupuestar
+                      </a>
+                    {% else %}
+                      <a class="btn btn-secondary btn-sm save_budget_item item-secondary-{{budget_item.pk}}" data-id="{{budget_item.pk}}"
+                        id="{{budget_item.pk}}">Presupuestar
+                      </a>
+                    {% endif %}
+
                   {% endif %}
                 </td>
               </tr>

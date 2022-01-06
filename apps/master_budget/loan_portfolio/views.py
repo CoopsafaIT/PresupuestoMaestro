@@ -188,7 +188,9 @@ def scenarios_loan_portfolio(request):
                 result = execute_sql_query(query)
                 if result.get('status') == 'ok':
                     data = result.get('data')
-                    amount = data[0].get('SaldoCartera')
+                    amount = 0
+                    if type(data) == list and len(data) > 0:
+                        amount = data[0].get('SaldoCartera')
                     _new.base_amount = amount
                     _new.annual_growth_percentage = 0
                     _new.annual_growth_amount = 0
@@ -364,7 +366,7 @@ def scenario_loan_portfolio(request, id):
     if request.method == 'POST':
         if request.POST.get('method') == 'update':
             calculations = LoanPortfolioCalculations()
-            qs.annual_growth_percentage = dc(request.POST.get('annual_growth_percentage').replace(',','')) # NOQA
+            # qs.annual_growth_percentage = dc(request.POST.get('annual_growth_percentage').replace(',','')) # NOQA
             qs.annual_growth_amount = dc(request.POST.get('annual_growth_amount').replace(',','')) # NOQA
             qs.save()
             _save_scenario()
@@ -405,11 +407,18 @@ def scenario_loan_portfolio(request, id):
                     _upd.amount_initial, _upd.amount_growth, _upd.rate
                 )
                 _upd.principal_payments = abs(_upd.level_quota) - abs(_upd.total_interest)
-                _upd.new_amount = calculations.new_amount(
-                    _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
-                )
+                if item == 12:
+                    _upd.new_amount = calculations.new_amount(
+                        _upd.amount_initial, _upd.amount_growth, 0
+                    )
+                else:
+                    _upd.new_amount = calculations.new_amount(
+                        _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
+                    )
                 _upd.commission_amount = calculations.commission_amount(
-                    _upd.amount_growth, dc(_upd.commission_percentage)
+                    qs.annual_growth_amount,
+                    dc(_upd.percent_growth),
+                    dc(_upd.commission_percentage)
                 )
                 _upd.amount_arrears = calculations.amount_arrears(
                     _upd.new_amount, _upd.percentage_arrears
@@ -445,8 +454,25 @@ def scenario_loan_portfolio(request, id):
             return redirect('scenarios_loan_portfolio')
 
     qs_detail = LoanPortfolio.objects.filter(scenario_id=qs.pk).order_by('month')
+    qs_sum = LoanPortfolio.objects.filter(scenario_id=qs.pk).extra({
+        'MontoInicial': 'SUM(MontoInicial)',
+        'MontoCrecimiento': 'SUM(MontoCrecimiento)',
+        'MontoNuevo': 'SUM(MontoNuevo)',
+        'CuotaNivelada': 'SUM(CuotaNivelada)',
+        'InteresesTotales': 'SUM(InteresesTotales)',
+        'PagosCapital': 'SUM(PagosCapital)',
+        'MontoMora': 'SUM(MontoMora)',
+        'InteresesMoratorios': 'SUM(InteresesMoratorios)',
+        'MontoComision': 'SUM(MontoComision)',
+    }).values(
+        'MontoInicial', 'MontoCrecimiento', 'MontoNuevo',
+        'CuotaNivelada', 'InteresesTotales', 'PagosCapital',
+        'MontoMora', 'InteresesMoratorios', 'MontoComision'
+    )
+
     ctx = {
         'qs': qs,
+        'qs_sum': qs_sum[0],
         'qs_detail': qs_detail,
         'form_clone': ScenarioCloneForm()
     }
@@ -735,8 +761,20 @@ def scenario_financial_investments(request, id):
             return redirect('scenarios_financial_investments')
 
     qs_detail = FinancialInvestments.objects.filter(scenario_id=qs.pk).order_by('month')
+    qs_sum = FinancialInvestments.objects.filter(scenario_id=qs.pk).extra({
+        'MontoInicial': 'SUM(MontoInicial)',
+        'MontoAumento': 'SUM(MontoAumento)',
+        'MontoNuevo': 'SUM(MontoNuevo)',
+        'MontoDisminucion': 'SUM(MontoDisminucion)',
+        'MontoInteresGanado': 'SUM(MontoInteresGanado)',
+        'MontoCuentasPorCobrar': 'SUM(MontoCuentasPorCobrar)'
+    }).values(
+        'MontoInicial', 'MontoAumento', 'MontoNuevo',
+        'MontoDisminucion', 'MontoInteresGanado', 'MontoCuentasPorCobrar'
+    )
     ctx = {
         'qs': qs,
+        'qs_sum': qs_sum[0],
         'qs_detail': qs_detail,
         'form_clone': FinancialInvestmentsScenarioCloneForm(),
     }

@@ -41,8 +41,8 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Inproductivos</a></li>
-        <li><a href="{% url 'budget_register' %}">Nuevas Adquisiciones</a></li>
-        <li><a href="{% url 'budget_register' %}">Activos Eventuales</a></li>
+        <li><a href="{% url 'scenarios_non_performing_assets' %}">Nuevas Adquisiciones</a></li>
+        <li><a href="{% url 'scenarios_others_assets' %}">Otros Activos</a></li>
       </ul>
     </li>
     
@@ -62,22 +62,25 @@
     </li>
 
     <li>
-      <a href="{% url 'dashboard' %}" class="institutional-golden-color">
+      <a href="{% url 'scenarios_payment_payroll' %}" class="institutional-golden-color">
         <i class="bi bi-person-plus"></i>
         <span class="link_name">Planilla</span>
       </a>
       <ul class="sub-menu blank">
-        <li><a class="link_name" href="{% url 'dashboard' %}">Planilla</a></li>
+        <li><a class="link_name" href="{% url 'scenarios_payment_payroll' %}">Planilla</a></li>
       </ul>
     </li>
-
     <li>
-      <a href="{% url 'dashboard' %}" class="institutional-golden-color">
-        <i class="bi bi-file-bar-graph"></i>
-        <span class="link_name">Reportes</span>
-      </a>
-      <ul class="sub-menu blank">
-        <li><a class="link_name" href="{% url 'dashboard' %}">Reportes</a></li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-file-bar-graph"></i>
+          <span class="link_name">Reportes</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Reportes </a></li>
+        <li><a href="{% url 'profit_loss_report_complementary_projection' %}">P&G Proyección Compl.</a></li>
       </ul>
     </li>
 
@@ -102,7 +105,6 @@
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Admin</a></li>
         <li><a href="{% url 'projection_parameters' %}">Proyección</a></li>
-        <li><a href="{% url 'budget_register' %}">Prestamos</a></li>
       </ul>
     </li>
     <li>
@@ -116,13 +118,8 @@
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Catálogos</a></li>
         <li><a href="{% url 'categories_loan_portfolio' %}">Categorias Cartera Cred</a></li>
-        <li><a href="{% url 'budget_register' %}">Prestamos</a></li>
       </ul>
     </li>
-
-    
-
-
     <li>
       <div class="profile-details">
         <div class="profile-content">

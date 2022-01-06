@@ -57,6 +57,13 @@ STAFF_POSITIONS = {
 }
 
 
+STATUS_LOGIN_VALIDATION = (
+    ('', '-- Seleccione Estado --'),
+    (True, 'Validar credenciales con Active Directory'),
+    (False, 'Validar con contraseña interna')
+)
+
+
 STATUS = (
     ('', '-- Seleccione Estado --'),
     (True, 'Activo'),
@@ -391,3 +398,23 @@ LIST_LIABILITIES_LOANS_FIELDS = [
         'term': 'term_december',
     },
 ]
+
+
+OTHERS_ASSETS_CRITERIA = (
+    (1, 'Mismo Valor'),
+    (2, 'Porcentaje de Aumento'),
+    (3, 'Porcentaje de Disminución'),
+    (4, 'Nuevo Valor'),
+)
+
+
+TYPE_COMPLEMENTARY_PROJECTION = (
+    ('I', 'Ingresos'),
+    ('P', 'Perdidas'),
+)
+
+
+SURPLUS_DISTRIBUTION_CRITERIA = (
+    (1, 'Porcentaje'),
+    (2, 'Monto'),
+)

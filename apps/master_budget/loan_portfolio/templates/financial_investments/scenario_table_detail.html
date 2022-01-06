@@ -19,6 +19,7 @@
             <th class="text-center">Oct</th>
             <th class="text-center">Nov</th>
             <th class="text-center">Dic</th>
+            <th class="text-center">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -36,70 +37,8 @@
             <td class="text-end">{{qs_detail.9.amount_initial|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.amount_initial|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoInicial|floatformat:2|intcomma}}</td>
           </tr>
-          <!-- <tr>
-            <td class=" fw-bold">Monto Crecimiento</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.0.percent_growth|floatformat:2|intcomma}}% "
-            >{{qs_detail.0.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.1.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.1.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.2.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.2.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.3.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.3.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.4.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.4.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.5.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.5.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.6.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.6.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.7.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.7.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.8.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.8.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.9.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.9.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.10.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.10.amount_growth|floatformat:2|intcomma}}</td>
-            <td class="text-end" 
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Saldo Anterior * {{qs_detail.11.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
-            >{{qs_detail.11.amount_growth|floatformat:2|intcomma}}</td>
-          </tr> -->
           <tr>
             <td class=" fw-bold">Aumentos</td>
             <td class="text-end">{{qs_detail.0.amount_increase|floatformat:2|intcomma}}</td>
@@ -114,6 +53,7 @@
             <td class="text-end">{{qs_detail.9.amount_increase|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.amount_increase|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.amount_increase|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoAumento|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Disminuciones</td>
@@ -129,6 +69,7 @@
             <td class="text-end">{{qs_detail.9.amount_decrease|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.amount_decrease|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.amount_decrease|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoDisminucion|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Nuevo Saldo</td>
@@ -144,6 +85,7 @@
             <td class="text-end">{{qs_detail.9.new_amount|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.new_amount|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoNuevo|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Tasa Interes</td>
@@ -159,6 +101,7 @@
             <td class="text-end">{{qs_detail.9.rate|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.rate|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end"></td>
           </tr>
           <tr>
             <td class=" fw-bold">Intereses Ganados</td>
@@ -174,6 +117,7 @@
             <td class="text-end">{{qs_detail.9.amount_interest_earned|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.amount_interest_earned|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.amount_interest_earned|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoInteresGanado|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Cuentas por Cobrar</td>
@@ -189,6 +133,7 @@
             <td class="text-end">{{qs_detail.9.amount_accounts_receivable|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.amount_accounts_receivable|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.amount_accounts_receivable|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoCuentasPorCobrar|floatformat:2|intcomma}}</td>
           </tr>
         </tbody>
       </table>

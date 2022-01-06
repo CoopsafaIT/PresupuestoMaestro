@@ -40,7 +40,6 @@
         {% if perms.ppto_personal.puede_ingresar_ppto_personal or perms.ppto_personal.puede_ingresar_ppto_personal_todos %}
         <li><a href="{% url 'staff_budgets_register' %}">Personal</a></li>
         {% endif %}
-        
         {% if perms.ppto_indirecto.puede_ingresar_ppto_indirecto %}
         <li><a href="{% url 'indirect_budget_register' %}">Indirecto</a></li>
         {% endif %}
@@ -52,6 +51,7 @@
         {% endif %}
       </ul>
     </li>
+    {% if perms.ppto_maestro.puede_ver_menu_ppto_maestro %}
     <li>
       <a href="{% url 'master_budget_dashboard' %}" class="institutional-golden-color">
         <i class="bi bi-cpu"></i>
@@ -61,6 +61,7 @@
         <li><a class="link_name" href="{% url 'master_budget_dashboard' %}">Ppto. Maestro</a></li>
       </ul>
     </li>
+    {% endif %}
     {% with s1=perms.admin.puede_listar_proyectos %}
     {% with s2=perms.admin.puede_ingresar_proyeccion %}
     {% with s3=perms.admin.puede_listar_periodos %}
@@ -104,6 +105,9 @@
         {% endif %}
         {% if perms.admin.puede_editar_indice_inflacionario %}
         <li><a href="{% url 'inflationary_index' %}">Indice Inflacionario</a></li>
+        {% endif %}
+        {% if perms.admin.puede_inicializar_ppto %}
+        <li><a href="{% url 'budget_init' %}">Inicializar Presupuestos</a></li>
         {% endif %}
         {% if perms.admin.puede_listar_puestos_trabajo %}
         <li><a href="{% url 'job_positions' %}">Puestos</a></li>

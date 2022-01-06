@@ -19,6 +19,7 @@
             <th class="text-center">Oct</th>
             <th class="text-center">Nov</th>
             <th class="text-center">Dic</th>
+            <th class="text-center">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -36,6 +37,7 @@
             <td class="text-end">{{qs_detail.9.amount_initial|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.amount_initial|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.amount_initial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoInicial|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Monto Crecimiento</td>
@@ -99,6 +101,7 @@
               data-bs-placement="top"
               title="Saldo Anterior * {{qs_detail.11.percent_growth|floatformat:2|intcomma}}% + Pagos a Capital mes anterior"
             >{{qs_detail.11.amount_growth|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoCrecimiento|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Tasa</td>
@@ -114,6 +117,7 @@
             <td class="text-end">{{qs_detail.9.rate|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.rate|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.rate|floatformat:2|intcomma}}</td>
+            <td class="text-end"></td>
           </tr>
           <tr>
             <td class=" fw-bold">Plazo</td>
@@ -129,6 +133,7 @@
             <td class="text-end">{{qs_detail.9.term}}</td>
             <td class="text-end">{{qs_detail.10.term}}</td>
             <td class="text-end">{{qs_detail.11.term}}</td>
+            <td class="text-end"></td>
           </tr>
           <tr>
             <td class=" fw-bold">Cuota Nivelada</td>
@@ -144,6 +149,7 @@
             <td class="text-end">{{qs_detail.9.level_quota|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.level_quota|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.level_quota|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.CuotaNivelada|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Int.s Totales</td>
@@ -159,6 +165,8 @@
             <td class="text-end">{{qs_detail.9.total_interest|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.total_interest|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.total_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.InteresesTotales|floatformat:2|intcomma}}</td>
+
           </tr>
           <tr>
             <td class=" fw-bold">Pagos a Capital</td>
@@ -234,6 +242,7 @@
               data-bs-placement="top"
               title="Cuota Nivelada - Total Intereses"
             >{{qs_detail.11.principal_payments|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.PagosCapital|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Nuevo Saldo</td>
@@ -249,9 +258,10 @@
             <td class="text-end">{{qs_detail.9.new_amount|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.new_amount|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.new_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoNuevo|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
-            <td class=" fw-bold">Monto Mora</td>
+            <td class=" fw-bold">Capital Mora</td>
             <td
               class="text-end"
               data-bs-toggle="tooltip"
@@ -324,6 +334,7 @@
               data-bs-placement="top"
               title="Nuevo Saldo * {{qs_detail.11.percentage_arrears|floatformat:2|intcomma}}%"
             >{{qs_detail.11.amount_arrears|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoMora|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Int.s Moratorios</td>
@@ -339,6 +350,7 @@
             <td class="text-end">{{qs_detail.9.default_interest|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.default_interest|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.default_interest|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.InteresesMoratorios|floatformat:2|intcomma}}</td>
           </tr>
           <tr>
             <td class=" fw-bold">Comisión</td>
@@ -414,6 +426,7 @@
               data-bs-placement="top"
               title="Monto Crecimiento * {{qs_detail.11.commission_percentage|floatformat:2|intcomma}}%"
             >{{qs_detail.11.commission_amount|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_sum.MontoComision|floatformat:2|intcomma}}</td>
           </tr>
         </tbody>
       </table>

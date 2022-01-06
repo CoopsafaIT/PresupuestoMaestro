@@ -140,6 +140,18 @@
                   </div>
                   <div class="col-md-12 mb-3">
                     <div class="form-group">
+                      <label for="id_date_transaction">Monto a trasladar</label>
+                      <input 
+                        class="form-control"
+                        id="id_date_transaction"
+                        name="date_transaction"
+                        type="date"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-12 mb-3">
+                    <div class="form-group">
                       <label for="id_investment_destination">Monto a trasladar</label>
                       <input 
                         class="form-control"
@@ -288,6 +300,10 @@
             })
           }
         })
+        if (origin_investment.length < 1 ){
+          alert('Seleccione Inversión (es) de origen');
+          return;
+        }
         $('#id_origin_investment').val( JSON.stringify(origin_investment) )
         $('#form_transfer_investment').submit()
       }
@@ -298,6 +314,7 @@
       let cost_center_origin =  $("#id_cost_center_form").val()
       let cost_center_destination =  $("#id_cost_center_destination").val()
       let investment_destination =  $("#id_investment_destination").val()
+      let date_transaction =  $("#id_date_transaction").val()
       let total_amount_transfer =  $("#id_total_amount_transfer").val()
       let total_amount_transfer_max = $("#id_total_amount_transfer").attr('max')
       if( typeof cost_center_origin !== 'string' || !!cost_center_origin.trim() === false ){
@@ -314,6 +331,10 @@
       }
       if( typeof investment_destination !== 'string' || !!investment_destination.trim() === false ){
         alert('Seleccione Inversión de destino')
+        return false
+      }
+      if( typeof date_transaction !== 'string' || !!date_transaction.trim() === false ){
+        alert('Ingrese fecha de traslado')
         return false
       }
       if( typeof total_amount_transfer !== 'string' || !!total_amount_transfer.trim() === false || parseFloat(total_amount_transfer) < 1 ){

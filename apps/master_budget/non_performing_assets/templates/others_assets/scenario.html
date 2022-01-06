@@ -1,0 +1,170 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Escenarios Activos Improductivos{% endblock title %}
+
+{% block breadcrumb %} 
+  <li class="breadcrumb-item text-white ">
+    <a href="{% url 'scenarios_others_assets' %}" class="text-white text-decoration-none">/ Otros Activos Improductivos - Escenarios</a>
+  </li>
+  <li class="breadcrumb-item active text-white before-none" aria-current="page"> / Correlativo: {{qs.correlative}}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'others_assets/scenario_change_status.html' %}
+{% include 'others_assets/scenario_clone.html' %}
+{% include 'others_assets/scenario_delete.html' %}
+{% include 'others_assets/scenario_edit_criteria.html' %}
+{% include 'shared/global_non_performing_assets_modal.html' %}
+<div class="container-fluid mt-1">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-5">
+          <h5
+            class="card-title fw-light fs-5"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="{{qs.comment}}"
+            >Fecha Cierre {{qs.parameter_id}}
+          </h5>
+        </div>
+        <div class="col-md-7">
+          <div class="d-grid gap-2 d-flex justify-content-end">
+            <button
+              id="openModalChangeScenario"
+              type="button"
+              class="btn btn-outline-dark btn-sm float-end"
+              data-url="{% url 'scenario_others_assets' qs.pk %}"
+              data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
+            >
+            {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
+            </button>
+            <button
+              id="openModalDeleteScenario"
+              type="button" 
+              data-url="{% url 'scenario_others_assets' qs.pk %}"
+              class="btn btn-outline-dark btn-sm float-end"
+            >Eliminar
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+            <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalGlobalScenario">Ver Detalle Global</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      {% include 'others_assets/scenario_table_detail.html' %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+  <script>
+    $(document).ready(()=>{
+      $('.add_criteria').click(function(){
+        let pk = $(this).data('pk')
+        let criteria = $(this).data('criteria')
+        let comment = $(this).data('comment')
+        let categoryName = $(this).data('category-name')
+        let previousBalanceCommas = $(this).data('previous-balance-commas')
+        let previousBalance = $(this).data('previous-balance')
+        let percentage = $(this).data('percentage')
+        let newBalance = $(this).data('new-balance')
+        let newBalanceCommas = $(this).data('new-balance-commas')
+        $('#id_pk_criteria').val(pk)
+        $(`#id_criteria option[value= '${criteria}']`).prop('selected', true).trigger("change");
+        $('#id_comment_criteria').val(comment)
+        $('#id_criteria_percentage').val(percentage)
+        $('#id_criteria_new_balance').val(newBalanceCommas)
+
+        // Hidden
+        $('#id_criteria_previous_balance_hidden').val(previousBalance)
+        $('#id_criteria_new_balance_hidden').val(newBalance)
+
+        $('#title_criteria').text(`Editar ${ categoryName }. | Saldo Anterior ${previousBalanceCommas}`)
+        $('#editCriteriaScenarioModal').modal('show');
+      })
+
+      $(document).on('change', '#id_criteria', function(){
+        let value = $(this).val()
+        if(!!value === false) return
+        $('#id_criteria_percentage').removeAttr('readonly')
+        $('#id_criteria_new_balance').removeAttr('readonly')
+
+        if(value === '1'){
+          let previousValue = $('#id_criteria_previous_balance_hidden').val()
+          $('#id_criteria_new_balance').val( numberWithCommas(previousValue) )
+          $('#id_criteria_percentage').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').attr('readonly', true)
+          $('#id_criteria_new_balance').attr('readonly', true)
+        }else if(value === '2' || value === '3'){
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_new_balance').attr('readonly', true) 
+        }else if(value === '4'){
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').attr('readonly', true) 
+        }
+      })
+
+      $(document).on('keyup', '#id_criteria_percentage', function(){
+        let percentage = $(this).val()
+        let criteria = $('#id_criteria').val()
+        let previousValue = $('#id_criteria_previous_balance_hidden').val()
+        percentage = parseFloat(percentage)
+        previousValue = parseFloat(previousValue)
+
+        if(criteria === '2'){
+          let result = (Math.abs(percentage) / 100) * previousValue
+          result = previousValue + result
+          if (!!result === false) result = 0
+          $('#id_criteria_new_balance').removeAttr('readonly')
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(result).toFixed(2)))
+          $('#id_criteria_new_balance').attr('readonly', true) 
+        }else if(criteria === '3'){
+          let result = (Math.abs(percentage) / 100) * previousValue
+          result = previousValue - result
+          if (!!result === false) result = 0
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(result).toFixed(2)))
+          $('#id_criteria_new_balance').attr('readonly', true) 
+        }
+      })
+    })
+  </script>
+
+  <!-- Modals Scripts -->
+  <script>
+    $(document).ready(()=>{
+      $('.select2-style').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioModal')
+      });
+
+
+      $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalChangeScenario').click(()=> {
+        let url = $('#openModalChangeScenario').data('url')
+        let text = $('#openModalChangeScenario').data('text')
+        $('#formChangeStatusScenario').attr('action', url);
+        $('#textChangeStatus').html(`¿Desea mover escenario a ${text}?`)
+        $('#changeStatusScenarioModal').modal('show')
+      })
+      $('#openModalDeleteScenario').click(()=> {
+        let url = $('#openModalDeleteScenario').data('url')
+        $('#formDeleteScenario').attr('action', url);
+        $('#textDelete').html(`¿Desea eliminar escenario?`)
+        $('#deleteScenarioModal').modal('show')
+      })
+      
+      $('#openModalGlobalScenario').click(()=>{
+        $('#globalNonPerformingAssetsScenarioModal').modal('show')
+      })
+    })
+  </script>
+  <!-- End Modals Scripts -->
+
+{% endblock javascript %}

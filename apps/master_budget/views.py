@@ -6,16 +6,22 @@ from django.shortcuts import (
     redirect,
 )
 from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from apps.main.models import Periodo
-from .models import MasterParameters
+from .models import (
+    MasterParameters,
+    LossesEarningsComplementaryProjection,
+    CatalogLossesEarnings
+)
 from .forms import (
     MasterParametersForm,
     MasterParametersEditForm,
 )
+
 from utils.pagination import pagination
 from utils.sql import execute_sql_query
 
@@ -30,7 +36,7 @@ def master_budget_dashboard(request):
 def projection_parameters(request):
     form = MasterParametersForm()
     if request.is_ajax():
-        year = dt.date.today().year - 1
+        year = dt.date.today().year
         period = Periodo.objects.filter(descperiodo=year).first()
         query = (
             f'EXEC dbo.sp_pptoMaestroCarteraCredCatObtenerFechasCierreHist '
@@ -138,3 +144,52 @@ def projection_parameter(request, id):
         'form': form,
     }
     return render(request, 'MB_projection_parameters/edit.html', ctx)
+
+
+@login_required()
+def profit_loss_report_complementary_projection(request):
+    query = (
+        "SELECT distinct ([PeriodoId]), p.DescPeriodo "
+        "from [dbo].[pptoMaestroPerdidasGananciasProyeccionComplementaria] a "
+        "inner join [dbo].[Periodo] p on a.PeriodoId = p.CodPeriodo"
+    )
+    result = execute_sql_query(query=query)
+    data = result.get('data') if result.get('status') == 'ok' else []
+    return render(
+        request,
+        'reports/profit_loss_report_complementary_projection_list.html',
+        {'data': data}
+    )
+
+
+@login_required()
+def profit_loss_report_complementary_projection_detail(request, period_id):
+
+    if request.is_ajax():
+        if request.method == 'GET':
+            category_id = request.GET.get('categoryId')
+            qs = list(LossesEarningsComplementaryProjection.objects.filter(
+                period_id=period_id, category_id=category_id
+            ).values('month', 'amount', 'category_id__level_four').order_by('month'))
+            return HttpResponse(json.dumps(qs, cls=DjangoJSONEncoder))
+        elif request.method == 'POST':
+            category_id = request.POST.get('categoryId')
+            data = json.loads(request.POST.get('data'))
+            for item in data:
+                LossesEarningsComplementaryProjection.objects.filter(
+                    period_id=period_id,
+                    category_id=category_id,
+                    month=item.get('month')
+                ).update(amount=item.get('amount'))
+            return HttpResponse(json.dumps({}, cls=DjangoJSONEncoder))
+
+    type_request = request.GET.get('type', 'G')
+    detail = CatalogLossesEarnings.objects.filter(
+        method="M", type=type_request
+    )
+    ctx = {
+        'detail': detail
+    }
+    return render(
+        request, 'reports/profit_loss_report_complementary_projection_detail.html', ctx
+    )
