@@ -10,7 +10,7 @@ from apps.main.models import Detallexpresupuestopersonal, Centroscosto
 from apps.master_budget.models import MasterParameters
 from utils.constants import STATUS_SCENARIO, MONTH
 from utils.pagination import pagination
-from utils.sql import execute_sql_query
+from utils.sql import execute_sql_query, execute_sql_query_no_return
 from .models import (
     PaymentPayrollScenario,
     BudgetedPaymentPayroll,
@@ -506,6 +506,60 @@ def scenario_payment_payroll(request, id):
             _permanent_percentage_ceco_calculation(qs_item, qs_item)
             _temporary_percentage_ceco_calculation(qs_item, qs_item)
             qs_item.refresh_from_db()
+            messages.success(request, 'Actualización realizada con éxito!')
+
+        elif request.POST.get('method') == 'change-status':
+            if not qs.is_active:
+                PaymentPayrollScenario.objects.filter(
+                    parameter_id=qs.parameter_id.pk
+                ).update(is_active=False)
+            qs.is_active = not qs.is_active
+            qs.save()
+            message = (
+                f'Escenario actualizado a : '
+                f'{"Principal" if qs.is_active else "Secundario"}'
+                f' con éxito!!'
+            )
+            messages.success(request, message)
+
+        elif request.POST.get('method') == 'delete':
+            BudgetedPaymentPayroll.objects.filter(scenario_id=qs.pk).delete()
+            PaymentPayroll.objects.filter(scenario_id=qs.pk).delete()
+            qs.is_active = False
+            qs.deleted = True
+            qs.updated_by = request.user
+            qs.save()
+            messages.error(request, 'Escenario eliminado')
+            return redirect('scenarios_payment_payroll')
+
+        elif request.POST.get('method') == 'recalculate':
+            qs_list = PaymentPayroll.objects.filter(scenario_id=id)
+            for qs_item in qs_list:
+                budgeted_permanent = list(BudgetedPaymentPayroll.objects.filter(
+                    scenario_id=qs.pk, budgeted_id__tipo=2,
+                    budgeted_id__codcentrocosto=qs_item.cost_center_id.pk
+                ).values_list('budgeted_id', flat=True))
+                budgeted_temp = list(BudgetedPaymentPayroll.objects.filter(
+                    scenario_id=qs.pk, budgeted_id__tipo=1,
+                    budgeted_id__codcentrocosto=qs_item.cost_center_id.pk
+                ).values_list('budgeted_id', flat=True))
+                _permanent_monthly_updated_calculation(qs_item, budgeted_permanent)
+                _temporary_monthly_updated_calculation(qs_item, budgeted_temp)
+                qs_item.refresh_from_db()
+                _permanent_percentage_ceco_calculation(qs_item, qs)
+                _temporary_percentage_ceco_calculation(qs_item, qs)
+                qs_item.refresh_from_db()
+                _permanent_percentage_ceco_calculation(qs_item, qs_item)
+                _temporary_percentage_ceco_calculation(qs_item, qs_item)
+                qs_item.refresh_from_db()
+
+            messages.success(request, 'Recalculo realizada con éxito!')
+
+        elif request.POST.get('method') == 'update-cta':
+            execute_sql_query_no_return(
+                f"EXEC [dbo].[sp_pptoMaestrPlanillaMigrarPresupuestoIndirecto] "
+                f"@CodPeriodo = {qs.period_id.pk} "
+            )
             messages.success(request, 'Actualización realizada con éxito!')
 
     details = PaymentPayroll.objects.filter(scenario_id=id)

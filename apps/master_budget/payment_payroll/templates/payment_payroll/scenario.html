@@ -14,6 +14,8 @@
 {% block content %}
 {% include 'payment_payroll/scenario_change_status.html' %}
 {% include 'payment_payroll/scenario_clone.html' %}
+{% include 'payment_payroll/scenario_recalculate.html' %}
+{% include 'payment_payroll/scenario_update_cta.html' %}
 {% include 'payment_payroll/scenario_edit.html' %}
 {% include 'payment_payroll/scenario_delete.html' %}
 {% include 'payment_payroll/scenario_edit_percentages.html' %}
@@ -23,7 +25,7 @@
   <div class="card card-template">
     <div class="card-header">
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-3">
           <h5
             class="card-title fw-light fs-5"
             data-bs-toggle="tooltip"
@@ -32,24 +34,44 @@
             >Fecha Cierre {{qs.parameter_id}}
           </h5>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-9">
           <div class="d-grid gap-2 d-flex justify-content-end">
             <button
               id="openModalChangeScenario"
               type="button"
               class="btn btn-outline-dark btn-sm float-end"
-              data-url="{% url 'scenario_non_performing_assets' qs.pk %}"
+              data-url="{% url 'scenario_payment_payroll' qs.pk %}"
               data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
             >
             {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
             </button>
             <button
               id="openModalDeleteScenario"
-              type="button" 
-              data-url="{% url 'scenario_non_performing_assets' qs.pk %}"
+              type="button"
+              data-url="{% url 'scenario_payment_payroll' qs.pk %}"
               class="btn btn-outline-dark btn-sm float-end"
             >Eliminar
             </button>
+            <button
+              type="button"
+              class="btn btn-outline-warning btn-sm float-end"
+              id="openModalRecalculateScenario"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Ejecutar en el caso de eliminaciones en ingreso de nuevas contrataciones"
+              >Recalcular
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm float-end"
+              id="openModalUpdateScenario"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Actualizar Montos en Cuentas contables de planilla"
+            >Actualizar CTA
+            </button>
+
             <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
             <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalScenarioEditPercentage">Aumentos</button>
             <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalScenarioEdit">Editar</button>
@@ -199,6 +221,10 @@
       if('{{request.GET.option}}' === 'open_calculations_modal') openEditModal()
       $('#openModalScenarioEdit').click(openEditModal)
       $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      
+      $('#openModalRecalculateScenario').click(()=> $('#recalculateScenarioModal').modal('show'))
+      $('#openModalUpdateScenario').click(()=> $('#updateCtaScenarioModal').modal('show'))
+
       $('#openModalScenarioEditPercentage').click(()=> $('#editScenarioPercentageModal').modal('show'))
       $('#openModalChangeScenario').click(()=> {
         let url = $('#openModalChangeScenario').data('url')
