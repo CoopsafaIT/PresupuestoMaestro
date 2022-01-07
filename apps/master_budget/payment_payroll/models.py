@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from apps.main.models import (
     Periodo,
@@ -19,6 +20,8 @@ class PaymentPayrollScenario(
     AuditDataMixin,
     PercentageIncreasesMonthlyMixin
 ):
+    MIN = 0
+    MAX = 100
     id = models.AutoField(primary_key=True, db_column='Id')
     period_id = models.ForeignKey(
         Periodo, models.DO_NOTHING, db_column="PeriodoId", null=True, blank=True
@@ -34,6 +37,29 @@ class PaymentPayrollScenario(
     )
     is_active = models.BooleanField(
         null=True, blank=True, default=True, db_column="Estado"
+    )
+    holidays = models.FloatField(
+        db_column="DiasVacaciones", null=True, blank=True, default=0
+    )
+    percentage_special_bonuses = models.FloatField(
+        db_column="PorcentajeBonificacionesEspeciales", null=True, blank=True,
+        default=0, validators=[MinValueValidator(MIN), MaxValueValidator(MAX)]
+    )
+    percentage_rap = models.FloatField(
+        db_column="PorcentajeRAP", null=True, blank=True,
+        default=0, validators=[MinValueValidator(MIN), MaxValueValidator(MAX)]
+    )
+    percentage_labor_coverage = models.FloatField(
+        db_column="PorcentajeCoberturaLaboral", null=True, blank=True,
+        default=0, validators=[MinValueValidator(MIN), MaxValueValidator(MAX)]
+    )
+    percentage_plan_sac = models.FloatField(
+        db_column="PorcentajePlanSAC", null=True, blank=True,
+        default=0, validators=[MinValueValidator(MIN), MaxValueValidator(MAX)]
+    )
+    percentage_social_security = models.FloatField(
+        db_column="PorcentajeSeguroSocial", null=True, blank=True,
+        default=0, validators=[MinValueValidator(MIN), MaxValueValidator(MAX)]
     )
     deleted = models.BooleanField(
         null=True, blank=True, default=False, db_column="Eliminado"

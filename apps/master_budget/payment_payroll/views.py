@@ -16,7 +16,10 @@ from .models import (
     BudgetedPaymentPayroll,
     PaymentPayroll
 )
-from .forms import PaymentPayrollScenarioForm
+from .forms import (
+    PaymentPayrollScenarioForm,
+    CollateralPaymentScenarioForm
+)
 from .request_get import QueryGetParms
 
 
@@ -556,11 +559,19 @@ def scenario_payment_payroll(request, id):
             messages.success(request, 'Recalculo realizada con éxito!')
 
         elif request.POST.get('method') == 'update-cta':
-            execute_sql_query_no_return(
-                f"EXEC [dbo].[sp_pptoMaestrPlanillaMigrarPresupuestoIndirecto] "
-                f"@CodPeriodo = {qs.period_id.pk} "
-            )
-            messages.success(request, 'Actualización realizada con éxito!')
+            form = CollateralPaymentScenarioForm(request.POST, instance=qs)
+            if not form.is_valid():
+                messages.warning(
+                    request,
+                    f'Formulario no válido: {form.errors.as_text()}'
+                )
+            else:
+                form.save()
+                execute_sql_query_no_return(
+                    f"EXEC [dbo].[sp_pptoMaestrPlanillaMigrarPresupuestoIndirecto] "
+                    f"@CodPeriodo = {qs.period_id.pk} "
+                )
+                messages.success(request, 'Actualización realizada con éxito!')
 
     details = PaymentPayroll.objects.filter(scenario_id=id)
     qs_sum_perm = details.extra({
@@ -610,6 +621,7 @@ def scenario_payment_payroll(request, id):
     qs_budgeted_for_scenario = BudgetedPaymentPayroll.objects.filter(
         scenario_id=id
     ).values_list('budgeted_id', flat=True)
+    form_update_cta = CollateralPaymentScenarioForm(instance=qs)
 
     ctx = {
         'qs': qs,
@@ -619,6 +631,7 @@ def scenario_payment_payroll(request, id):
         'sum_total_perm': sum_total_perm,
         'sum_total_temp': sum_total_temp,
         'budgeted': budgeted,
+        'form_update_cta': form_update_cta,
         'qs_budgeted_for_scenario': qs_budgeted_for_scenario
     }
     return render(request, 'payment_payroll/scenario.html', ctx)

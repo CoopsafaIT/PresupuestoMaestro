@@ -38,3 +38,59 @@ class PaymentPayrollScenarioForm(forms.ModelForm):
             'is_active',
             'comment',
         )
+
+
+class CollateralPaymentScenarioForm(forms.ModelForm):
+    holidays = forms.FloatField(
+        required=True,
+        label="Días de Vacaciones",
+        widget=forms.NumberInput(
+            attrs={'class': "form-control"}
+        )
+    )
+    percentage_special_bonuses = forms.FloatField(
+        required=True,
+        label="Porcentaje de Bonificaciones Especiales (%)",
+        widget=forms.NumberInput(
+            attrs={'class': "form-control"}
+        )
+    )
+    percentage_rap = forms.FloatField(
+        required=True,
+        label="Porcentaje RAP (%)",
+        widget=forms.NumberInput(
+            attrs={'class': "form-control"}
+        )
+    )
+    percentage_labor_coverage = forms.FloatField(
+        required=True,
+        label="Porcentaje Cubertura Laboral (%)",
+        widget=forms.NumberInput(
+            attrs={'class': "form-control"}
+        )
+    )
+    percentage_plan_sac = forms.FloatField(
+        required=True,
+        label="Porcentaje Plan SAC (%)",
+        widget=forms.NumberInput(
+            attrs={'class': "form-control"}
+        )
+    )
+    percentage_social_security = forms.FloatField(
+        required=True,
+        label="Procentaje Seguridad Social (%)",
+        widget=forms.NumberInput(
+            attrs={'class': "form-control"}
+        )
+    )
+
+    class Meta:
+        model = PaymentPayrollScenario
+        fields = (
+            'holidays',
+            'percentage_special_bonuses',
+            'percentage_rap',
+            'percentage_labor_coverage',
+            'percentage_plan_sac',
+            'percentage_social_security'
+        )
