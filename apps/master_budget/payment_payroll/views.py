@@ -571,6 +571,16 @@ def scenario_payment_payroll(request, id):
                     f"EXEC [dbo].[sp_pptoMaestrPlanillaMigrarPresupuestoIndirecto] "
                     f"@CodPeriodo = {qs.period_id.pk} "
                 )
+                execute_sql_query_no_return(
+                    f"EXEC [dbo].[sp_pptoMaestrPlanillaMigrarPresupuestoIndirecto"
+                    f"ColateralesTreceavosCatorceavoPrestaciones] "
+                    f"@EscenarioId = {qs.pk}"
+                )
+                execute_sql_query_no_return(
+                    f"EXEC [dbo].[sp_pptoMasterPlanillaMigrarPresupuestoIndirecto"
+                    f"ColateralesConFormula] "
+                    f"@EscenarioId = {qs.pk}"
+                )
                 messages.success(request, 'Actualización realizada con éxito!')
 
     details = PaymentPayroll.objects.filter(scenario_id=id)
