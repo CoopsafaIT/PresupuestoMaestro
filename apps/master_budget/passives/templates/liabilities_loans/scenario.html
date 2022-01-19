@@ -14,13 +14,14 @@
 {% block content %}
 {% include 'liabilities_loans/scenario_change_status.html' %}
 {% include 'liabilities_loans/scenario_clone.html' %}
+{% include 'liabilities_loans/scenario_clone_update_parameter.html' %}
 {% include 'liabilities_loans/scenario_edit.html' %}
 {% include 'liabilities_loans/scenario_delete.html' %}
 <div class="container-fluid mt-1">
-  <div class="card card-template">
+  <div class="card card-template"> 
     <div class="card-header">
       <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-6">
           <h5
             class="card-title fw-light fs-5"
             data-bs-toggle="tooltip"
@@ -32,7 +33,7 @@
             </span>
           </h5>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div class="d-grid gap-2 d-flex justify-content-end">
             <button
               id="openModalChangeScenario"
@@ -51,6 +52,8 @@
             >Eliminar
             </button>
             <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+            <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalCloneUpdateScenario">Actualizar Parametro</button>
+
             <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalScenarioEdit">Editar</button>
           </div>
         </div>
@@ -136,10 +139,15 @@
         language: "es",
         dropdownParent: $('#cloneScenarioModal')
       });
+      $('.select2-style-clone-update').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioUpdateParameterModal')
+      });
       const openEditModal = ()=> $('#editScenarioModal').modal('show')
       if('{{request.GET.option}}' === 'open_calculations_modal') openEditModal()
       $('#openModalScenarioEdit').click(openEditModal)
       $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalCloneUpdateScenario').click(()=> $('#cloneScenarioUpdateParameterModal').modal('show'))
       $('#openModalChangeScenario').click(()=> {
         let url = $('#openModalChangeScenario').data('url')
         let text = $('#openModalChangeScenario').data('text')

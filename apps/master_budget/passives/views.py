@@ -21,9 +21,10 @@ from .models import (
 from .forms import (
     SavingsLiabilitiesForm,
     ScenarioCloneForm,
+    ScenarioCloneUpdateParameterForm,
     LiabilitiesLoansScenarioForm,
 )
-from .calculations import LiabilitiesLoansCalculations
+from .calculations import LiabilitiesLoansCalculations, calculate_interest_generated
 from utils.pagination import pagination
 from utils.constants import STATUS_SCENARIO
 from utils.sql import execute_sql_query
@@ -36,6 +37,16 @@ from utils.constants import (
 @login_required()
 def scenarios_savings_liabilities(request):
     form = SavingsLiabilitiesForm()
+
+    def _get_amount_base(query, filter):
+        amount = 0
+        result = execute_sql_query(f'{query} {filter}')
+
+        if result.get('status') != 'ok':
+            return amount
+        data = result.get('data')
+        amount = data[0].get('Saldo')
+        return amount
 
     def _correlative(category_name, period, total):
         return (
@@ -67,20 +78,12 @@ def scenarios_savings_liabilities(request):
                     period_id=_new.period_id,
                     category_id=_new.category_id
                 ).count()
-                correlative = _correlative(category_name, period, total)
-                _new.correlative = correlative
+                _new.correlative = _correlative(category_name, period, total)
+                _new.base_amount = _get_amount_base(
+                    _new.category_id.identifier, _new.parameter_id.pk
+                )
+                _new.annual_growth_amount = 0
                 _new.save()
-
-                query = _new.category_id.identifier
-                query = f"{query} '{_new.parameter_id.pk}'"
-                result = execute_sql_query(query)
-                if result.get('status') == 'ok':
-                    data = result.get('data')
-                    amount = data[0].get('Saldo')
-                    _new.base_amount = amount
-                    _new.annual_growth_amount = 0
-                    _new.save()
-
                 messages.success(
                     request,
                     'Escenario creado con éxito!'
@@ -90,6 +93,7 @@ def scenarios_savings_liabilities(request):
                 )
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
+
         elif request.POST.get('method') == 'clone':
             id = request.POST.get('id')
             comment = request.POST.get('comment')
@@ -137,9 +141,78 @@ def scenarios_savings_liabilities(request):
                 request,
                 'Escenario clonado con éxito!'
             )
-            redirect_url = reverse('scenario_savings_liabilities', kwargs={'id': _clone.pk})
+            redirect_url = reverse(
+                'scenario_savings_liabilities', kwargs={'id': _clone.pk}
+            )
             full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
             return redirect(full_redirect_url)
+
+        elif request.POST.get('method') == 'clone-update-parameter':
+            id = request.POST.get('id')
+            parameter_id = request.POST.get('parameter_id')
+            comment = request.POST.get('comment')
+            is_active = request.POST.get('is_active')
+            qs_parameter = get_object_or_404(MasterParameters, pk=parameter_id)
+            qs_old_esc = get_object_or_404(SavingsLiabilitiesScenario, pk=id)
+            _clone = SavingsLiabilitiesScenario.objects.get(pk=id)
+            _clone.pk = None
+            _clone.parameter_id = qs_parameter
+            _clone.period_id = qs_parameter.period_id
+            _clone.save()
+            if is_active == 'True':
+                SavingsLiabilitiesScenario.objects.filter(
+                    parameter_id=_clone.parameter_id.pk,
+                    category_id=_clone.category_id.pk
+                ).update(is_active=False)
+            total = SavingsLiabilitiesScenario.objects.filter(
+                period_id=_clone.period_id,
+                category_id=_clone.category_id
+            ).count()
+
+            _clone.comment = comment
+            _clone.is_active = is_active
+            _clone.created_by = request.user
+            _clone.updated_by = request.user
+            _clone.correlative = _correlative(
+                _clone.category_id.name,
+                _clone.parameter_id.period_id.descperiodo, total
+            )
+            _clone.base_amount = _get_amount_base(
+                _clone.category_id.identifier, _clone.parameter_id.pk
+            )
+            _clone.save()
+            _clone.refresh_from_db()
+            for item in range(1, 13):
+                fields = LIST_SAVINGS_LIABILITIES_FIELDS[item-1]
+                if item == 1:
+                    base_amount = _clone.base_amount
+                else:
+                    qs_before = SavingsLiabilities.objects.get(
+                        scenario_id=_clone.pk, month=item-1
+                    )
+                    base_amount = qs_before.new_amount
+
+                growth_percentage = getattr(_clone, fields.get('growth_percentage'), 0)
+                rate = getattr(_clone, fields.get('rate'), 0)
+                _upd = SavingsLiabilities.objects.filter(
+                    scenario_id=_clone.pk, month=item
+                ).first()
+                _upd.amount_initial = base_amount
+                _upd.percent_growth = growth_percentage
+                _upd.amount_growth = _clone.annual_growth_amount * dc(growth_percentage / 100) # NOQA
+                _upd.new_amount = _upd.amount_initial + _upd.amount_growth
+                _upd.rate = rate
+                _upd.total_interest = calculate_interest_generated(
+                    _upd.amount_initial, _upd.new_amount, _upd.rate
+                )
+                _upd.save()
+            messages.success(
+                request, 'Escenario clonado y proyección actualizada con éxito'
+            )
+            redirect_url = reverse(
+                'scenario_savings_liabilities', kwargs={'id': _clone.pk}
+            )
+            return redirect(redirect_url)
 
     page = request.GET.get('page', '')
     parameter = request.GET.get('parameter')
@@ -283,6 +356,7 @@ def scenario_savings_liabilities(request, id):
         'qs_sum': qs_sum[0],
         'qs_detail': qs_detail,
         'form_clone': ScenarioCloneForm(),
+        'form_clone_update': ScenarioCloneUpdateParameterForm()
     }
     return render(request, 'savings_liabilities/scenario.html', ctx)
 
@@ -312,6 +386,20 @@ def scenario_savings_liabilities_comments(request, id):
 @login_required()
 def scenarios_liabilities_loans(request):
     form = LiabilitiesLoansScenarioForm()
+
+    def _get_amount_base(parameter, identifier):
+        amount = 0
+        query = (
+            f"[dbo].[sp_pptoMaestroPrestamosCatObtenerSaldoHist] "
+            f"@ParametroId = '{parameter_id}' ,@CategoriaId = '{identifier}'"
+        )
+        result = execute_sql_query(query)
+
+        if result.get('status') != 'ok':
+            return amount
+        data = result.get('data')
+        amount = data[0].get('Saldo')
+        return amount
 
     def _correlative(category_name, period, total):
         return (
@@ -343,22 +431,12 @@ def scenarios_liabilities_loans(request):
                     period_id=_new.period_id,
                     category_id=_new.category_id
                 ).count()
-                correlative = _correlative(category_name, period, total)
-                _new.correlative = correlative
-                _new.save()
-
-                query = (
-                    f"[dbo].[sp_pptoMaestroPrestamosCatObtenerSaldoHist] "
-                    f"@ParametroId = '{_new.parameter_id.pk}' , "
-                    f"@CategoriaId = '{_new.category_id.identifier}' "
+                _new.correlative = _correlative(category_name, period, total)
+                _new.base_amount = _get_amount_base(
+                    _new.parameter_id.pk, _new.category_id.identifier
                 )
-                result = execute_sql_query(query)
-                if result.get('status') == 'ok':
-                    data = result.get('data')
-                    amount = data[0].get('Saldo')
-                    _new.base_amount = amount
-                    _new.annual_growth_amount = 0
-                    _new.save()
+                _new.annual_growth_amount = 0
+                _new.save()
 
                 messages.success(
                     request,
@@ -370,21 +448,20 @@ def scenarios_liabilities_loans(request):
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
+            # TODO: Corregir esta funcionalidad
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
-            qs_old_esc = get_object_or_404(SavingsLiabilitiesScenario, pk=id)
-            _clone = SavingsLiabilitiesScenario.objects.get(pk=id)
+            qs_old_esc = get_object_or_404(LiabilitiesLoansScenario, pk=id)
+            _clone = LiabilitiesLoansScenario.objects.get(pk=id)
             _clone.pk = None
             _clone.save()
             if is_active == 'True':
-                SavingsLiabilitiesScenario.objects.filter(
-                    parameter_id=_clone.parameter_id.pk,
-                    category_id=_clone.category_id.pk
+                LiabilitiesLoansScenario.objects.filter(
+                    parameter_id=_clone.parameter_id.pk, category_id=_clone.category_id.pk
                 ).update(is_active=False)
-            total = SavingsLiabilitiesScenario.objects.filter(
-                period_id=_clone.period_id,
-                category_id=_clone.category_id
+            total = LiabilitiesLoansScenario.objects.filter(
+                period_id=_clone.period_id, category_id=_clone.category_id
             ).count()
 
             _clone.comment = comment
@@ -393,25 +470,29 @@ def scenarios_liabilities_loans(request):
             _clone.updated_by = request.user
             _clone.correlative = _correlative(
                 _clone.category_id.name,
-                _clone.parameter_id.period_id.descperiodo,
-                total
+                _clone.parameter_id.period_id.descperiodo, total
             )
             _clone.save()
             _clone.refresh_from_db()
             for item in range(1, 13):
-                old_item = SavingsLiabilities.objects.filter(
+                old_item = LiabilitiesLoans.objects.filter(
                     scenario_id=qs_old_esc.pk, month=item
                 ).first()
-                _upd = SavingsLiabilities.objects.filter(
+                _upd = LiabilitiesLoans.objects.filter(
                     scenario_id=_clone.pk, month=item
                 ).first()
+
                 _upd.amount_initial = old_item.amount_initial
                 _upd.percent_growth = old_item.percent_growth
                 _upd.amount_growth = old_item.amount_growth
-                _upd.new_amount = old_item.new_amount
                 _upd.rate = old_item.rate
+                _upd.term = old_item.term
+                _upd.level_quota = old_item.level_quota
                 _upd.total_interest = old_item.total_interest
+                _upd.principal_payments = old_item.principal_payments
+                _upd.new_amount = old_item.new_amount
                 _upd.save()
+
             messages.success(
                 request,
                 'Escenario clonado con éxito!'
@@ -419,6 +500,81 @@ def scenarios_liabilities_loans(request):
             redirect_url = reverse('scenario_liabilities_loans', kwargs={'id': _clone.pk})
             full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
             return redirect(full_redirect_url)
+
+        elif request.POST.get('method') == "clone-update-parameter":
+            calculations = LiabilitiesLoansCalculations()
+            id = request.POST.get('id')
+            parameter_id = request.POST.get('parameter_id')
+            comment = request.POST.get('comment')
+            is_active = request.POST.get('is_active')
+            qs_parameter = get_object_or_404(MasterParameters, pk=parameter_id)
+            qs_old_esc = get_object_or_404(LiabilitiesLoansScenario, pk=id)
+            _clone = LiabilitiesLoansScenario.objects.get(pk=id)
+            _clone.pk = None
+            _clone.parameter_id = qs_parameter
+            _clone.period_id = qs_parameter.period_id
+            _clone.save()
+            if is_active == 'True':
+                LiabilitiesLoansScenario.objects.filter(
+                    parameter_id=_clone.parameter_id.pk, category_id=_clone.category_id.pk
+                ).update(is_active=False)
+            total = LiabilitiesLoansScenario.objects.filter(
+                period_id=_clone.period_id, category_id=_clone.category_id
+            ).count()
+
+            _clone.comment = comment
+            _clone.is_active = is_active
+            _clone.created_by = request.user
+            _clone.updated_by = request.user
+            _clone.correlative = _correlative(
+                _clone.category_id.name, _clone.parameter_id.period_id.descperiodo, total
+            )
+            _clone.base_amount = _get_amount_base(
+                _clone.parameter_id.pk, _clone.category_id.identifier
+            )
+            _clone.save()
+            _clone.refresh_from_db()
+            for item in range(1, 13):
+                fields = LIST_LIABILITIES_LOANS_FIELDS[item-1]
+                if item == 1:
+                    base_amount = _clone.base_amount
+                    principal_payments_before = 0
+                else:
+                    qs_before = LiabilitiesLoans.objects.get(scenario_id=_clone.pk, month=item-1) # NOQA
+                    base_amount = qs_before.new_amount
+                    principal_payments_before = qs_before.principal_payments
+
+                growth_percentage = getattr(_clone, fields.get('growth_percentage'), 0)
+                rate = getattr(_clone, fields.get('rate'), 0)
+                term = getattr(_clone, fields.get('term'), 0)
+
+                _upd = LiabilitiesLoans.objects.filter(scenario_id=_clone.pk, month=item).first() # NOQA
+                _upd.amount_initial = base_amount
+                _upd.percent_growth = growth_percentage
+                _upd.amount_growth = (
+                    _clone.annual_growth_amount * dc(growth_percentage / 100)
+                ) + principal_payments_before
+                _upd.rate = rate
+                _upd.term = term
+                _upd.level_quota = calculations.level_quota(
+                    _upd.amount_initial, _upd.amount_growth, _upd.rate, _upd.term
+                )
+                _upd.total_interest = calculations.total_interest(
+                    _upd.amount_initial, _upd.amount_growth, _upd.rate
+                )
+                _upd.principal_payments = abs(_upd.level_quota) - abs(_upd.total_interest)
+                if item == 12:
+                    _upd.new_amount = _upd.amount_initial + _upd.amount_growth - 0
+                else:
+                    _upd.new_amount = _upd.amount_initial + _upd.amount_growth - _upd.principal_payments # NOQA
+                _upd.save()
+            messages.success(
+                request, 'Escenario clonado y proyección actualizada con éxito'
+            )
+            redirect_url = reverse(
+                'scenario_liabilities_loans', kwargs={'id': _clone.pk}
+            )
+            return redirect(redirect_url)
 
     page = request.GET.get('page', '')
     parameter = request.GET.get('parameter')
@@ -518,7 +674,6 @@ def scenario_liabilities_loans(request, id):
                 growth_percentage = float(request.POST.get(fields.get('growth_percentage'))) # NOQA
                 rate = float(request.POST.get(fields.get('rate')))
                 term = float(request.POST.get(fields.get('term')))
-                print(principal_payments_before)
                 _upd = LiabilitiesLoans.objects.filter(scenario_id=qs.pk, month=item).first() # NOQA
                 _upd.amount_initial = base_amount
                 _upd.percent_growth = growth_percentage
@@ -580,6 +735,7 @@ def scenario_liabilities_loans(request, id):
         'qs_detail': qs_detail,
         'qs_sum': qs_sum[0],
         'form_clone': ScenarioCloneForm(),
+        'form_clone_update': ScenarioCloneUpdateParameterForm()
     }
     return render(request, 'liabilities_loans/scenario.html', ctx)
 
