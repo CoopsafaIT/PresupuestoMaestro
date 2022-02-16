@@ -14,13 +14,14 @@
 {% block content %}
 {% include 'savings_liabilities/scenario_change_status.html' %}
 {% include 'savings_liabilities/scenario_clone.html' %}
+{% include 'savings_liabilities/scenario_clone_update_parameter.html' %}
 {% include 'savings_liabilities/scenario_edit.html' %}
 {% include 'savings_liabilities/scenario_delete.html' %}
 <div class="container-fluid mt-1">
   <div class="card card-template">
     <div class="card-header">
       <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-6">
           <h5
             class="card-title fw-light fs-5"
             data-bs-toggle="tooltip"
@@ -32,11 +33,10 @@
             </span>
           </h5>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div class="d-grid gap-2 d-flex justify-content-end">
             <button
-              id="openModalChangeScenario"
-              type="button"
+              id="openModalChangeScenario" type="button"
               class="btn btn-outline-dark btn-sm float-end"
               data-url="{% url 'scenario_savings_liabilities' qs.pk %}"
               data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
@@ -44,13 +44,13 @@
             {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
             </button>
             <button
-              id="openModalDeleteScenario"
-              type="button" 
+              id="openModalDeleteScenario" type="button" 
               data-url="{% url 'scenario_savings_liabilities' qs.pk %}"
               class="btn btn-outline-dark btn-sm float-end"
             >Eliminar
             </button>
             <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+            <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalCloneUpdateScenario">Actualizar Parametro</button>
             <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalScenarioEdit">Editar</button>
           </div>
         </div>
@@ -136,10 +136,15 @@
         language: "es",
         dropdownParent: $('#cloneScenarioModal')
       });
+      $('.select2-style-clone-update').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioUpdateParameterModal')
+      });
       const openEditModal = ()=> $('#editScenarioModal').modal('show')
       if('{{request.GET.option}}' === 'open_calculations_modal') openEditModal()
       $('#openModalScenarioEdit').click(openEditModal)
       $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalCloneUpdateScenario').click(()=> $('#cloneScenarioUpdateParameterModal').modal('show'))
       $('#openModalChangeScenario').click(()=> {
         let url = $('#openModalChangeScenario').data('url')
         let text = $('#openModalChangeScenario').data('text')

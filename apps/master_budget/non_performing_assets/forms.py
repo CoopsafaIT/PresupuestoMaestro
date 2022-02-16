@@ -78,6 +78,18 @@ class OthersAssetsScenarioForm(forms.ModelForm):
 
 
 class ScenarioCloneForm(forms.Form):
+    parameter_id = forms.ModelChoiceField(
+        label="Actualizar Parametro de Proyección",
+        required=False,
+        queryset=MasterParameters.objects.filter(is_active=True),
+        empty_label="--- Seleccione Parametro de Proyección ---",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-select select2-style',
+                'style': 'width:100%'
+            }
+        )
+    )
     is_active = forms.ChoiceField(
         label="Estado",
         required=True,

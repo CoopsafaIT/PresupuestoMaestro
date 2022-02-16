@@ -711,8 +711,6 @@ def transfers_expenses(request):
             budget_origin_qs.fechamodificacion = now
             budget_origin_qs.usuariomodificacion = request.user.pk
             budget_origin_qs.save()
-            print(budget_origin_qs.pk)
-            print(budget_destination_qs.pk)
 
             budget_destination_qs.montooriginal = budget_destination_qs.montooriginal + amount # NOQA
             budget_destination_qs.enero = budget_destination_qs.enero + per_month

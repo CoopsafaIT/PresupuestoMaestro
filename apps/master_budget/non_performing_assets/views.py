@@ -140,11 +140,16 @@ def scenarios_non_performing_assets(request):
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
             id = request.POST.get('id')
+            parameter_id = request.POST.get('parameter_id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
             qs_old_esc = get_object_or_404(NonPerformingAssetsScenario, pk=id)
             _clone = NonPerformingAssetsScenario.objects.get(pk=id)
             _clone.pk = None
+            if not not parameter_id:
+                qs_parameter = get_object_or_404(MasterParameters, pk=parameter_id)
+                _clone.parameter_id = qs_parameter
+                _clone.period_id = qs_parameter.period_id
             _clone.save()
             if is_active == 'True':
                 NonPerformingAssetsScenario.objects.filter(
@@ -156,9 +161,7 @@ def scenarios_non_performing_assets(request):
             _clone.updated_by = request.user
             _clone.correlative = _correlative(
                 _clone.parameter_id.period_id.descperiodo,
-                NonPerformingAssetsScenario.objects.filter(
-                    period_id=_clone.period_id
-                ).count()
+                NonPerformingAssetsScenario.objects.filter(period_id=_clone.period_id).count()
             )
             _clone.save()
             _clone.refresh_from_db()

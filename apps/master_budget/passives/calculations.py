@@ -17,3 +17,9 @@ class LiabilitiesLoansCalculations():
     ):
         pv = float(amount_initial + amount_growth) / 1
         return dc(pv * (rate*30/36000))
+
+
+def calculate_interest_generated(amount_initial, new_amount, rate):
+    total_amount = (amount_initial + new_amount) / 2
+    rate_monthly = (rate/100) / 12
+    return total_amount * dc(rate_monthly)
