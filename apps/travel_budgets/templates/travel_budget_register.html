@@ -2,21 +2,16 @@
 {% load static %}
 {% load humanize %}
 {% block title %}Presupuestos de Viaticos {% endblock title %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Ingreso de Presupuestos de Viaticos</li>
+{% endblock breadcrumb %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/budgets.css' %}">
-<!-- <link rel="stylesheet" href="{% static 'plugins/datatables/datatables.min.css' %}"> -->
 {% endblock css %}
 
 {% block content %}
 <div class="container-fluid pt-4">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-template">
-      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Ingreso de Presupuestos de Viaticos</li>
-    </ol>
-  </nav>
-
   <div class="card card-template">
     <div class="card-body">
       <ul class="nav nav-tabs" id="myTab" role="tablist">

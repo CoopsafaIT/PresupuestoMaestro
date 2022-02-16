@@ -63,22 +63,21 @@
                     class="text-center" 
                     colspan="6"
                   >
-                    <h5>No hay Disponible</h5>
+                    <h5 class="fw-light">No Data</h5>
                   </td>
                 </tr>
                 {% endfor %}
               </form>
             </tbody>
-            <!-- <tfoot>
+            <tfoot>
               <tr>
-                <th colspan="2"> Total Presupuestado </th>
-                <td class="fw-light" colspan="6">{{total_budget|floatformat:2|intcomma}}</td>
+                <th colspan="2"> Totales: </th>
+                <td class="fw-light">{{total.total_ejecutado_diciembre|floatformat:2|intcomma}}</td>
+                <td class="fw-light">{{total.proyeccion|floatformat:2|intcomma}}</td>
+                <td class="fw-light">{{total.porcentaje|floatformat:2|intcomma}}</td>
+                <td class="fw-light">{{total.totalpresupuestado|floatformat:2|intcomma}}</td>
               </tr>
-              <tr>
-                <th colspan="2"> Total Disponible </th>
-                <td class="fw-light" colspan="6">{{amount_available|floatformat:2|intcomma}}</td>
-              </tr>
-            </tfoot> -->
+            </tfoot>
           </table>
         </div>
       </div>

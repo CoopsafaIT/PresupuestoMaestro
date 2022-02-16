@@ -1,0 +1,345 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Escenarios Cartera Crediticia {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item text-white ">
+    <a href="{% url 'scenarios_loan_portfolio' %}" class="text-white text-decoration-none">/ Cartera Crediticia - Escenarios</a>
+  </li>
+  <li class="breadcrumb-item active text-white before-none" aria-current="page"> / Categoria: {{qs.category_id.name}}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'loan_portfolio/scenario_change_status.html' %}
+{% include 'loan_portfolio/scenario_clone.html' %}
+{% include 'loan_portfolio/scenario_clone_update_parameter.html' %}
+{% include 'loan_portfolio/scenario_edit.html' %}
+{% include 'loan_portfolio/scenario_delete.html' %}
+<div class="container-fluid mt-1">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-6">
+          <h5
+            class="card-title fw-light fs-5"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="{{qs.comment}}"
+            >Fecha Cierre {{qs.parameter_id}} &nbsp;&nbsp;
+            <span class="fw-light fs-6 mt-2"
+            >Crecimiento: {{qs.annual_growth_amount|floatformat:2|intcomma|default:'0'}}
+            </span>
+          </h5>
+        </div>
+        <div class="col-md-6">
+          <div class="d-grid gap-2 d-flex justify-content-end">
+            <button
+              id="openModalChangeScenario"
+              type="button"
+              class="btn btn-outline-dark btn-sm float-end"
+              data-url="{% url 'scenario_loan_portfolio' qs.pk %}"
+              data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
+            >
+            {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
+            </button>
+            <button
+              id="openModalDeleteScenario"
+              type="button" 
+              data-url="{% url 'scenario_loan_portfolio' qs.pk %}"
+              class="btn btn-outline-dark btn-sm float-end"
+            >Eliminar
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+            <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalCloneUpdateScenario">Actualizar Parametro</button>
+            <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalScenarioEdit">Editar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      {% include 'loan_portfolio/scenario_table_detail.html' %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+  <script>
+    $(document).ready(()=>{
+      const loadComments = ()=>{
+        loaderShow(true)
+        let url = '{% url "scenario_loan_portfolio_comments" qs.pk %}'
+        $.ajax({
+          type: 'GET',
+          data: {},
+          url: url
+        })
+        .done((res)=>{
+          fillComentsTable(res);
+          loaderShow(false)
+        })
+        .fail(handleError)
+
+      }
+
+      $('#btnAddCommentScenario').click(function(){
+        let url = '{% url "scenario_loan_portfolio_comments" qs.pk %}'
+        let comment = $('#id_comment_scenario').val()
+        if(!!comment){
+          loaderShow(true)
+          $.ajax({
+            type: 'POST',
+            data: {comment},
+            url: url
+          })
+          .done((res)=>{
+            fillComentsTable(res)
+            $('#id_comment_scenario').val('')
+            loaderShow(false)
+          })
+          .fail(handleError)
+        }
+      })
+
+      const fillComentsTable = (res)=>{
+        $('#tblComments > tbody').empty()
+        let data = JSON.parse(res)
+        $.each(data.data, (key, val) => {
+          let tr =  `
+            <tr>
+              <td>
+                <p>
+                  <span class="fw-bold"> ${val.created_by__username}: 
+                    <span class="fw-light" style="font-size: 0.8rem;">( ${val.created_at} )</span>
+                  </span><br>
+                  ${val.comment}
+                </p> 
+              </td>
+            </tr>
+          `
+          $('#tblComments > tbody').append(tr)
+        })
+      }
+
+      const handleError = (e) => {
+        console.log(e);
+        loaderShow(false)
+        alert(e)
+      }
+      loadComments()
+    })
+  </script>
+
+  <script>
+    $(document).ready(()=>{
+      $('.select2-style').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioModal')
+      });
+      $('.select2-style-clone-update').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioUpdateParameterModal')
+      });
+      const openEditModal = ()=> $('#editScenarioModal').modal('show')
+      if('{{request.GET.option}}' === 'open_calculations_modal') openEditModal()
+      $('#openModalScenarioEdit').click(openEditModal)
+      $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalCloneUpdateScenario').click(()=> $('#cloneScenarioUpdateParameterModal').modal('show'))
+      $('#openModalChangeScenario').click(()=> {
+        let url = $('#openModalChangeScenario').data('url')
+        let text = $('#openModalChangeScenario').data('text')
+        $('#formChangeStatusScenario').attr('action', url);
+        $('#textChangeStatus').html(`¿Desea mover escenario a ${text}?`)
+        $('#changeStatusScenarioModal').modal('show')
+      })
+      $('#openModalDeleteScenario').click(()=> {
+        let url = $('#openModalDeleteScenario').data('url')
+        $('#formDeleteScenario').attr('action', url);
+        $('#textDelete').html(`¿Desea eliminar escenario?`)
+        $('#deleteScenarioModal').modal('show')
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      totalGrowthPercentageMonthlyEach()
+      $('#id_annual_growth_percentage').keyup(function(){
+        let percentaje = $(this).val().replace(',', '')
+        let base_amount = $('#id_amount_base').data('amount');
+        if(!!percentaje && !!base_amount){
+          percentaje = parseFloat(percentaje) / 100;
+          base_amount = parseFloat(base_amount);
+          let total = base_amount * percentaje
+          $('#id_annual_growth_amount').val(numberWithCommas(total.toFixed(2)))
+        }
+      })
+
+      $('.fill-growth-percentage-monthly-jan').click(function(){
+        let january = $('#id_growth_percentage_january').val();
+        january = parseFloat(january).toFixed(2)
+        if((january*12) > 100 ) {
+          alert('Porcentaje a aplicar cada mes mayor al porcentaje disponible!')
+          return;
+        }
+        $('.growth-percentaje-monthly').val(january)
+        let total = 100 - (january*12)
+        $('#total-growth-percentaje-monthly-avialable').val(total.toFixed(1))
+      })
+      $('.fill-growth-percentage-monthly-divided').click(function(){
+        const divided = (100 / 12).toFixed(2);
+        $('.growth-percentaje-monthly').val(divided)
+        $('#total-growth-percentaje-monthly-avialable').val(0)
+      })
+      
+      function totalGrowthPercentageMonthlyEach(){
+        let total = 100
+        $.each( $('.growth-percentaje-monthly'), function(key, val){
+          let value = $(val).val()
+          if(!!value){
+            value = parseFloat($(val).val().replace(',', ''))
+          }else{
+            value = 0
+            $(val).val('0')
+          }
+          if(value > 100 || (total - value ) < 0){
+            $(val).val('0')
+            return
+          }
+          total = total - value  
+        })
+        $('#total-growth-percentaje-monthly-avialable').val(total.toFixed(1))
+      }
+  
+      function totalGrowthPercentageMonthly(){
+        let new_val = $(this).val()
+        if(!!new_val ===  false) return;
+        totalGrowthPercentageMonthlyEach()
+      }
+
+      $('.growth-percentaje-monthly').keyup(totalGrowthPercentageMonthly)
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('#fill-rate-monthly-jan').click(()=>{
+        let val = $('#id_rate_january').val()
+        if(!!val === false) return;
+        $('.rate-monthly').val(val)
+      })
+      
+      $('.rate-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false) {
+          $(this).val(0)
+          return;
+        }
+        val = parseFloat(val)
+        if( val < 0 ){
+          $(this).val(0)
+          return;
+        }
+
+
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('#fill-term-monthly-jan').click(()=>{
+        let val = $('#id_term_january').val()
+        if(!!val === false) return;
+        $('.term-monthly').val(val)
+      })
+      
+      $('.term-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val(0)
+          return;
+        }
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('#fill-commission-percentage-monthly-jan').click(()=>{
+        let val = $('#id_commission_percentage_january').val()
+        if(!!val === false) return;
+        $('.commission-percentage-monthly').val(val)
+      })
+
+      $('.commission-percentage-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val(0)
+          return;
+        }
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('#fill-percentage-arrears-monthly-jan').click(()=>{
+        let val = $('#id_percentage_arrears_january').val()
+        if(!!val === false) return;
+        $('.percentage-arrears-monthly').val(val)
+      })
+
+      $('.percentage-arrears-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val(0)
+          return;
+        }
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      const clean_data = ()=>{
+        // let anual_percentage = $('#id_annual_growth_percentage').val()
+        let anual_amount = $('#id_annual_growth_amount').val()
+        // $('#id_annual_growth_percentage').val(anual_percentage.replaceAll(',', ''))
+        $('#id_annual_growth_amount').val(anual_amount.replaceAll(',', ''))
+
+        $.each($('.commission-percentage-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.percentage-arrears-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.term-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.rate-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.growth-percentaje-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+      }
+
+      $('#submitScenarioEdit').click(function(){
+        let total = 100;
+        $.each($('.growth-percentaje-monthly'), function(key, val){
+          value = parseFloat($(val).val().replaceAll(',', ''))
+          total = total - value
+        })
+        if (total.toFixed(1) > 0 ){
+          alert(`Debe aún distribuir ${total.toFixed(2)}% en crecimiento!`)
+          return;
+        }
+        clean_data()
+        $('#idFormScenarioEdit').submit()
+        $(this).hide()
+      })
+    })
+  </script>
+{% endblock javascript %}

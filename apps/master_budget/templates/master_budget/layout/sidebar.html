@@ -1,0 +1,138 @@
+{% load static %}
+<div class="sidebar close">
+  <div class="logo-details">
+    <span class="logo_name">
+      <img src="{% static 'img/white-icon.png' %}" alt="" srcset="" width="60%" style="text-align: center;">
+    </span>
+  </div>
+  <ul class="nav-links">
+    <li>
+      <a href="{% url 'dashboard' %}" class="institutional-golden-color">
+        <i class="bi bi-arrow-left"></i>
+        <span class="link_name">Volver Ingreso PPTO</span>
+      </a>
+      <ul class="sub-menu blank">
+        <li><a class="link_name" href="{% url 'dashboard' %}">Volver Ingreso PPTO.</a></li>
+      </ul>
+    </li>
+    
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-cash"></i>
+          <span class="link_name">Productivos</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Productivos</a></li>
+        <li><a href="{% url 'scenarios_loan_portfolio' %}">Cartera Crediticia</a></li>
+        <li><a href="{% url 'scenarios_financial_investments' %}">Inversiones Financieras</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-arrow-left-right"></i>
+          <span class="link_name">Improductivos</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Inproductivos</a></li>
+        <li><a href="{% url 'scenarios_non_performing_assets' %}">Nuevas Adquisiciones</a></li>
+        <li><a href="{% url 'scenarios_others_assets' %}">Otros Activos</a></li>
+      </ul>
+    </li>
+    
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-cart-dash"></i>
+          <span class="link_name">Pasivos</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Pasivos </a></li>
+        <li><a href="{% url 'scenarios_savings_liabilities' %}">Ahorro</a></li>
+        <li><a href="{% url 'scenarios_liabilities_loans' %}">Prestamos</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="{% url 'scenarios_payment_payroll' %}" class="institutional-golden-color">
+        <i class="bi bi-person-plus"></i>
+        <span class="link_name">Planilla</span>
+      </a>
+      <ul class="sub-menu blank">
+        <li><a class="link_name" href="{% url 'scenarios_payment_payroll' %}">Planilla</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-file-bar-graph"></i>
+          <span class="link_name">Reportes</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Reportes </a></li>
+        <li><a href="{% url 'profit_loss_report_complementary_projection' %}">P&G Proyección Compl.</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="{% url 'dashboard' %}" class="institutional-golden-color">
+        <i class="bi bi-graph-up"></i>
+        <span class="link_name">Indicadores Financieros</span>
+      </a>
+      <ul class="sub-menu blank">
+        <li><a class="link_name" href="{% url 'dashboard' %}">Indicadores Financieros</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-gear"></i>
+          <span class="link_name">Admin</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Admin</a></li>
+        <li><a href="{% url 'projection_parameters' %}">Proyección</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-sliders"></i>
+          <span class="link_name">Catálogos</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Catálogos</a></li>
+        <li><a href="{% url 'categories_loan_portfolio' %}">Categorias Cartera Cred</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="profile-details">
+        <div class="profile-content">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <div class="name-job">
+          <div class="profile_name fw-light fs-6">{{request.user.username|truncatechars:12}}</div>
+          <div class="job">Sagrada Familia</div>
+        </div>
+        <a href="{% url 'logout' %}" class="text-decoration-none">
+          <i class="bi bi-box-arrow-left"></i>
+        </a>
+      </div>
+    </li>
+  </ul>
+</div>

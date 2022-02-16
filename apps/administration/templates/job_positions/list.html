@@ -19,12 +19,14 @@
               <h1 class="card-title fs-4 fw-light mb-0">Puestos de Trabajo</h1>
             </div>
             <div class="col-md-2 d-flex justify-content-end offset-md-2">
+              {% if perms.admin.puede_crear_puestos_trabajo %}
               <button 
                 class="btn btn-outline-safa" 
                 id="btn-register-user"
                 data-bs-toggle="modal" 
                 data-bs-target="#JobPositionAddModal"
               >Registrar</button>
+              {% endif %}
             </div>
             <div class="col-md-4">
               {% include 'layout/search.html' %}
@@ -53,6 +55,7 @@
                     <td>{{item.sueldotemporal|floatformat:2|intcomma}}</td>
                     <td>{{item.puestoestado|yesno:'Activo,Inactivo'}}</td>
                     <td>
+                      {% if perms.admin.puede_editar_puestos_trabajo %}
                       <div class="d-grid gap-2 d-flex justify-content-center">
                         <a 
                           class="btn btn-outline-safa me-2"
@@ -63,6 +66,7 @@
                         > <i class="bi bi-pencil-square"></i>
                         </a>
                       </div>
+                      {% endif %}
                     </td>
                   </tr>
                 {% empty %}

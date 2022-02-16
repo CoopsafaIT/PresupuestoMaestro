@@ -1,0 +1,457 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Traslados de Inversión {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Traslados de Inversión</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'transfers_investment/add_investment_modal.html' %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-12 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Traslados de Inversión</h1>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-8 pe-5">
+              <div class="row">
+                <div class="col-md-12">
+                  {% include 'transfer/search.html' %}
+                  <div class="table-responsive mt-4">
+                    <table class="table table-sm table-bordered table-hover table-striped align-middle mt-1 mb-5">
+                      <thead>
+                        <tr>
+                          <th class="text-center">#</th>
+                          <th>Descripción</th>
+                          <th>Presupuestado</th>
+                          <th>Disponible</th>
+                          <th class="text-center">Trasladar</th>
+                          <th>Monto a trasladar</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for item in qs %}
+                          <tr>
+                            <td class="text-center">{{forloop.counter}}</td>
+                            <td>{{item.descproducto}}</td>
+                            <td>{{item.presupuestado|floatformat:2|intcomma}}</td>
+                            <td>{{item.disponible|floatformat:2|intcomma}}</td>
+                            <td class="text-center">
+                              <input
+                                autocomplete="off"
+                                class="btn-check budget-to-transfer"
+                                id="id_checkbox_transfer_{{item.pk}}"
+                                name="budget-to-transfer[]"
+                                type="checkbox"
+                                data-id="{{item.pk}}"
+                                data-available-text="{{item.disponible|floatformat:2|intcomma}}"
+                                data-available="{{item.disponible}}"
+                                value="{{item.pk}}"
+                              />
+                              <label
+                                class="btn btn-outline-primary"
+                                for="id_checkbox_transfer_{{item.pk}}"
+                              > <i class="bi bi-arrow-left-right"></i>
+                              </label>
+                            </td>
+                            <td>
+                              <input
+                                type="number"
+                                class="form-control amount-transfer"
+                                id="amount_transfer_{{item.pk}}"
+                                name="amount-transfer[]"
+                                step="any"
+                              />
+                            </td>
+                          </tr>
+                        {% empty %}
+                          <tr>
+                            <td
+                              class="fw-light text-center" 
+                              colspan="6"
+                            > No Data
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 ps-5 " style="border-left: 1px solid gray;">
+              <form method="post" id="form_transfer_investment" >
+                {% csrf_token %}
+                <input type="hidden" name="period_origin" id="id_period_origin">
+                <input type="hidden" name="cost_center_origin" id="id_cost_center_origin">
+                <input type="hidden" name="origin" id="id_origin_investment">
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <h4 class="fw-light fs-5">Destino</h4>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    <button
+                      type="button"
+                      class="btn btn-outline-safa btn-sm float-end"
+                      id="btn-create-investment"
+                    >Crear Inversión</button>
+                  </div>
+                  <div class="w-100"></div>
+                  <div class="col-md-12 mb-3">
+                    <div class="form-group">
+                      <label for="id_cost_center_destination">Centro de Costo</label>
+                      <select
+                        name="cost_center_destination"
+                        id="id_cost_center_destination"
+                        class="form-select select2-style" 
+                        required 
+                        style="width: 100%;"
+                      >
+                        <option value="">-- Seleccione Centro Costo --</option>
+                        {% for i in cost_centers %}
+                        <option {% if request.GET.cost_center == i.pk %} selected {% endif %} 
+                        value="{{i.pk}}">{{i}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-12 mb-3">
+                    <div class="form-group">
+                      <label for="id_investment_destination">Inversión</label>
+                      <select
+                        name="investment_destination"
+                        id="id_investment_destination"
+                        class="form-select select2-style"
+                        required
+                        style="width: 100%;"
+                      >
+                        <option value="">-- Seleccione Inversión--</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-12 mb-3">
+                    <div class="form-group">
+                      <label for="id_date_transaction">Monto a trasladar</label>
+                      <input 
+                        class="form-control"
+                        id="id_date_transaction"
+                        name="date_transaction"
+                        type="date"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-12 mb-3">
+                    <div class="form-group">
+                      <label for="id_investment_destination">Monto a trasladar</label>
+                      <input 
+                        class="form-control"
+                        id="id_total_amount_transfer"
+                        min="1"
+                        name="total_amount_transfer"
+                        step="any"
+                        type="number"
+                        readonly 
+                      />
+                    </div>
+                  </div>
+                </div>
+                <di class="row">
+                  <div class="col-md-12 mb-3">
+                    <button
+                      type="button"
+                      class="btn btn-outline btn-safa float-end"
+                      id="btn_submit_transfer"
+                    >Aceptar</button>
+                  </div>
+                </di>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    $('.select2-style-register').select2({
+      language: "es",
+      dropdownParent: $('#addInvestmentModal')
+    });
+    $(
+      "#id_period_form option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+    $(
+      "#id_cost_center_form option[value= '{{request.session.cost_center}}'] "
+    ).prop('selected', true).trigger("change");
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    $('.budget-to-transfer').change(function(){
+      if( $(this).is(':checked') ){
+        $(`#amount_transfer_${ $(this).data('id') }`).val( $(this).data('available') )
+        $(`#amount_transfer_${ $(this).data('id') }`).attr('max', $(this).data('available'))
+      }
+      else{
+        $(`#amount_transfer_${ $(this).data('id') }`).val('')
+        $(`#amount_transfer_${ $(this).data('id') }`).removeAttr('max')
+      }
+      total_amount()
+    })
+
+    $('.amount-transfer').change(()=>total_amount())
+
+    const total_amount = ()=>{
+      let total = 0
+      $('.amount-transfer').each(function(index ){
+        let val = $(this).val()
+        let max = $(this).attr('max')
+        
+        if( typeof val === 'string' || val instanceof String ) val = val.trim()
+        if(parseFloat(val) > parseFloat(max)){
+          alert(`El monto ${val} es mayor al maximo permitido ${max}`)
+          if(!!val) total += parseFloat(max);
+          $(this).val(max)
+        }else{
+          if(!!val) total += parseFloat(val);
+        }
+
+      })
+      $('#id_total_amount_transfer').val(total);
+    }
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    $('#btn-create-investment').click(()=>{
+      $('#addInvestmentModal').modal('show');
+    })
+    $('#id_cost_center_destination').change(function(){
+
+      let period =  $("#id_period_form").val()
+      if( typeof period !== 'string' || !!period.trim() === false ){
+        alert('Seleccione periodo')
+        return 
+      }
+      let cost_center = $('#id_cost_center_destination').val();
+      if (typeof cost_center === 'string' && !!cost_center.trim() ){
+        $.ajax({
+          type: "GET",
+          data: {
+            cost_center,
+            period
+          },
+          url: "{% url 'transfers_investment' %}"
+        })
+        .done(fillInvestmentSelected)
+        .fail(handleGetInvestmentError)
+      }
+    })
+    
+    const fillInvestmentSelected = ({data}) => {
+      $('#id_investment_destination').empty();
+      $('#id_investment_destination').append('<option value="">--- Seleccione Inversión ---</option>');
+      $.each(data.qs, (key, val) => {
+        let available = parseFloat(val.disponible).toLocaleString(
+          'en-US', { style: 'currency', currency: 'HNL' }
+        )
+        $('#id_investment_destination').append(`<option value=${val.pk}>${val.descproducto} ( ${available} )</option>`);
+      })
+      $('#id_investment_destination').trigger("chosen:updated");
+    }
+
+    const handleGetInvestmentError = (e) => {
+      console.log(e);
+      alert("No se pudo Cargar Inversiones asociadas a cuenta contable!")
+    }
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    $('#btn_submit_transfer').click(function(){
+      if(validate_data()){
+        $('#id_period_origin').val( $("#id_period_form").val() )
+        $('#id_cost_center_origin').val( $("#id_cost_center_form").val() )
+        
+        let origin_investment = []
+        $('.budget-to-transfer').each(function(index){
+          if($(this).is(':checked')){
+            let id = $(this).data('id')
+            let amount = $(`#amount_transfer_${$(this).data('id')}`).val()
+            origin_investment.push({
+              id,
+              amount
+            })
+          }
+        })
+        if (origin_investment.length < 1 ){
+          alert('Seleccione Inversión (es) de origen');
+          return;
+        }
+        $('#id_origin_investment').val( JSON.stringify(origin_investment) )
+        $('#form_transfer_investment').submit()
+      }
+    })
+
+    const validate_data = ()=>{
+      let period =  $("#id_period_form").val()
+      let cost_center_origin =  $("#id_cost_center_form").val()
+      let cost_center_destination =  $("#id_cost_center_destination").val()
+      let investment_destination =  $("#id_investment_destination").val()
+      let date_transaction =  $("#id_date_transaction").val()
+      let total_amount_transfer =  $("#id_total_amount_transfer").val()
+      let total_amount_transfer_max = $("#id_total_amount_transfer").attr('max')
+      if( typeof cost_center_origin !== 'string' || !!cost_center_origin.trim() === false ){
+        alert('Seleccione Centro de Costo Origen')
+        return false
+      }
+      if( typeof cost_center_destination !== 'string' || !!cost_center_destination.trim() === false ){
+        alert('Seleccione Centro de Costo Destino')
+        return false
+      }
+      if( typeof period !== 'string' || !!period.trim() === false ){
+        alert('Seleccione periodo')
+        return false
+      }
+      if( typeof investment_destination !== 'string' || !!investment_destination.trim() === false ){
+        alert('Seleccione Inversión de destino')
+        return false
+      }
+      if( typeof date_transaction !== 'string' || !!date_transaction.trim() === false ){
+        alert('Ingrese fecha de traslado')
+        return false
+      }
+      if( typeof total_amount_transfer !== 'string' || !!total_amount_transfer.trim() === false || parseFloat(total_amount_transfer) < 1 ){
+        alert('El mímimo monto a trasladar debe ser mayor a cero')
+        return false
+      }
+      return true;
+    } 
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    let urlGetInvestment = '{% url "get_investment_by_account" 0 %}';
+    $('#id_account_register').change(function(){
+      let account_id = $(this).val()
+      if( !!account_id === false){
+        $('#id_investment_register').empty();
+        $('#id_investment_register').append('<option value="">--- Seleccione Inversión ---</option>');
+        return
+      }
+      let url = urlGetInvestment.replace('0', account_id)
+      $.ajax({
+        type: "GET",
+        data: {},
+        url: url
+      })
+      .done(fillInvestmentSelected)
+      .fail(handleGetInvestmentError)
+    })
+    const fillInvestmentSelected = (res) => {
+      $('#id_investment_register').empty();
+      $('#id_investment_register').append('<option value="">--- Seleccione Inversión ---</option>');
+      $.each(res, (key, val) => {
+        $('#id_investment_register').append(`<option value=${val.codinversion}>${val.descinversion}</option>`);
+      })
+      $('#id_investment_register').trigger("chosen:updated");
+    }
+
+    const handleGetInvestmentError = (e) => {
+      console.log(e);
+      alert("No se pudo Cargar Inversiones asociadas a cuenta contable!")
+    }
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    $('#btn-submit-create-investment').click(function(){
+      if(validateForm()){
+        period = $('#id_period_register').val()
+        cost_center = $('#id_cost_center_register').val()
+        account = $('#id_account_register').val()
+        investment = $('#id_investment_register').val()
+        $('#btn-submit-create-investment').hide()
+        $.ajax({
+          type: "POST",
+          data: {
+            period,
+            cost_center,
+            account,
+            investment
+          },
+          url: "{% url 'transfers_investment' %}"
+        })
+        .done((res)=>{
+          $('#btn-submit-create-investment').show()
+          fillInvestmentSelect(res)
+          $(
+            `#id_cost_center_destination option[value= '${res.data.cost_center}'] `
+          ).prop('selected', true).trigger("change");
+          setTimeout(() => {
+            $(
+              `#id_investment_destination option[value= '${res.data.new_record}'] `
+            ).prop('selected', true).trigger("change");
+          }, 2500);
+
+          $('#addInvestmentModal').modal('hide');
+          alert('Inversión creada con éxito!')
+        })
+        .fail(handleGetInvestmentError)
+      }
+    })
+
+    const fillInvestmentSelect = ({data}) => {
+      $('#id_investment_destination').empty();
+      $('#id_investment_destination').append('<option value="">--- Seleccione Inversión ---</option>');
+      $.each(data.qs, (key, val) => {
+        let available = parseFloat(val.disponible).toLocaleString(
+          'en-US', { style: 'currency', currency: 'HNL' }
+        )
+        $('#id_investment_destination').append(`<option value=${val.pk}>${val.descproducto} ( ${available} )</option>`);
+      })
+      $('#id_investment_destination').trigger("chosen:updated");
+    }
+
+    const validateForm = () =>{
+      period = $('#id_period_register').val()
+      cost_center = $('#id_cost_center_register').val()
+      account = $('#id_account_register').val()
+      investment = $('#id_investment_register').val()
+      if(
+        !!period.trim() &&
+        !!cost_center.trim() &&
+        !!account.trim() &&
+        !!investment.trim()
+      ){
+        return true
+      }
+      alert('Todos los campos son requeridos')
+      return false
+    }
+
+    const handleGetInvestmentError = (e) => {
+      console.log(e);
+      alert("No se pudo Cargar Inversiones asociadas a cuenta contable!")
+    }
+  })
+</script>
+{% endblock javascript %}

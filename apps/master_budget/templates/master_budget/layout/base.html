@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/icons/bootstrap-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+  <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
+  {% block css %}
+  {% endblock css %}
+
+  <title>{% block title %} {% endblock title %} | Presupuesto Maestro</title>
+</head>
+
+<body>
+  {% include 'master_budget/layout/sidebar.html' %}
+  <section class="home-section">
+    <div class="header-navbar">
+      <span class="icon-menu">
+        <i class="bi bi-list icon-menu"></i>
+      </span>
+      <span class="header-navbar-title fw-light">
+        <a href="{% url 'master_budget_dashboard' %}" class="text-decoration-none text-white fs-6">
+          Presupuesto Maestro
+        </a>
+      </span>
+      <nav aria-label="breadcrumb" class="ms-3 text-white">
+        <ol class="breadcrumb my-0 text-white">
+          {% block breadcrumb %} {% endblock breadcrumb %}
+        </ol>
+      </nav>
+    </div>
+    {% include 'layout/messages.html' %}
+    {% include 'layout/loader.html' %}
+    {% block content %}
+    {% endblock content %}
+  </section>
+
+
+  <script src="{% static 'js/sidebar-menu.js' %}"></script>
+  <script src="{% static 'plugins/popper/popper.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/django-ajax.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/loader.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/utils.js' %}"></script>
+  <script src="{% static 'plugins/select2/js/select2.min.js' %}"></script>
+  <script>
+    $('.select2-style').select2({
+      language: "es"
+    });
+    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
+  {% block javascript %}
+  {% endblock javascript %}
+</body>
+
+</html>

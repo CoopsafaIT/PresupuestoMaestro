@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db import models
-from ppto_safa.constants import ZONES
+
+from utils.constants import ZONES, MONTH_CHOICES_REVERSE
 
 
 class Administracionpresupuesto(models.Model):
@@ -13,6 +16,7 @@ class Administracionpresupuesto(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "AdministracionPresupuesto"
 
 
@@ -44,10 +48,9 @@ class Periodo(models.Model):
     cerrado = models.BooleanField(db_column="Cerrado")
 
     class Meta:
+        default_permissions = []
         db_table = "Periodo"
-
-    def __unicode__(self):
-        return "%s" % (self.descperiodo)
+        ordering = ("-descperiodo", "-fechalimite",)
 
     def __str__(self):
         return "%s" % (self.descperiodo)
@@ -91,6 +94,7 @@ class Centrocostoxcuentacontable(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "CentroCostoXCuentaContable"
 
 
@@ -127,7 +131,9 @@ class Centroscosto(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "CentrosCosto"
+        ordering = ("desccentrocosto",)
 
     def __unicode__(self):
         return "%s" % (self.desccentrocosto)
@@ -174,7 +180,9 @@ class Cuentascontables(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "CuentasContables"
+        ordering = ("desccuentacontable",)
 
     def __unicode__(self):
         return "%s" % (self.desccuentacontable)
@@ -329,7 +337,7 @@ class Presupuestos(models.Model):
     )
 
     class Meta:
-        managed = True
+        default_permissions = []
         db_table = "Presupuestos"
 
 
@@ -439,12 +447,62 @@ class Detallexpresupuestoinversion(models.Model):
         db_column="ValorFusion", max_digits=23, decimal_places=5, blank=True, null=True
     )
 
+    numero_meses = models.IntegerField(
+        db_column="NumeroMeses", blank=True, null=True
+    )
+
+    numero_meses_depreciacion = models.IntegerField(
+        db_column="NumeroMesesDepreciacion", blank=True, null=True
+    )
+
+    monto_depreciacion_mensual = models.DecimalField(
+        db_column="MontoDepreciacionMensual",
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+    monto_depreciacion_anual = models.DecimalField(
+        db_column="MontoDepreciacionAnual",
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
     class Meta:
-        managed = True
+        default_permissions = []
         db_table = "DetalleXPresupuestoInversion"
 
     def __unicode__(self):
         return "%s" % (self.descproducto)
+
+
+@receiver(post_save, sender=Detallexpresupuestoinversion)
+def post_save_investment(sender, instance, created, **kwargs):
+    qs = instance
+    if qs.numero_meses_depreciacion is None:
+        investment = Inversiones.objects.filter(descinversion=qs.descproducto).first()
+        if hasattr(investment, 'meses_depreciacion'):
+            Detallexpresupuestoinversion.objects.filter(pk=qs.pk).update(
+                numero_meses_depreciacion=investment.meses_depreciacion
+            )
+            qs = Detallexpresupuestoinversion.objects.get(pk=qs.pk)
+
+    if qs.presupuestadocontraslado > 0 and qs.numero_meses_depreciacion:
+        month_acquisition = dict(MONTH_CHOICES_REVERSE).get(qs.mes)
+        month_of_period = 12 - month_acquisition + 1
+
+        total_budget = float(qs.presupuestadocontraslado) * 0.99
+        depreciation_per_month = total_budget / qs.numero_meses_depreciacion
+
+        total_depreciation_per_month = depreciation_per_month * month_of_period
+
+        Detallexpresupuestoinversion.objects.filter(pk=qs.pk).update(
+            numero_meses=month_of_period,
+            monto_depreciacion_mensual=depreciation_per_month,
+            monto_depreciacion_anual=total_depreciation_per_month
+        )
 
 
 class Detallexpresupuestopersonal(models.Model):
@@ -503,8 +561,11 @@ class Detallexpresupuestopersonal(models.Model):
     )
 
     class Meta:
-        managed = True
+        default_permissions = []
         db_table = "DetalleXPresupuestoPersonal"
+
+    def get_tipo_name(self):
+        return 'Temporal' if self.tipo == 1 else 'Permanente'
 
 
 class Detallexpresupuestoviaticos(models.Model):
@@ -580,7 +641,7 @@ class Detallexpresupuestoviaticos(models.Model):
     )
 
     class Meta:
-        managed = True
+        default_permissions = []
         db_table = "DetalleXPresupuestoViaticos"
 
     @property
@@ -653,6 +714,7 @@ class Presupuestoindirecto(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "PresupuestoIndirecto"
 
 
@@ -723,6 +785,7 @@ class Presupuestoingresos(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "PresupuestoIngresos"
 
 
@@ -802,6 +865,7 @@ class Presupuestocostos(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "PresupuestoCostos"
 
 
@@ -839,10 +903,9 @@ class Proyectos(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "Proyectos"
-
-    def __unicode__(self):
-        return "%s" % (self.descproyecto)
+        ordering = ("-fechainicio", "descproyecto", 'codcentrocosto',)
 
     def __str__(self):
         return "%s" % (self.descproyecto)
@@ -857,6 +920,7 @@ class Tipopresupuesto(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "TipoPresupuesto"
 
     def __unicode__(self):
@@ -884,6 +948,7 @@ class Tiposcuenta(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "TiposCuenta"
 
     def __unicode__(self):
@@ -914,6 +979,7 @@ class Puestos(models.Model):
     puestoestado = models.BooleanField(db_column="puestoEstado")
 
     class Meta:
+        default_permissions = []
         db_table = "Puestos"
 
     def __unicode__(self):
@@ -935,6 +1001,7 @@ class Filiales(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "Filiales"
 
     def __unicode__(self):
@@ -965,6 +1032,7 @@ class ResponsablesPorCentrosCostos(models.Model):
     Estado = models.BooleanField(db_column="Estado")
 
     class Meta:
+        default_permissions = []
         db_table = "ResponsablesPorCentrosCostos"
         ordering = ("CodCentroCosto", "CodUser", "Estado")
         unique_together = ('CodCentroCosto', 'CodUser',)
@@ -1002,7 +1070,9 @@ class Inversiones(models.Model):
     Habilitado = models.BooleanField(db_column="Habilitado")
 
     class Meta:
+        default_permissions = []
         db_table = "Inversiones"
+        ordering = ("descinversion",)
 
     def __str__(self):
         return f'{self.descinversion}'
@@ -1044,6 +1114,12 @@ class Manejodeviaticos(models.Model):
     comentario = models.CharField(
         db_column="Comentario", max_length=200, blank=True, null=True
     )
+    categoria = models.CharField(
+        db_column="categoria",
+        max_length=2,
+        blank=True,
+        null=True
+    )
     tipoaccion = models.IntegerField(
         db_column="TipoAccion", blank=True, null=True
     )
@@ -1076,6 +1152,7 @@ class Manejodeviaticos(models.Model):
     # )
 
     class Meta:
+        default_permissions = []
         db_table = "ManejoDeViaticos"
 
 
@@ -1109,6 +1186,7 @@ class Historicotrasladosviaticos(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "HistoricoTrasladosViaticos"
 
 
@@ -1158,6 +1236,7 @@ class Manejopersonal(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "ManejoPersonal"
 
 
@@ -1221,6 +1300,7 @@ class Historicotrasladosinversiones(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "HistoricoTrasladosInversiones"
 
 
@@ -1258,6 +1338,7 @@ class Transaccionesviaticos(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "TransaccionesViaticos"
 
 
@@ -1295,6 +1376,7 @@ class Transaccionesinversiones(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "TransaccionesInversiones"
 
 
@@ -1314,6 +1396,7 @@ class Valoresviativos(models.Model):
     valor = models.DecimalField(max_digits=17, decimal_places=2, blank=True, null=True)
 
     class Meta:
+        default_permissions = []
         db_table = "ValoresViativos"
         # unique_together = (('zona', 'tipoviatico', 'categoria'),)
 
@@ -1330,6 +1413,7 @@ class Criterios(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "Criterios"
 
     def __unicode__(self):
@@ -1345,6 +1429,7 @@ class Tipoaccionpresupuestoinversion(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "TipoAccionPresupuestoInversion"
 
     def __unicode__(self):
@@ -1435,4 +1520,5 @@ class Historicotraslados(models.Model):
     )
 
     class Meta:
+        default_permissions = []
         db_table = "HistoricoTraslados"

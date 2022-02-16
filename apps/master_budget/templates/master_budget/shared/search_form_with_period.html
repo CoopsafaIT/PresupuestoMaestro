@@ -1,0 +1,29 @@
+{% load static %}
+<form method="GET">
+<div class="row">
+  <div class="col-md-5">
+    <div class="form-group">
+      <select name="period" id="id_period" class="form-select" style="width: 100%;">
+        <option value="">-- Periodo --</option>
+        {% for i in periods %}
+        <option {% if request.GET.period == i.pk %} selected {% endif %} 
+        value="{{i.pk}}">{{i}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="input-group">
+      <input
+        name="q"
+        value="{{request.GET.q}}"
+        type="text"
+        class="form-control"
+        placeholder="Ingrese filtro de busqueda"
+        aria-label="Ingrese filtro de busqueda"
+        aria-describedby="button-addon2">
+      <button class="btn btn-outline-primary" type="submit" id="button-addon2">Buscar</button>
+    </div>
+  </div>
+</div>
+</form>

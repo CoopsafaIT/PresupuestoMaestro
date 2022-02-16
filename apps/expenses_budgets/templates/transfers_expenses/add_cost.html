@@ -1,0 +1,70 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="transferCostsModal" tabindex="-1" aria-labelledby="transferCostsModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="transferCostsModalLabel">
+          Traslado de PPTO. Costos
+        </h5>
+        <button type="button" class="btn-close close-modal-cost-transfer" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h4 class="fw-bold fs-6 mb-2 mt-2">Origen: <span id="cost_title_origin"></span></h4>
+            <div class="form-group mb-3">
+              <label for="id_cost_account_origin">Cuenta Contable</label>
+              <select name="cost_account" id="id_cost_account_origin" class="form-select select2-for-cost"
+                style="width: 100%;">
+                <option value="">---- Seleccione Cuenta Contable ----</option>
+                {% for item in cost.qs_cost_origin %}
+                <option 
+                  value="{{item.codpresupuestocostos}}"
+                  data-total-text="{{item.total|floatformat:2|intcomma}}"
+                  data-name="{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}"
+                  data-total="{{item.total}}"
+                >{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}
+                  ({{item.total|floatformat:2|intcomma}})
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_amount_cost_origin">Monto a Trasladar</label>
+              <input type="number" class="form-control" min='1' id="id_amount_cost_origin" value="0">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h4 class="fw-bold fs-6 mb-2 mt-2">Destino: <span id="cost_title_destination"></span></h4>
+            <div class="form-group mb-3">
+              <label for="id_cost_account_destination">Cuenta Contable</label>
+              <select name="cost_account" id="id_cost_account_destination" class="form-select select2-for-cost"
+                style="width: 100%;">
+                <option value="">---- Seleccione Cuenta Contable ----</option>
+                {% for item in cost.qs_cost_destination %}
+                <option 
+                  value="{{item.codpresupuestocostos}}"
+                  data-total-text="{{item.total|floatformat:2|intcomma}}"
+                  data-name="{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}"
+                  data-total="{{item.total}}"
+                >{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}
+                  ({{item.total|floatformat:2|intcomma}})
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_amount_cost_destination">Monto a recibir</label>
+              <input type="number" readonly class="form-control" min='1' id="id_amount_cost_destination">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-safa close-modal-cost-transfer">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

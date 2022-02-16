@@ -1,0 +1,101 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Distribución de Viaticos {% endblock title %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Distribución de Viaticos</li>
+{% endblock breadcrumb %}
+{% block content %}
+{% include 'load_travel_distribution/load_excel_modal.html' %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-4 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Distribución de viaticos</h1>
+            </div>
+            <div class="col-md-2" style="border-left: 1px solid rgb(187, 185, 185);">
+            {% if request.session.period %}
+            <form method="GET">
+              <input type="hidden" name="method" value="download-file">
+              <input type="hidden" name="period" value="{{request.session.period}}">
+              <button type="submit" class="btn btn-sm btn-outline-safa">Descargar Excel</button>
+            </form>
+            {% endif %}
+            </div>
+            <div class="col-md-2" style="border-left: 1px solid rgb(187, 185, 185);">
+            <button
+              type="button"
+              id="btn_load_excel_distribution"
+              class="btn btn-sm btn-outline-safa"
+            >Cargar Excel</button>
+            </div>
+  
+            <div class="col-md-4" style="border-left: 1px solid rgb(187, 185, 185);">
+              {% include 'load_travel_distribution/filter_form.html' %}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped align-middle mt-1">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>CECO</th>
+                  <th>Filial</th>
+                  <th>PPTO.</th>
+                  <th>Reservado</th>
+                  <th>Ejecutado</th>
+                  <th>Disponible</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in qs %}
+                <tr>
+                  <td class="text-center">{{forloop.counter}}</td>
+                  <td>{{item.centropresupuestado__desccentrocosto}}</td>
+                  <td>{{item.codcentrocosto__desccentrocosto}}</td>
+                  <td>{{item.presupuestadocontraslado|floatformat:2|intcomma}}</td>
+                  <td>{{item.reservado|floatformat:2|intcomma}}</td>
+                  <td>{{item.ejecutado|floatformat:2|intcomma}}</td>
+                  <td>{{item.disponible|floatformat:2|intcomma}}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td 
+                    class="text-center" 
+                    colspan="7"
+                  >
+                    <h5 class="fw-light fs-5">No Data</h5>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'checkout/pagination.html' with qs=qs %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    $(
+      "#id_period option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+
+    $('#btn_load_excel_distribution').click(()=>{
+      $('#modalLoasDistribution').modal('show')
+    })
+  })
+</script>
+
+{% endblock javascript %}

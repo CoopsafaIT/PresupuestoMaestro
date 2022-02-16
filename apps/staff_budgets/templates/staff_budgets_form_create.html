@@ -50,6 +50,24 @@
     </div>
     <div class="col-md-4 mb-3">
       <div class="form-group">
+        <label for="id_type_position">Tipo</label>
+        <select 
+          class="form-select select2-style"
+          id="id_type_position"
+          name="type_position" 
+          required
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Tipo Posición ---</option>
+          {% for key, staff_position in staff_positions.items %}
+            <option value="{{key}}">{{staff_position}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-md-4 mb-3">
+      <div class="form-group">
         <label for="id_month">Mes Inicio</label>
         <select
           class="form-select select2-style"
@@ -65,7 +83,23 @@
         </select>
       </div>
     </div>
-    <div class="w-100"></div>
+    <div class="col-md-4 mb-3" id="id_month_end_container">
+      <div class="form-group">
+        <label for="id_month_end">Mes Fin</label>
+        <select
+          class="form-select select2-style"
+          id="id_month_end"
+          name="month_end"
+          style="width: 100%;"
+        >
+          <option value="">--- Seleccione Mes Fin ---</option>
+          {% for month in months %}
+          <option value="{{month}}">{{month}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
     <div class="col-md-4 mb-3">
       <div class="form-group">
         <label for="id_job_position">Puesto</label>
@@ -83,23 +117,8 @@
         </select>
       </div>
     </div>
-    <div class="col-md-4 mb-3">
-      <div class="form-group">
-        <label for="id_type_position">Tipo</label>
-        <select 
-          class="form-select select2-style"
-          id="id_type_position"
-          name="type_position" 
-          required
-          style="width: 100%;"
-        >
-          <option value="">--- Seleccione Tipo Posición ---</option>
-          {% for key, staff_position in staff_positions.items %}
-            <option value="{{key}}">{{staff_position}}</option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
+    
+    <div class="w-100"></div>
     <div class="col-md-4 mb-3">
       <div class="form-group">
         <label for="id_number">Cantidad</label>
@@ -112,23 +131,6 @@
           step="1"
           type="number"
         />
-      </div>
-    </div>
-    <div class="w-100"></div>
-    <div class="col-md-4 mb-3" id="id_month_end_container">
-      <div class="form-group">
-        <label for="id_month_end">Mes Fin</label>
-        <select
-          class="form-select select2-style"
-          id="id_month_end"
-          name="month_end"
-          style="width: 100%;"
-        >
-          <option value="">--- Seleccione Mes Fin ---</option>
-          {% for month in months %}
-          <option value="{{month}}">{{month}}</option>
-          {% endfor %}
-        </select>
       </div>
     </div>
 

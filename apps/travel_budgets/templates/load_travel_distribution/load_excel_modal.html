@@ -1,0 +1,34 @@
+<div class="modal fade" id="modalLoasDistribution" tabindex="-1" aria-labelledby="modalLoasDistributionLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="modalLoasDistributionLabel">Cargar Excel de Distribución</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form 
+        method="post"
+        accept-charset="utf-8"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <input 
+                class="form-control"
+                type="file" 
+                name="excel-file" 
+                required  
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

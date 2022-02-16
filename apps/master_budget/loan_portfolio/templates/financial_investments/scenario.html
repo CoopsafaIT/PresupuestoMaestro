@@ -1,0 +1,261 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Escenarios Inversiones Financieras{% endblock title %}
+
+{% block breadcrumb %} 
+  <li class="breadcrumb-item text-white ">
+    <a href="{% url 'scenarios_financial_investments' %}" class="text-white text-decoration-none">/ Inversiones Financieras - Escenarios</a>
+  </li>
+  <li class="breadcrumb-item active text-white before-none" aria-current="page"> / Categoria: {{qs.category_id.name}}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'financial_investments/scenario_change_status.html' %}
+{% include 'financial_investments/scenario_clone.html' %}
+{% include 'financial_investments/scenario_clone_update_parameter.html' %}
+{% include 'financial_investments/scenario_edit.html' %}
+{% include 'financial_investments/scenario_delete.html' %}
+<div class="container-fluid mt-1">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-5">
+          <h5
+            class="card-title fw-light fs-5"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="{{qs.comment}}"
+            >Fecha Cierre {{qs.parameter_id}}
+          </h5>
+        </div>
+        <div class="col-md-7">
+          <div class="d-grid gap-2 d-flex justify-content-end">
+            <button
+              id="openModalChangeScenario"
+              type="button"
+              class="btn btn-outline-dark btn-sm float-end"
+              data-url="{% url 'scenario_financial_investments' qs.pk %}"
+              data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
+            >
+            {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
+            </button>
+            <button
+              id="openModalDeleteScenario"
+              type="button" 
+              data-url="{% url 'scenario_financial_investments' qs.pk %}"
+              class="btn btn-outline-dark btn-sm float-end"
+            >Eliminar
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+            <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalCloneUpdateScenario">Actualizar Parametro</button>
+            <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalScenarioEdit">Editar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      {% include 'financial_investments/scenario_table_detail.html' %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+  <!-- Comments scripts -->
+  <script>
+    $(document).ready(()=>{
+      const loadComments = ()=>{
+        loaderShow(true)
+        let url = '{% url "scenario_financial_investments_comments" qs.pk %}'
+        $.ajax({
+          type: 'GET',
+          data: {},
+          url: url
+        })
+        .done((res)=>{
+          fillComentsTable(res);
+          loaderShow(false)
+        })
+        .fail(handleError)
+
+      }
+
+      $('#btnAddCommentScenario').click(function(){
+        let url = '{% url "scenario_financial_investments_comments" qs.pk %}'
+        let comment = $('#id_comment_scenario').val()
+        if(!!comment){
+          loaderShow(true)
+          $.ajax({
+            type: 'POST',
+            data: {comment},
+            url: url
+          })
+          .done((res)=>{
+            fillComentsTable(res)
+            $('#id_comment_scenario').val('')
+            loaderShow(false)
+          })
+          .fail(handleError)
+        }
+      })
+
+      const fillComentsTable = (res)=>{
+        $('#tblComments > tbody').empty()
+        let data = JSON.parse(res)
+        $.each(data.data, (key, val) => {
+          let tr =  `
+            <tr>
+              <td>
+                <p>
+                  <span class="fw-bold"> ${val.created_by__username}: 
+                    <span class="fw-light" style="font-size: 0.8rem;">( ${val.created_at} )</span>
+                  </span><br>
+                  ${val.comment}
+                </p> 
+              </td>
+            </tr>
+          `
+          $('#tblComments > tbody').append(tr)
+        })
+      }
+
+      const handleError = (e) => {
+        console.log(e);
+        loaderShow(false)
+        alert(e)
+      }
+      loadComments()
+    })
+  </script>
+  <!-- End comments scripts -->
+
+  <!-- Modals Scripts -->
+  <script>
+    $(document).ready(()=>{
+      $('.select2-style').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioModal')
+      });
+      $('.select2-style-clone-update').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioUpdateParameterModal')
+      });
+      const openEditModal = ()=> $('#editScenarioModal').modal('show')
+      if('{{request.GET.option}}' === 'open_calculations_modal') openEditModal()
+      $('#openModalScenarioEdit').click(openEditModal)
+      $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalCloneUpdateScenario').click(()=> $('#cloneScenarioUpdateParameterModal').modal('show'))
+      $('#openModalChangeScenario').click(()=> {
+        let url = $('#openModalChangeScenario').data('url')
+        let text = $('#openModalChangeScenario').data('text')
+        $('#formChangeStatusScenario').attr('action', url);
+        $('#textChangeStatus').html(`¿Desea mover escenario a ${text}?`)
+        $('#changeStatusScenarioModal').modal('show')
+      })
+      $('#openModalDeleteScenario').click(()=> {
+        let url = $('#openModalDeleteScenario').data('url')
+        $('#formDeleteScenario').attr('action', url);
+        $('#textDelete').html(`¿Desea eliminar escenario?`)
+        $('#deleteScenarioModal').modal('show')
+      })
+    })
+  </script>
+  <!-- End Modals Scripts -->
+
+  <script>
+    $(document).ready(()=>{
+      $('#fill-increases-monthly-jan').click(()=>{
+        let val = $('#id_increases_january').val()
+        if(!!val === false) return;
+        $('.increases-monthly').val(val)
+      })
+
+      $('#fill-decreases-monthly-jan').click(()=>{
+        let val = $('#id_decreases_january').val()
+        if(!!val === false) return;
+        $('.decreases-monthly').val(val)
+      })
+      $('#fill-rate-monthly-jan').click(()=>{
+        let val = $('#id_rate_january').val()
+        if(!!val === false) return;
+        $('.rate-monthly').val(val)
+      })
+
+      $('#fill-amount_accounts_receivable-monthly-jan').click(()=>{
+        let val = $('#id_amount_accounts_receivable_january').val()
+        if(!!val === false) return;
+        $('.amount_accounts_receivable-monthly').val(val)
+      })
+
+      
+
+      $('.amount_accounts_receivable-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val('0.00')
+          return;
+        }
+      })
+      $('.increases-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val('0.00')
+          return;
+        }
+      })
+      $('.decreases-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val('0.00')
+          return;
+        }
+      })
+      $('.rate-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false || parseFloat(val) < 0) {
+          $(this).val('0.00')
+          return;
+        }
+      })
+    })
+  </script>
+  
+  <!-- Submit scenario Edit -->
+  <script>
+    $(document).ready(()=>{
+      const clean_data = ()=>{
+        $.each($('.increases-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.rate-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.decreases-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.amount_accounts_receivable-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+      }
+
+      $('#submitScenarioEdit').click(function(){
+        clean_data()
+        $('#idFormScenarioEdit').submit()
+        $(this).hide()
+      })
+    })
+  </script>
+  <!-- End submit scenario Edit -->
+
+  <script>
+    $(document).ready(()=>{
+      $('#tblEditScenario').find('input[type="text"]').css({'font-size': '0.9rem'})
+    })
+  </script>
+{% endblock javascript %}

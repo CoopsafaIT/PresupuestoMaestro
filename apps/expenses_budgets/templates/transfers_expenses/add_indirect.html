@@ -1,0 +1,74 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="transferIndirectModal" tabindex="-1" aria-labelledby="transferIndirectModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="transferIndirectModalLabel">
+          Traslado de PPTO. Indirecto
+        </h5>
+        <button type="button" class="btn-close close-modal-indirect-transfer" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h4 class="fw-bold fs-6 mb-2 mt-2">Origen: <span id="indirect_title_origin"></span></h4>
+            <div class="col-md-12">
+              <div class="form-group mb-3">
+                <label for="id_indirect_account_origin">Cuenta Contable</label>
+                <select name="indirect_account" id="id_indirect_account_origin" class="form-select select2-for-indirect"
+                  style="width: 100%;">
+                  <option value="">---- Seleccione Cuenta Contable ----</option>
+                  {% for item in indirect.qs_indirect_origin %}
+                  <option 
+                    value="{{item.codpresupuestoindirecto}}"
+                    data-total-text="{{item.total|floatformat:2|intcomma}}"
+                    data-total="{{item.total}}"
+                    data-name="{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}"
+                  >{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}
+                    ({{item.total|floatformat:2|intcomma}})
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group mb-3">
+                <label for="id_amount_indirect_origin">Monto a Trasladar</label>
+                <input type="number" class="form-control" min='1' id="id_amount_indirect_origin">
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h4 class="fw-bold fs-6 mb-2 mt-2">Destino: <span id="indirect_title_destination"></span></h4>
+            <div class="col-md-12">
+              <div class="form-group mb-3">
+                <label for="id_indirect_account_destination">Cuenta Contable</label>
+                <select name="indirect_account" id="id_indirect_account_destination" class="form-select select2-for-indirect"
+                  style="width: 100%;">
+                  <option value="">---- Seleccione Cuenta Contable ----</option>
+                  {% for item in indirect.qs_indirect_destination %}
+                  <option 
+                    value="{{item.codpresupuestoindirecto}}"
+                    data-total-text="{{item.total|floatformat:2|intcomma}}"
+                    data-total="{{item.total}}"
+                    data-name="{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}"
+                  >{{item.codcentrocostoxcuentacontable_new__codcuentacontable__desccuentacontable}}
+                    ({{item.total|floatformat:2|intcomma}})
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group mb-3">
+                <label for="id_amount_indirect_destination">Monto a recibir</label>
+                <input type="number" readonly class="form-control" min='1' id="id_amount_indirect_destination">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-safa close-modal-indirect-transfer">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="modal fade" id="requireModal" tabindex="-1" aria-labelledby="requireModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="requireModalLabel">
+          Requerir Inversión
+          <span id="require_available_title"></span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="require">
+          <input type="hidden" name="id" value="" id="id_investment_require"/>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_request_number">Número de Solicitud</label>
+                <select name="request_number" id="id_request_number" required class="form-select"></select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_purchase_amount">Monto de Compra</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="id_purchase_amount"
+                  required
+                  name="purchase_amount"
+                  step="0.01"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_settlement_number">Número de Liquidación</label>
+                <input
+                  type="text"
+                  id="id_settlement_number"
+                  name="settlement_number"
+                  readonly
+                  required
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="id_comment">Comentario</label>
+              <textarea
+                class="form-control"
+                id="id_comment"
+                name="comment"
+                required
+                style="resize: none;"
+                rows="3"
+                placeholder="Ingrese Comentario... N/A en su defecto"
+                ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

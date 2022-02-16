@@ -41,7 +41,6 @@ class StaffCUForm(forms.Form):
         cleaned_data = super(StaffCUForm, self).clean()
         type_position = cleaned_data['type_position']
         if type_position == 1:
-            print(cleaned_data.get('month_end'))
             if cleaned_data.get('month_end') == '':
                 raise forms.ValidationError(
                     "Para tipo de posicion temporal es necesario una fecha final"

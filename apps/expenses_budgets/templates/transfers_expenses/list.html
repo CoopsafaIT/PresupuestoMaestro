@@ -1,0 +1,689 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Traslados de Gastos {% endblock title %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active text-white" aria-current="page">/ Traslados de Gastos</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'transfers_expenses/add_expenses.html' %}
+{% include 'transfers_expenses/add_cost.html' %}
+{% include 'transfers_expenses/add_indirect.html' %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-12 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Traslados de Gastos</h1>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form method="get">
+            <div class="row">
+              <div class="col-md-1">
+                <h5 class="fs-5 fw-light mt-4">Filtrar:</h5>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group mb-3">
+                  <label for="id_period_origin">Periodo</label>
+                  <select
+                    name="period"
+                    id="id_period_origin"
+                    required
+                    class="form-select select2-style"
+                    style="width: 100%;"
+                  >
+                    <option value="">---- Seleccione Periodo ----</option>
+                    {% for i in periods %}
+                    <option {% if request.GET.period == i.pk %} selected {% endif %} value="{{i.pk}}">{{i}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label for="id_cost_center_origin">Centro de Costos Origen</label>
+                  <select
+                    name="cost_center_origin"
+                    id="id_cost_center_origin"
+                    class="form-select select2-style"
+                    required
+                    style="width: 100%;"
+                  >
+                    <option value="">---- Seleccione Centro Costo Origen ----</option>
+                    {% for i in cost_centers %}
+                    <option {% if request.GET.cost_center == i.pk %} selected {% endif %} value="{{i.pk}}">{{i}}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label for="id_cost_center_destination">Centro de Costos Destino</label>
+                  <select
+                    name="cost_center_destination"
+                    id="id_cost_center_destination"
+                    class="form-select select2-style"
+                    required
+                    style="width: 100%;"
+                  >
+                    <option value="">-- Seleccione Centro Costo Destino --</option>
+                    {% for i in cost_centers %}
+                    <option {% if request.GET.cost_center == i.pk %} selected {% endif %} value="{{i.pk}}">{{i}}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-1">
+                <button class="btn btn-outline-primary float-end mt-3" type="submit">Buscar</button>
+              </div>
+            </div>
+            <hr>
+          </form>
+          <form method="post" id="form-transfer-expenses">
+            {% csrf_token %}
+            <input type="hidden" name="cost_transfer" id="input-cost-transfer">
+            <input type="hidden" name="indirect_transfer" id="input-indirect-transfer">
+            <input type="hidden" name="expenses_transfer" id="input-expenses-transfer">
+            <div class="row mt-4">
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <table class="table table-sm table-hover table-bordered table-striped">
+                    <thead >
+                      <tr>
+                        <th></th>
+                        <th class="text-center fs-6 fw-bold my-auto">Origen:</th>
+                        <th class="text-center fs-6 fw-bold">Destino:</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="width: 20% !important;">
+                          <button id="btn-add-expenses-transfer" class="btn btn-outline-safa" type="button"
+                            style="min-width: 95% !important; text-align:start;"> <i class=" ms-3 bi bi-plus-lg"></i> PPTO. Gastos
+                          </button>
+                        </td>
+                        <td style="width: 40% !important;" id="td-expenses-origin"></td>
+                        <td style="width: 40% !important;" id="td-expenses-destination"></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <button id="btn-add-indirect-transfer" class="btn btn-outline-safa" type="button"
+                            style="min-width: 95% !important; text-align:start;"><i class=" ms-3 bi bi-plus-lg"></i> PPTO. Indirecto
+                          </button>
+                        </td>
+                        <td id="td-indirect-origin"></td>
+                        <td id="td-indirect-destination"></td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <button id="btn-add-cost-transfer" class="btn btn-outline-safa" type="button"
+                            style="min-width: 95% !important; text-align:start;"> <i class="ms-3 bi bi-plus-lg"></i> PPTO. Costos
+                          </button>
+                        </td>
+                        <td id="td-cost-origin"></td>
+                        <td id="td-cost-destination"></td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td></td>
+                        <td> <label for="" class="float-end fw-bold">Fecha Aplicación:</label></td>
+                        <td>
+                          <input
+                            type="date"
+                            name="application_date"
+                            id="id_application_date"
+                            required
+                            class="form-control"
+                          />
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+              <div class="mt-3 mb-3">
+                <button type="button" class="btn btn-safa float-end" id="btn_submit_transfer">Realizar Traslado</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+
+<!-- Open Modals -->
+<script>
+  $(document).ready(() => {
+    $("#btn-add-expenses-transfer").click(function (){
+      if(validateCECO()) modalsTextCECO('expenses_title_origin','expenses_title_destination')
+      $('#transferExpensesModal').modal('show')
+    })
+
+    $("#btn-add-indirect-transfer").click(function (){
+      if(validateCECO()) modalsTextCECO('indirect_title_origin', 'indirect_title_destination')
+      $('#transferIndirectModal').modal('show')
+    })
+
+    $("#btn-add-cost-transfer").click(function () {
+      if(validateCECO()) modalsTextCECO('cost_title_origin', 'cost_title_destination')
+      $('#transferCostsModal').modal('show')
+    })
+
+    const validateCECO = ()=>{
+      let origin = $(
+        "#id_cost_center_origin option[value= '{{request.session.cost_center_origin}}'] "
+      ).val()
+      let destination = $(
+        "#id_cost_center_destination option[value= '{{request.session.cost_center_destination}}'] "
+      ).val()
+      if(!!origin && !!destination) return true
+      else return false
+    }
+
+    const modalsTextCECO = (where_origin, where_destination) => {
+      let origin = $(
+        "#id_cost_center_origin option[value= '{{request.session.cost_center_origin}}'] "
+      )
+      let destination = $(
+        "#id_cost_center_destination option[value= '{{request.session.cost_center_destination}}'] "
+      )
+      $(`#${where_origin}`).html(origin.text())
+      $(`#${where_destination}`).html(destination.text())
+    }
+  })
+</script>
+<!-- End open Modals -->
+
+<!-- Init select2 and selected options by session vars -->
+<script>
+  $(document).ready(() => {
+    $('.select2-for-expenses').select2({
+      language: "es",
+      dropdownParent: $('#transferExpensesModal')
+    });
+    $('.select2-for-cost').select2({
+      language: "es",
+      dropdownParent: $('#transferCostsModal')
+    });
+    $('.select2-for-indirect').select2({
+      language: "es",
+      dropdownParent: $('#transferIndirectModal')
+    });
+    $(
+      "#id_period_origin option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+    $(
+      "#id_cost_center_origin option[value= '{{request.session.cost_center_origin}}'] "
+    ).prop('selected', true).trigger("change");
+    $(
+      "#id_cost_center_destination option[value= '{{request.session.cost_center_destination}}'] "
+    ).prop('selected', true).trigger("change");
+  })
+</script>
+<!-- End init select2 and selected options by session vars -->
+
+<!-- Modal Cost transfer calculations -->
+<script>
+  $(document).ready(()=>{
+    $('#id_cost_account_origin').change(function(){
+      let val = $(this).val()
+      if(!!val){
+        let total = $(this).find(':selected').data('total')
+        if(parseFloat(total) < 1){
+          $("#id_cost_account_origin option[value= ''] ").prop('selected', true).trigger("change");
+          alert('Cuenta origen tiene fondos insuficientes para realizar traslados ')
+          return false;
+        }
+        let account_name = $(this).find(':selected').data('name')
+        let id = $(this).val()
+        $('#id_amount_cost_origin').val(total);
+        $('#id_amount_cost_origin').attr('max', total);
+        $('#id_amount_cost_destination').val(total);
+        
+      }else{
+        $('#id_amount_cost_origin').val('0');
+        $('#id_amount_cost_origin').removeAttr('max');
+        $('#id_amount_cost_destination').val('0');
+      }
+    })
+    $('#id_amount_cost_origin').keyup(function(){
+      let val = parseFloat($(this).val())
+      let max = parseFloat( $(this).attr('max') )
+      if (val > max || val < 1){
+        $(this).val(max)
+        $('#id_amount_cost_destination').val(max);
+        alert(`Monto a trasladar ${val.toLocaleString('en-US')} no puede ser mayor al maximo disponible: ${max.toLocaleString('en-US')} ni menor a 1`)
+        return false;
+      }
+      $('#id_amount_cost_destination').val(val);
+    })
+
+    $('.close-modal-cost-transfer').click(function(e){
+      e.preventDefault()
+      e.stopPropagation()
+      let origin = $('#id_cost_account_origin').val()
+      let destination = $('#id_cost_account_destination').val()
+      if(!!origin === false || !!destination === false){
+        alert(`Debes seleccionar cuenta de origen y cuenta destino`)
+        $('#input-cost-transfer').val('');
+        $('#td-cost-origin').empty()
+        $('#td-cost-destination').empty()
+      }else{
+        createCostTransferDetail()
+
+      }
+      $('#transferCostsModal').modal('hide')
+    })
+
+    const createCostTransferDetail = ()=>{
+      let originId = $('#id_cost_account_origin').val()
+      let originAmountTotal = $('#id_cost_account_origin').find(':selected').data('total')
+      let originAmountTotalText = $('#id_cost_account_origin').find(':selected').data('total-text')
+      let originAccountName = $('#id_cost_account_origin').find(':selected').data('name')
+      let originAmountTransfer = $('#id_amount_cost_origin').val()
+
+      originAmountTotal = parseFloat(originAmountTotal).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+      originAmountTransfer = parseFloat(originAmountTransfer).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+
+      let destinationId = $('#id_cost_account_destination').val()
+      let destinationAmountTotal = $('#id_cost_account_destination').find(':selected').data('total')
+      let destinationAmountTotalText = $('#id_cost_account_destination').find(':selected').data('total-text')
+      let destinationAccountName = $('#id_cost_account_destination').find(':selected').data('name')
+      let destinationAmountTransfer = $('#id_amount_cost_destination').val()
+
+      destinationAmountTotal = parseFloat(destinationAmountTotal).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+      destinationAmountTransfer = parseFloat(destinationAmountTransfer).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+
+      $('#td-cost-origin').empty()
+      $('#td-cost-origin').html(
+        `<p>
+          <b>Cuenta:</b> ${originAccountName} </br>
+          <b>Disponible:</b> ${originAmountTotal} </br>
+          <b>Monto a trasladar:</b> ${originAmountTransfer}
+        </p>`
+      )
+      $('#td-cost-destination').empty()
+      $('#td-cost-destination').html(
+        `<p>
+          <b>Cuenta:</b> ${destinationAccountName} </br>
+          <b>Disponible:</b> ${destinationAmountTotal} </br>
+          <b>Monto a recibir:</b> ${destinationAmountTransfer}
+        </p>`
+      )
+
+      let obj_cost = {
+        originId : originId,
+        destinationId: destinationId,
+        amount: $('#id_amount_cost_origin').val()
+      }
+      $('#input-cost-transfer').val(JSON.stringify(obj_cost))
+
+    }
+  })
+</script>
+<!-- End modal Cost transfer calculations -->
+
+<!-- Modal Indirect transfer calculations -->
+<script>
+  $(document).ready(()=>{
+    $('#id_indirect_account_origin').change(function(){
+      let val = $(this).val()
+      if(!!val){
+        let total = $(this).find(':selected').data('total')
+        if(parseFloat(total) < 1){
+          $(
+            "#id_indirect_account_origin option[value= ''] "
+          ).prop('selected', true).trigger("change");
+          alert('Cuenta origen tiene fondos insuficientes para realizar traslados ')
+          return false;
+        }
+        let account_name = $(this).find(':selected').data('name')
+        let id = $(this).val()
+        $('#id_amount_indirect_origin').val(total);
+        $('#id_amount_indirect_origin').attr('max', total);
+        $('#id_amount_indirect_destination').val(total);
+        
+      }else{
+        $('#id_amount_indirect_origin').val('0');
+        $('#id_amount_indirect_origin').removeAttr('max');
+        $('#id_amount_indirect_destination').val('0');
+      }
+    })
+    $('#id_amount_indirect_origin').keyup(function(){
+      let val = parseFloat($(this).val())
+      let max = parseFloat( $(this).attr('max') )
+      if (val > max || val < 1){
+        $(this).val(max);
+        $('#id_amount_indirect_destination').val(max);
+        alert(`Monto a trasladar ${val.toLocaleString('en-US')} no puede ser mayor al maximo disponible: ${max.toLocaleString('en-US')} ni menor a 1`)
+        return false;
+      }
+      $('#id_amount_indirect_destination').val(val);
+    })
+
+    $('.close-modal-indirect-transfer').click(function(e){
+      e.preventDefault()
+      e.stopPropagation()
+      let origin = $('#id_indirect_account_origin').val()
+      let destination = $('#id_indirect_account_destination').val()
+      if(!!origin === false || !!destination === false){
+        alert(`Debes seleccionar cuenta de origen y cuenta destino`)
+        $('#input-indirect-transfer').val('')
+        $('#td-indirect-origin').empty()
+        $('#td-indirect-destination').empty()
+      }else{
+        createIndirectTransferDetail()
+      }
+      $('#transferIndirectModal').modal('hide')
+    })
+
+    const createIndirectTransferDetail = ()=>{
+      let originId = $('#id_indirect_account_origin').val()
+      let originAmountTotal = $('#id_indirect_account_origin').find(':selected').data('total')
+      let originAmountTotalText = $('#id_indirect_account_origin').find(':selected').data('total-text')
+      let originAccountName = $('#id_indirect_account_origin').find(':selected').data('name')
+      let originAmountTransfer = $('#id_amount_indirect_origin').val()
+
+      originAmountTotal = parseFloat(originAmountTotal).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+      originAmountTransfer = parseFloat(originAmountTransfer).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+
+      let destinationId = $('#id_indirect_account_destination').val()
+      let destinationAmountTotal = $('#id_indirect_account_destination').find(':selected').data('total')
+      let destinationAmountTotalText = $('#id_indirect_account_destination').find(':selected').data('total-text')
+      let destinationAccountName = $('#id_indirect_account_destination').find(':selected').data('name')
+      let destinationAmountTransfer = $('#id_amount_indirect_destination').val()
+
+      destinationAmountTotal = parseFloat(destinationAmountTotal).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+      destinationAmountTransfer = parseFloat(destinationAmountTransfer).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+
+      $('#td-indirect-origin').empty()
+      $('#td-indirect-origin').html(
+        `<p>
+          <b>Cuenta:</b> ${originAccountName} </br>
+          <b>Disponible:</b> ${originAmountTotal} </br>
+          <b>Monto a trasladar:</b> ${originAmountTransfer}
+        </p>`
+      )
+      $('#td-indirect-destination').empty()
+      $('#td-indirect-destination').html(
+        `<p>
+          <b>Cuenta:</b> ${destinationAccountName} </br>
+          <b>Disponible:</b> ${destinationAmountTotal} </br>
+          <b>Monto a recibir:</b> ${destinationAmountTransfer}
+        </p>`
+      )
+    
+      let obj_indirect = {
+        originId : originId,
+        destinationId: destinationId,
+        amount: $('#id_amount_indirect_origin').val()
+      }
+      $('#input-indirect-transfer').val(JSON.stringify(obj_indirect))
+    }
+  })
+</script>
+<!-- End modal Indirect transfer calculations -->
+
+<!-- Modal Expenses transfer requests -->
+<script>
+  $(document).ready(()=>{
+    $('#id_expenses_project_origin').change(function(){
+      let project = $(this).val()
+      let cost_center = '{{request.session.cost_center_origin}}'
+      let period = '{{request.session.period}}'
+      if(!!project && !!cost_center && !!period){
+        $.ajax({
+          url: '{% url "transfers_expenses" %}',
+          data:{
+            period,
+            cost_center,
+            project
+          },
+          type: 'GET'
+        })
+        .done((res)=>{
+          fillSelectAccount('id_expenses_account_origin', res.data)
+        })
+        .fail(catch_fail)
+      }else{
+        $(`#id_expenses_account_origin`).empty();
+        $(`#id_expenses_account_origin`).append('<option value="">-- Seleccione Cuenta Contable --</option>');
+        $('#id_amount_expenses_origin').val('0');
+        $('#id_amount_expenses_origin').removeAttr('max');
+        $('#id_amount_expenses_destination').val('0');
+      }
+    })
+
+    $('#id_expenses_project_destination').change(function(){
+      let project = $(this).val()
+      let cost_center = '{{request.session.cost_center_destination}}';
+      let period = '{{request.session.period}}';
+      if(!!project && !!cost_center && !!period){
+        $.ajax({
+          url: '{% url "transfers_expenses" %}',
+          data:{
+            period,
+            cost_center,
+            project
+          },
+          type: 'GET'
+        })
+        .done((res)=>{
+          fillSelectAccount('id_expenses_account_destination', res.data)
+        })
+        .fail(catch_fail)
+      }else{
+        $(`#id_expenses_account_destination`).empty();
+        $(`#id_expenses_account_destination`).append('<option value="">-- Seleccione Cuenta Contable --</option>');
+      }
+    })
+
+    const fillSelectAccount = (where, data) => {
+      $(`#${where}`).empty();
+      $(`#${where}`).append('<option value="">-- Seleccione Cuenta Contable --</option>');
+      $.each(data, (key, val) => {
+        let amount = val.montooriginal ? parseFloat(val.montooriginal).toLocaleString('en-US') : 0
+        $(`#${where}`).append(`
+          <option 
+            value=${val.pk}
+            data-name="${val.codcentroscostoxcuentacontable__codcuentacontable__desccuentacontable}"
+            data-total="${val.montooriginal}"
+            data-total-text="${amount}"
+          > 
+            ${val.codcentroscostoxcuentacontable__codcuentacontable__desccuentacontable}
+            (${amount})
+          </option>
+        `);
+      })
+      $(`#${where}`).trigger("chosen:updated");
+    }
+
+    const catch_fail = (err)=>{
+      alert(`Error: ${err}`)
+      console.log(err);
+    }
+  })
+</script>
+<!-- End modal Expenses transfer requests -->
+
+<!-- Modal Expenses transfer calculations  -->
+<script>
+  $(document).ready(()=>{
+    $('#id_expenses_account_origin').change(function(){
+      let val = $(this).val()
+      if(!!val){
+        let total = $(this).find(':selected').data('total')
+        if(parseFloat(total) < 1){
+          $(
+            "#id_expenses_account_origin option[value= ''] "
+          ).prop('selected', true).trigger("change");
+          alert('Cuenta origen tiene fondos insuficientes para realizar traslados ')
+          return false;
+        }
+        let account_name = $(this).find(':selected').data('name')
+        let id = $(this).val()
+        $('#id_amount_expenses_origin').val(total);
+        $('#id_amount_expenses_origin').attr('max', total);
+        $('#id_amount_expenses_destination').val(total);
+      }else{
+        $('#id_amount_expenses_origin').val('0');
+        $('#id_amount_expenses_origin').removeAttr('max');
+        $('#id_amount_expenses_destination').val('0');
+      }
+    })
+    $('#id_amount_expenses_origin').keyup(function(){
+      let val = parseFloat($(this).val())
+      let max = parseFloat( $(this).attr('max') )
+      if (val > max || val < 1){
+        $(this).val(max)
+        $('#id_amount_expenses_destination').val(max);
+        alert(`Monto a trasladar ${val.toLocaleString('en-US')} no puede ser mayor al maximo disponible: ${max.toLocaleString('en-US')} ni menor a 1`)
+        return false;
+      }
+      $('#id_amount_expenses_destination').val(val);
+    })
+
+    $('.close-modal-expenses-transfer').click(function(e){
+      e.preventDefault()
+      e.stopPropagation()
+      let origin = $('#id_expenses_account_origin').val()
+      let originProject = $('#id_expenses_project_origin').val()
+      let destination = $('#id_expenses_account_destination').val()
+      let destinationProject = $('#id_expenses_project_destination').val()
+      if(!!originProject === false || !!destinationProject === false){
+        alert(`Debes seleccionar proyecto de origen y proyecto destino`)
+        $('#td-expenses-origin').empty()
+        $('#td-expenses-destination').empty()
+        $('#input-expenses-transfer').val('')
+      }else if(!!origin === false || !!destination === false){
+        alert(`Debes seleccionar cuenta de origen y cuenta destino`)
+        $('#td-expenses-origin').empty()
+        $('#td-expenses-destination').empty()
+        $('#input-expenses-transfer').val('')
+      }else{
+        createExpensesTransferDetail()
+      }
+      $('#transferExpensesModal').modal('hide')
+    })
+
+    const createExpensesTransferDetail = ()=>{
+      let originProjectId = $('#id_expenses_project_origin').val() 
+      let originProjectName = $('#id_expenses_project_origin').find(':selected').data('name')
+      let originId = $('#id_expenses_account_origin').val()
+      let originAmountTotal = $('#id_expenses_account_origin').find(':selected').data('total')
+      let originAmountTotalText = $('#id_expenses_account_origin').find(':selected').data('total-text')
+      let originAccountName = $('#id_expenses_account_origin').find(':selected').data('name')
+      let originAmountTransfer = $('#id_amount_expenses_origin').val()
+
+      originAmountTotal = parseFloat(originAmountTotal).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+      originAmountTransfer = parseFloat(originAmountTransfer).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+
+      let destinationProjectId = $('#id_expenses_project_destination').val() 
+      let destinationProjectName = $('#id_expenses_project_destination').find(':selected').data('name')
+      let destinationId = $('#id_expenses_account_destination').val()
+      let destinationAmountTotal = $('#id_expenses_account_destination').find(':selected').data('total')
+      let destinationAmountTotalText = $('#id_expenses_account_destination').find(':selected').data('total-text')
+      let destinationAccountName = $('#id_expenses_account_destination').find(':selected').data('name')
+      let destinationAmountTransfer = $('#id_amount_expenses_destination').val()
+
+      destinationAmountTotal = parseFloat(destinationAmountTotal).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+      destinationAmountTransfer = parseFloat(destinationAmountTransfer).toLocaleString(
+        'en-US', { style: 'currency', currency: 'HNL' }
+      )
+
+      $('#td-expenses-origin').empty()
+      $('#td-expenses-origin').html(
+        `<p>
+          <b>Proyecto:</b> ${originProjectName} </br>
+          <b>Cuenta:</b> ${originAccountName} </br>
+          <b>Disponible:</b> ${originAmountTotal} </br>
+          <b>Monto a trasladar:</b> ${originAmountTransfer}
+        </p>`
+      )
+      $('#td-expenses-destination').empty()
+      $('#td-expenses-destination').html(
+        `<p>
+          <b>Proyecto:</b> ${destinationProjectName} </br>
+          <b>Cuenta:</b> ${destinationAccountName} </br>
+          <b>Disponible:</b> ${destinationAmountTotal} </br>
+          <b>Monto a recibir:</b> ${destinationAmountTransfer}
+        </p>`
+      )
+    
+      let obj_expenses = {
+        originId : originId,
+        destinationId: destinationId,
+        amount: $('#id_amount_expenses_origin').val()
+      }
+      $('#input-expenses-transfer').val(JSON.stringify(obj_expenses))
+    
+    }
+  })
+</script>
+<!-- End modal Expenses transfer calculations -->
+
+
+
+<script>
+  $(document).ready(()=>{
+    $('#btn_submit_transfer').click(function(){
+      let cost = $('#input-cost-transfer').val()
+      let indirect = $('#input-indirect-transfer').val()
+      let expenses = $('#input-expenses-transfer').val()
+      if (!!cost || !!indirect || !!expenses){
+        let date = $('#id_application_date').val()
+        if(!!date) $('#form-transfer-expenses').submit()
+        else alert('Ingrese fecha de aplicación')
+      }
+      else alert('Agregar al menos un traslado')
+    })
+
+    $().change(function(){
+      let val = $('#id_cost_center_origin').val();
+      if(!!val){
+        console.log('ori',$(this).find(':selected').text())
+      }
+    })
+    $().change(function(){
+      let val = $('#id_cost_center_destination').val();
+      if(!!val){
+        console.log('des',)
+      }
+    })
+  })
+</script>
+{% endblock javascript %}

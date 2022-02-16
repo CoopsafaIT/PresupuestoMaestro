@@ -1,11 +1,13 @@
 import os
 import datetime as dt
+
 from django.http import HttpResponse
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from openpyxl.writer.excel import save_virtual_workbook
 from openpyxl.styles import Font, Border, Side, PatternFill
+from openpyxl.utils.exceptions import InvalidFileException
 
-from ppto_safa.constants import TRAVEL_CATEGORY, ZONES, TRAVEL_TYPE
+from utils.constants import TRAVEL_CATEGORY, ZONES, TRAVEL_TYPE
 
 
 def create_excel_report(qs):
@@ -94,3 +96,56 @@ def create_excel_report(qs):
     response = HttpResponse(stream, content_type='text/xlsx')
     response['Content-Disposition'] = 'attachment; filename={0}.xlsx'.format(file_name)
     return response
+
+
+def generate_excel_file_format_distribution(qs):
+    wb = Workbook()
+    ws = wb.active
+    ws['A1'] = 'Identificador (No cambiar)'
+    ws['B1'] = 'Periodo'
+    ws['C1'] = 'Centro de costo presupuesta'
+    ws['D1'] = 'Filial'
+    ws['E1'] = 'Categoria'
+    ws['F1'] = 'Cantidad'
+    ws['G1'] = 'Días'
+    ws['H1'] = 'Monto a Asignar'
+    x = 2
+    period = qs.first()
+    for item in qs:
+        ws[f'A{x}'].value = item.pk
+        ws[f'B{x}'].value = item.codperiodo.descperiodo
+        ws[f'C{x}'].value = item.codcentrocosto.desccentrocosto
+        ws[f'D{x}'].value = item.filial.nombrefilial
+        ws[f'E{x}'].value = item.categoria
+        ws[f'F{x}'].value = item.cantidadviajes
+        ws[f'G{x}'].value = item.cantidaddias
+        ws[f'H{x}'].value = 0
+        x = x + 1
+
+    file_name = (
+        f'travel_budget_distribution_format_'
+        f'{period.codperiodo.descperiodo if period else ""}'
+    )
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename={file_name}.xlsx'
+    wb.save(response)
+    return response
+
+
+def load_excel_file(file):
+    try:
+        book = load_workbook(file)
+        sheet_list = book.sheetnames
+        first_sheet = book.get_sheet_by_name(sheet_list[0])
+        number_rows = first_sheet.max_row
+        return {
+            'status': 'ok',
+            'sheet': first_sheet,
+            'number_rows': number_rows
+        }
+    except InvalidFileException as e:
+        raise InvalidFileException(
+            f'Error loading excel file: {e.__str__()}'
+        )

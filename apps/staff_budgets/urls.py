@@ -3,7 +3,8 @@ from apps.staff_budgets.views import (
     staff_budgets_register,
     staff_budgets_update,
     staff_budgets_delete,
-    generate_excel_report
+    generate_excel_report,
+    check_out_staff
 )
 
 urlpatterns = [
@@ -26,5 +27,10 @@ urlpatterns = [
         'staff-budget-update/<int:id>/',
         staff_budgets_update,
         name='staff_budgets_update'
+    ),
+    path(
+        'check-out/',
+        check_out_staff,
+        name='check_out_staff'
     ),
 ]

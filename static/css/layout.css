@@ -307,3 +307,16 @@
 .breadcrumb-template{
   justify-content: flex-end !important;
 }
+
+#loaderSpinner{
+  display: none;
+  visibility: hidden;
+}
+
+.loaderSpinnerBusy{
+  display: block !important;
+  visibility: visible !important;
+}
+.before-none::before{
+  display: none;
+}

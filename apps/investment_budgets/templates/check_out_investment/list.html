@@ -1,0 +1,201 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Egresos de Inversión {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Egresos de Inversión</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'check_out_investment/reserve_modal.html' %}
+{% include 'check_out_investment/require_modal.html' %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-4 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Egresos de Inversión</h1>
+            </div>
+            <div class="col-md-8">
+              {% include 'checkout/search.html' %}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped align-middle mt-1">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Descripción</th>
+                  <th>Cant.</th>
+                  <th>Monto UD</th>
+                  <th>PPTO.</th>
+                  <th>Reservado</th>
+                  <th>Ejecutado</th>
+                  <th>Disponible</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in qs %}
+                  <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{item.descproducto}}</td>
+                    <td>{{item.cantidad}}</td>
+                    <td>{{item.valor|floatformat:2|intcomma}}</td>
+                    <td>{{item.presupuestadocontraslado|floatformat:2|intcomma}}</td>
+                    <td>{{item.reservado|floatformat:2|intcomma}}</td>
+                    <td>{{item.ejecutado|floatformat:2|intcomma}}</td>
+                    <td>{{item.disponible|floatformat:2|intcomma}}</td>
+                    <td>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <a 
+                          class="btn btn-outline-warning me-2 reserve_modal"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          data-id = '{{item.pk}}'
+                          data-available-text='{{item.disponible|floatformat:2|intcomma}}'
+                          data-available='{{item.disponible|floatformat:2}}'
+                          title="Reservar" 
+                        > <i class="bi bi-bag-plus"></i>
+                        </a>
+                        <a 
+                          class="btn btn-outline-safa me-2 require_modal"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          data-id='{{item.pk}}'
+                          data-available-text='{{item.disponible|floatformat:2|intcomma}}'
+                          data-reserve-text='{{item.reservado|floatformat:2|intcomma}}'
+                          title="Requerir" 
+                        > <i class="bi bi-bag-check"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td
+                      class="fw-light text-center" 
+                      colspan="9"
+                    > No Data
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="4" class="text-end fw-bold">Totales: </td>
+                  <td>{{total_budget|floatformat:2|intcomma}}</td>
+                  <td>{{total_reserved|floatformat:2|intcomma}}</td>
+                  <td>{{total_executed|floatformat:2|intcomma}}</td>
+                  <td>{{total_available|floatformat:2|intcomma}}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+            {% include 'checkout/pagination.html' with qs=qs %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+
+<script>
+  $(document).ready(()=>{
+    $(
+      "#id_period_form option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+    $(
+      "#id_cost_center_form option[value= '{{request.session.cost_center}}'] "
+    ).prop('selected', true).trigger("change");
+
+  })
+</script>
+
+
+<script>
+  $(document).ready(()=>{
+    $('.reserve_modal').click(function(){
+      $.ajax({
+        url: '{% url "check_out_investment" %}',
+        data:{
+          method: 'reserve'
+        },
+        type: 'GET'
+      })
+      .done((resp)=>{
+        console.log(resp);
+        $('#reserve_available_title').html(
+          `( Disponible ${$(this).data('available-text')} ) `
+        )
+        $('#id_amount_reserve').attr('max', $(this).data('available'))
+        $('#id_correlative_reserve').val(resp?.require_number)
+        $('#id_investment').val($(this).data('id'))
+        $('#reserveModal').modal('show');
+      })
+      .fail(catch_fail)
+      .always(()=>{
+        console.log("termino")
+      })
+    })
+
+    const catch_fail = (err)=>{
+      alert(`Error: ${err}`)
+      console.log(err);
+    }
+
+  })
+</script>
+
+
+<script>
+  $(document).ready(()=>{
+    $('.require_modal').click(function(){
+      $.ajax({
+        url: '{% url "check_out_investment" %}',
+        data:{
+          method: 'require',
+          id: $(this).data('id')
+        },
+        type: 'GET'
+      })
+      .done((res)=>{
+        $('#id_investment_require').val($(this).data('id'))
+        $('#id_settlement_number').val(res.settlement_number)
+        $('#require_available_title').html(
+            `( Disponible ${$(this).data('available-text')} ) `
+          )
+        fillSelected(res.requests)
+        $('#requireModal').modal('show');
+      })
+      .fail(catch_fail)
+    })
+
+    const catch_fail = (err)=>{
+      alert(`Error: ${err}`)
+    }
+  
+  
+    const fillSelected = (data) => {
+      $(`#id_request_number`).empty();
+      $(`#id_request_number`).append('<option value="">-- Seleccione Solicitud --</option>');
+      // $(`#id_request_number`).append('<option value="not_request_number"> Sin número de Solicitud</option>');
+      $.each(data, (key, val) => {
+        $(`#id_request_number`).append(
+          `<option value=${val.pk}> ${val.numerosolicitud}</option>`
+        );
+      })
+      $(`#id_request_number`).trigger("chosen:updated");
+    }
+  
+  })
+</script>
+
+{% endblock javascript %}

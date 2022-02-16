@@ -38,6 +38,9 @@
           style="width: 100%;"
         >
           <option value="">--- Seleccione Centro Costos ---</option>
+          {% if perms.ppto_inversion.puede_ingresar_ppto_inversion_todos %}
+          <option value="__all__">--- Todos Centros de Costos ---</option>
+          {% endif %}
           {% for cost_center in cost_centers %}
           <option value="{{cost_center.pk}}">{{cost_center}}</option>
           {% endfor %}

@@ -1,0 +1,121 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Periodos {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Periodos</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'periods/change_status_modal.html' %}
+{% include 'periods/close_modal.html' %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-4 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Periodos</h1>
+            </div>
+            <div class="col-md-2 d-flex justify-content-end offset-md-2">
+              <form method="POST" id="form-create-period">
+                {% csrf_token %}
+                {% if perms.admin.puede_ingresar_periodos %}
+                <button
+                type="button"
+                class="btn btn-outline-safa" 
+                id="btn-register-period"
+                >Registrar</button>
+                {% endif %}
+              </form>
+            </div>
+            <div class="col-md-4">
+              {% include 'layout/search.html' %}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped align-middle mt-1">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Periodo</th>
+                  <th>Estado</th>
+                  <th>Cerrado</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in qs %}
+                  <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{item.descperiodo}}</td>
+                    <td>{{item.habilitado|yesno:'Activo,Inactivo'}}</td>
+                    <td>{{item.cerrado|yesno:'Si,No'}}</td>
+                    <td>
+                      {% if perms.admin.puede_editar_periodos %}
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <a 
+                          class="btn btn-outline-safa me-2 change_status"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          data-url="{% url 'period' item.pk %}" 
+                          title="Cambiar Estado" 
+                        > <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <a 
+                          class="btn btn-outline-danger me-2 close_period"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          data-url="{% url 'period' item.pk %}" 
+                          title="Cerrar Periodo {{item.descperiodo}}" 
+                        > <i class="bi bi-x-circle"></i>
+                        </a>
+                      </div>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td 
+                      class="fw-light text-center" 
+                      colspan="5"
+                    > No hay Periodos
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'layout/pagination.html' with qs=qs %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+
+<script>
+  $(document).ready(()=>{
+    $('#btn-register-period').click(()=>{
+      if(confirm('¿Desea crear periodo?')){
+        $('#form-create-period').submit();
+      }
+    })
+
+    $('.change_status').click(function(){
+      $('#formChangePeriodStatus').attr('action', $(this).data('url'))
+      $('#modalChangePeriodStatus').modal('show');
+    })
+    $('.close_period').click(function(){
+      $('#formClosePeriod').attr('action', $(this).data('url'))
+      $('#modalClosePeriod').modal('show');
+    })
+  })
+</script>
+
+{% endblock javascript %}

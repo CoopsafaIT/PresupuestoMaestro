@@ -1,0 +1,76 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="transferExpensesModal" tabindex="-1" aria-labelledby="transferExpensesModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="transferExpensesModalLabel">
+          Traslado de PPTO. Gastos
+        </h5>
+        <button type="button" class="btn-close close-modal-expenses-transfer" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h4 class="fw-bold fs-6 mb-2 mt-2">Origen: <span id="expenses_title_origin"></span></h4>
+            <div class="form-group mb-3">
+              <label for="id_expenses_project_origin">Proyecto</label>
+              <select name="expenses_project" id="id_expenses_project_origin" class="form-select select2-for-expenses"
+                style="width: 100%;">
+                <option value="">---- Seleccione Proyecto ----</option>
+                {% for item in expenses_project.projects_origin %}
+                <option 
+                  value="{{item.codproyecto}}"
+                  data-name="{{item.descproyecto}}"
+                >{{item.descproyecto}}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_expenses_account_origin">Cuenta Contable</label>
+              <select name="expenses_account" id="id_expenses_account_origin" class="form-select select2-for-expenses"
+                style="width: 100%;">
+                <option value="">---- Seleccione Cuenta Contable ----</option>
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_amount_origin">Monto a trasladar</label>
+              <input type="number" class="form-control" min='1' id="id_amount_expenses_origin">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h4 class="fw-bold fs-6 mb-2 mt-2">Destino: <span id="expenses_title_destination"></span></h4>
+            <div class="form-group mb-3">
+              <label for="id_expenses_project_destination">Proyecto</label>
+              <select name="expenses_project" id="id_expenses_project_destination" class="form-select select2-for-expenses"
+                style="width: 100%;">
+                <option value="">---- Seleccione Proyecto ----</option>
+                {% for item in expenses_project.projects_destination %}
+                <option 
+                  value="{{item.codproyecto}}"
+                  data-name="{{item.descproyecto}}"
+                >{{item.descproyecto}}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_expenses_account_destination">Cuenta Contable</label>
+              <select name="expenses_account" id="id_expenses_account_destination" class="form-select select2-for-expenses"
+                style="width: 100%;">
+                <option value="">---- Seleccione Cuenta Contable ----</option>
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="id_amount_expenses_destination">Monto a recibir</label>
+              <input type="number" class="form-control" readonly min='1' id="id_amount_expenses_destination">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-safa close-modal-expenses-transfer">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

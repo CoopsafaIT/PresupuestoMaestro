@@ -1,0 +1,168 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Escenarios Activos Improductivos{% endblock title %}
+
+{% block breadcrumb %} 
+  <li class="breadcrumb-item text-white ">
+    <a href="{% url 'scenarios_non_performing_assets' %}" class="text-white text-decoration-none">/ Activos Improductivos - Escenarios</a>
+  </li>
+  <li class="breadcrumb-item active text-white before-none" aria-current="page"> / Correlativo: {{qs.correlative}}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'non_performing_assets/scenario_change_status.html' %}
+{% include 'non_performing_assets/scenario_clone.html' %}
+{% include 'non_performing_assets/scenario_edit.html' %}
+{% include 'non_performing_assets/scenario_delete.html' %}
+{% include 'non_performing_assets/scenario_edit_amount_increases_decreases.html' %}
+{% include 'shared/global_non_performing_assets_modal.html' %}
+<div class="container-fluid mt-1">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-5">
+          <h5
+            class="card-title fw-light fs-5"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="{{qs.comment}}"
+            >Fecha Cierre {{qs.parameter_id}}
+          </h5>
+        </div>
+        <div class="col-md-7">
+          <div class="d-grid gap-2 d-flex justify-content-end">
+            <button
+              id="openModalChangeScenario"
+              type="button"
+              class="btn btn-outline-dark btn-sm float-end"
+              data-url="{% url 'scenario_non_performing_assets' qs.pk %}"
+              data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
+            >
+            {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
+            </button>
+            <button
+              id="openModalDeleteScenario"
+              type="button" 
+              data-url="{% url 'scenario_non_performing_assets' qs.pk %}"
+              class="btn btn-outline-dark btn-sm float-end"
+            >Eliminar
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+            <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalScenarioEdit">Editar</button>
+            <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalGlobalScenario">Ver Detalle Global</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      {% include 'non_performing_assets/scenario_table_detail.html' %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+  <script>
+    $(document).ready(()=>{
+      $('.items_remove').change(function(){
+        let actualValue = $('#remove_budgeted_object').val()
+        let array = actualValue === '' ? [] : JSON.parse(actualValue)
+        if($(this).is(':checked')){
+          if(!array.includes($(this).val())) array.push($(this).val())
+        }else{
+          for(let i=0; i< array.length; i++){
+            if(array[i]=== $(this).val()) array.splice(i,1)
+          }
+        }
+        $('#remove_budgeted_object').val(JSON.stringify(array))
+      })
+
+      $('.items_add').change(function(){
+        let actualValue = $('#add_budgeted_object').val()
+        let array = actualValue === '' ? [] : JSON.parse(actualValue)
+        if($(this).is(':checked')){
+          if(!array.includes($(this).val())) array.push($(this).val())
+        }else{
+          for(let i=0; i< array.length; i++){
+            if(array[i]=== $(this).val()) array.splice(i,1)
+          }
+        }
+        $('#add_budgeted_object').val(JSON.stringify(array))
+
+      })
+
+      $('#submitScenarioEdit').click(function(){
+        console.log("sdljckmnsdjklcnjkdsnckdj");
+        let remove = $('#remove_budgeted_object').val()
+        let add = $('#add_budgeted_object').val()
+        console.log(remove);
+        console.log(add);
+        if (!!remove || !!add){
+          console.log($('#idFormScenarioEdit'));
+          if(!!remove === false) $('#remove_budgeted_object').val('[]')
+          if(!!add === false) $('#add_budgeted_object').val('[]')
+          $('#idFormScenarioEdit').submit()
+        }
+        else{
+          alert('Debe seleccionar los items que desea agregar o quitar del escenario!!')
+        }
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('.add_amount_increases_decreases').click(function(){
+        let comment = $(this).data('comment')
+        let pk = $(this).data('pk')
+        let category_name = $(this).data('category')
+        let amount = $(this).data('amount')
+        let type = $(this).data('type')
+
+        $('#title_increases_decreases').text(
+          `Editar ${ type === 'decreases' ? 'Disminución': 'Aumento'} en ${ category_name }`
+        )
+        $('#pk_increases_decreases').val(pk)
+        
+        $('#id_amount_increases_decreases').val(amount)
+        $('#id_comment_increases_decreases').val(comment)
+
+        $('#type_increases_decreases').val(type)
+        $('#editAmountIncreasesDecreasesScenarioModal').modal('show');
+      })
+    })
+  </script>
+
+  <!-- Modals Scripts -->
+  <script>
+    $(document).ready(()=>{
+      $('.select2-style').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioModal')
+      });
+      const openEditModal = ()=> $('#editScenarioModal').modal('show')
+      if('{{request.GET.option}}' === 'open_calculations_modal') openEditModal()
+      $('#openModalScenarioEdit').click(openEditModal)
+      $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalChangeScenario').click(()=> {
+        let url = $('#openModalChangeScenario').data('url')
+        let text = $('#openModalChangeScenario').data('text')
+        $('#formChangeStatusScenario').attr('action', url);
+        $('#textChangeStatus').html(`¿Desea mover escenario a ${text}?`)
+        $('#changeStatusScenarioModal').modal('show')
+      })
+      $('#openModalDeleteScenario').click(()=> {
+        let url = $('#openModalDeleteScenario').data('url')
+        $('#formDeleteScenario').attr('action', url);
+        $('#textDelete').html(`¿Desea eliminar escenario?`)
+        $('#deleteScenarioModal').modal('show')
+      })
+      $('#openModalGlobalScenario').click(()=>{
+        $('#globalNonPerformingAssetsScenarioModal').modal('show')
+      })
+    })
+  </script>
+  <!-- End Modals Scripts -->
+
+{% endblock javascript %}

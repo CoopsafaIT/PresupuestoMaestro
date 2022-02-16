@@ -25,31 +25,53 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Ingreso Ppto.</a></li>
+        {% if perms.ppto_gastos.puede_ingresar_ppto_gastos_todos  or perms.ppto_gastos.puede_ingresar_ppto_gastos %}
         <li><a href="{% url 'budget_register' %}">Gastos</a></li>
+        {% endif %}
+        {% if perms.ppto_viaticos.puede_ingresar_ppto_viaticos  or perms.ppto_viaticos.puede_ingresar_ppto_viaticos_todos %}
         <li><a href="{% url 'travel_budget_register' %}">Viaticos</a></li>
+        {% endif %}
+        {% if perms.ppto_viaticos.puede_distribuir_ppto_viaticos %}
+        <li><a href="{% url 'load_travel_distribution' %}">Distribución Viaticos</a></li>
+        {% endif %}
+        {% if perms.ppto_inversion.puede_ingresar_ppto_inversion_todos or perms.ppto_inversion.puede_ingresar_ppto_inversion %}
         <li><a href="{% url 'investment_budget_register' %}">Inversión</a></li>
+        {% endif %}
+        {% if perms.ppto_personal.puede_ingresar_ppto_personal or perms.ppto_personal.puede_ingresar_ppto_personal_todos %}
         <li><a href="{% url 'staff_budgets_register' %}">Personal</a></li>
+        {% endif %}
+        {% if perms.ppto_indirecto.puede_ingresar_ppto_indirecto %}
         <li><a href="{% url 'indirect_budget_register' %}">Indirecto</a></li>
+        {% endif %}
+        {% if perms.ppto_costos.puede_ingresar_ppto_costos %}
         <li><a href="{% url 'cost_budget_register' %}">Costos</a></li>
+        {% endif %}
+        {% if perms.ppto_ingresos.puede_ingresar_ppto_ingresos %}
         <li><a href="{% url 'income_budget_register' %}">Ingresos</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% if perms.ppto_maestro.puede_ver_menu_ppto_maestro %}
     <li>
-      <div class="icon-link">
-        <a href="#">
-          <i class="bi bi-bar-chart-steps"></i>
-          <span class="link_name">Ppto. Maestro</span>
-        </a>
-        <i class='bi bi-chevron-down arrow'></i>
-      </div>
-      <ul class="sub-menu">
-        <li><a class="link_name" href="#">Ppto. Maestro</a></li>
-        <li><a href="#">Gastos</a></li>
-        <li><a href="#">Indirecto</a></li>
-        <li><a href="#">Costos</a></li>
-        <li><a href="#">Ingresos</a></li>
+      <a href="{% url 'master_budget_dashboard' %}" class="institutional-golden-color">
+        <i class="bi bi-cpu"></i>
+        <span class="link_name">Ppto. Maestro</span>
+      </a>
+      <ul class="sub-menu blank">
+        <li><a class="link_name" href="{% url 'master_budget_dashboard' %}">Ppto. Maestro</a></li>
       </ul>
     </li>
+    {% endif %}
+    {% with s1=perms.admin.puede_listar_proyectos %}
+    {% with s2=perms.admin.puede_ingresar_proyeccion %}
+    {% with s3=perms.admin.puede_listar_periodos %}
+    {% with s4=perms.admin.puede_listar_cuentas_inversion %}
+    {% with s5=perms.admin.puede_listar_inversiones %}
+    {% with s6=perms.admin.puede_listar_centros_costos %}
+    {% with s7=perms.admin.puede_listar_control_ppto_centros_costos %}
+    {% with s8=perms.admin.puede_editar_indice_inflacionario %}
+    {% with s9=perms.admin.puede_listar_puestos_trabajo %}
+    {% if s1 or s2 or s3 or s4 or s5 or s6 or s7 or s8 or s9 %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -60,17 +82,50 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Administración</a></li>
-        <li><a href="#">Proyectos</a></li>
-        <li><a href="#">Proyección</a></li>
-        <li><a href="#">Periodos</a></li>
+        {% if perms.admin.puede_listar_proyectos %}
+        <li><a href="{% url 'projects' %}">Proyectos</a></li>
+        {% endif %}
+        {% if perms.admin.puede_ingresar_proyeccion %}
+        <li><a href="{% url 'projections' %}">Proyección</a></li>
+        {% endif %}
+        {% if perms.admin.puede_listar_periodos %}
+        <li><a href="{% url 'periods' %}">Periodos</a></li>
+        {% endif %}
+        {% if perms.admin.puede_listar_cuentas_inversion %}
         <li><a href="{% url 'investment_accounts' %}">Cuentas de Inversión</a></li>
+        {% endif %}
+        {% if perms.admin.puede_listar_inversiones %}
         <li><a href="{% url 'investments' %}">Inversiones</a></li>
+        {% endif %}
+        {% if perms.admin.puede_listar_centros_costos %}
         <li><a href="{% url 'cost_centers' %}">Centros de Costos</a></li>
+        {% endif %}
+        {% if perms.admin.puede_listar_control_ppto_centros_costos %}
+        <li><a href="{% url 'control_budgeted_cost_centers' %}">Control CECO PPTO</a></li>
+        {% endif %}
+        {% if perms.admin.puede_editar_indice_inflacionario %}
         <li><a href="{% url 'inflationary_index' %}">Indice Inflacionario</a></li>
+        {% endif %}
+        {% if perms.admin.puede_inicializar_ppto %}
+        <li><a href="{% url 'budget_init' %}">Inicializar Presupuestos</a></li>
+        {% endif %}
+        {% if perms.admin.puede_listar_puestos_trabajo %}
         <li><a href="{% url 'job_positions' %}">Puestos</a></li>
-        <li><a href="#">Accesos</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% endif %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+
+    {% if perms.ppto_inversion.puede_registrar_egresos_inversion or perms.ppto_personal.puede_registrar_egresos_personal or perms.ppto_viaticos.puede_registrar_egresos_viaticos %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -81,11 +136,20 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Egresos</a></li>
-        <li><a href="#">Inversiones</a></li>
-        <li><a href="#">Viaticos</a></li>
-        <li><a href="#">Personal</a></li>
+        {% if perms.ppto_inversion.puede_registrar_egresos_inversion %}
+        <li><a href="{% url 'check_out_investment' %}">Inversiones</a></li>
+        {% endif %}
+        {% if perms.ppto_personal.puede_registrar_egresos_personal %}
+        <li><a href="{% url 'check_out_staff' %}">Personal</a></li>
+        {% endif %}
+        {% if perms.ppto_viaticos.puede_registrar_egresos_viaticos %}
+        <li><a href="{% url 'check_out_travel' %}">Viaticos</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% endif %}
+
+    {% if perms.ppto_inversion.puede_crear_traslados_inversion or perms.ppto_gastos.puede_crear_traslados_gastos %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -96,10 +160,33 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Traslados</a></li>
-        <li><a href="#">Inversiones</a></li>
-        <li><a href="#">Gastos</a></li>
+        {% if perms.ppto_inversion.puede_crear_traslados_inversion %}
+        <li><a href="{% url 'transfers_investment' %}">Inversiones</a></li>
+        {% endif %}
+        {% if perms.ppto_gastos.puede_crear_traslados_gastos %}
+        <li><a href="{% url 'transfers_expenses' %}">Gastos</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% endif %}
+
+    {% if perms.ppto_gastos.puede_ver_ppto_gastos_todos or perms.ppto_gastos.puede_ver_ppto_gastos %}
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-pie-chart"></i>
+          <span class="link_name">Reportes</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Reportes</a></li>
+        <li><a href="{% url 'budget_execution_report' %}">Rpt. Ejecución PPTO.</a></li>
+      </ul>
+    </li>
+    {% endif %}
+    
+    {% if perms.security.puede_listar_roles or perms.security.puede_listar_usuarios or perms.security.puede_asignar_usuarios_ceco %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -110,11 +197,18 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Seguridad</a></li>
+        {% if perms.security.puede_listar_usuarios %}
         <li><a href="{% url 'users' %}">Usuarios</a></li>
+        {% endif %}
+        {% if perms.security.puede_asignar_usuarios_ceco %}
         <li><a href="{% url 'users_cost_centers' %}">Usuarios por CECO</a></li>
+        {% endif %}
+        {% if perms.security.puede_listar_roles %}
         <li><a href="{% url 'roles' %}">Roles</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% endif %}
 
     <li>
       <div class="profile-details">
@@ -122,7 +216,7 @@
           <i class="bi bi-person-circle"></i>
         </div>
         <div class="name-job">
-          <div class="profile_name">{{request.user.first_name}}</div>
+          <div class="profile_name fw-light fs-6">{{request.user.username|truncatechars:12}}</div>
           <div class="job">Sagrada Familia</div>
         </div>
         <a href="{% url 'logout' %}" class="text-decoration-none">

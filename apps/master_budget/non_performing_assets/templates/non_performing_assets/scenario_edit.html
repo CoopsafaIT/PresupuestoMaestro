@@ -1,0 +1,88 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="editScenarioModal" tabindex="-1" aria-labelledby="editScenarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="row" style="width: 100%;">
+          <div class="col-md-4 offset-md-8">
+            {% include 'master_budget/shared/search_form_simple.html' %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="idFormScenarioEdit">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="edit-budgeted">
+          <input type="hidden" name="remove" id="remove_budgeted_object">
+          <input type="hidden" name="add" id="add_budgeted_object">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered table-stripped">
+                  <thead>
+                    <tr>
+                      <th>Centro Costo</th>
+                      <th>Cuenta Contable</th>
+                      <th>Mes</th>
+                      <th>Producto</th>
+                      <th>Cantidad</th>
+                      <th>Total Presupuestado</th>
+                      <th>Depreciación Anual</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in result %}
+                      <tr {% if item.pk in qs_budgeted_for_scenario %} class="table-success" {% endif %}>
+                        <td>{{item.codcentrocostoxcuentacontable.codcentrocosto}}</td>
+                        <td>{{item.codcentrocostoxcuentacontable.codcuentacontable}}</td>
+                        <td>{{item.mes}}</td>
+                        <td>{{item.descproducto}}</td>
+                        <td>{{item.cantidad}}</td>
+                        <td>{{item.presupuestado|floatformat:2|intcomma}}</td>
+                        <td>{{item.monto_depreciacion_anual|floatformat:2|intcomma}}</td>
+                        <td>
+                          {% if item.pk in qs_budgeted_for_scenario %}
+                            <input
+                              type="checkbox"
+                              class="btn-check items_remove"
+                              name="items_remove"
+                              id="remove__{{item.pk}}"
+                              autocomplete="off"
+                              data-value="{{item.pk}}"
+                              value="{{item.pk}}"
+                            >
+                            <label class="btn btn-outline-danger" for="remove__{{item.pk}}"><i class="bi bi-x-lg"></i></label>
+                            {% else %}  
+                            <input
+                              type="checkbox"
+                              class="btn-check items_add"
+                              name="items_add"
+                              id="add__{{item.pk}}"
+                              autocomplete="off"
+                              data-value="{{item.pk}}"
+                              value="{{item.pk}}"
+                            >
+                            <label class="btn btn-outline-primary" for="add__{{item.pk}}"><i class="bi bi-plus-lg"></i></label>
+                          {% endif %}  
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-12">
+              {% include 'master_budget/shared/pagination_multiple.html' with qs=result %}
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-outline-safa" id="submitScenarioEdit">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

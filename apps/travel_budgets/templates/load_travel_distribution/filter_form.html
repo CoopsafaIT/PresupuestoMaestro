@@ -1,0 +1,20 @@
+{% load static %}
+<form method="GET">
+  <input type="hidden" name="method" value="filter">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="form-group">
+        <select name="period" id="id_period" class="form-select select2-style" required style="width: 100%;">
+          <option value="">-- Periodo --</option>
+          {% for i in periods %}
+          <option {% if request.GET.period == i.pk %} selected {% endif %} 
+          value="{{i.pk}}">{{i}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-outline-primary btn-sm float-end">Buscar</button>
+    </div>
+  </div>
+</form>

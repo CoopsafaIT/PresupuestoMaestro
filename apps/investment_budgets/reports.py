@@ -19,7 +19,6 @@ def create_excel_report(qs):
         top=Side(style="thin"),
         bottom=Side(style="thin"),
     )
-    fecha = str(dt.date.today())
     row = 3
     ws1.cell(column=1, row=row).fill = PatternFill(fgColor="2FC300", fill_type="solid")
     ws1.cell(column=2, row=row).fill = PatternFill(fgColor="2FC300", fill_type="solid")
@@ -28,35 +27,35 @@ def create_excel_report(qs):
     ws1.cell(column=5, row=row).fill = PatternFill(fgColor="2FC300", fill_type="solid")
     ws1.cell(column=6, row=row).fill = PatternFill(fgColor="2FC300", fill_type="solid")
     ws1.cell(column=7, row=row).fill = PatternFill(fgColor="2FC300", fill_type="solid")
-    period = desc = ''
-    if len(qs) > 0:
-        desc = qs[0]["codcentrocostoxcuentacontable__codcentrocosto__desccentrocosto"]
+
     _ = ws1.cell(
         column=3,
         row=1,
-        value=f"Presupuesto de Inversión: {desc}"
+        value="Presupuesto de Inversión:"
     )
     _.font = Font(bold=True, size="26")
 
-    _ = ws1.cell(column=1, row=row, value="{0}".format("Cuenta Contable"))
+    _ = ws1.cell(column=1, row=row, value="{0}".format("Centro de Costos"))
+    _.font = Font(bold=True)
+    _ = ws1.cell(column=2, row=row, value="{0}".format("Cuenta Contable"))
     _.font = Font(bold=True)
     _.border = border
-    _ = ws1.cell(column=2, row=row, value="{0}".format("Mes"))
+    _ = ws1.cell(column=3, row=row, value="{0}".format("Mes"))
     _.font = Font(bold=True)
     _.border = border
-    _ = ws1.cell(column=3, row=row, value="{0}".format("Producto"))
+    _ = ws1.cell(column=4, row=row, value="{0}".format("Producto"))
     _.font = Font(bold=True)
     _.border = border
-    _ = ws1.cell(column=4, row=row, value="{0}".format("Cantidad"))
+    _ = ws1.cell(column=5, row=row, value="{0}".format("Cantidad"))
     _.font = Font(bold=True)
     _.border = border
-    _ = ws1.cell(column=5, row=row, value="{0}".format("Precio Unitario"))
+    _ = ws1.cell(column=6, row=row, value="{0}".format("Precio Unitario"))
     _.font = Font(bold=True)
     _.border = border
-    _ = ws1.cell(column=6, row=row, value="{0}".format("Total"))
+    _ = ws1.cell(column=7, row=row, value="{0}".format("Total"))
     _.font = Font(bold=True)
     _.border = border
-    _ = ws1.cell(column=7, row=row, value="{0}".format("Justificación"))
+    _ = ws1.cell(column=8, row=row, value="{0}".format("Justificación"))
     _.font = Font(bold=True)
     _.border = border
 
@@ -65,29 +64,43 @@ def create_excel_report(qs):
         _ = ws1.cell(
             column=1,
             row=row,
+            value=f'{i["codcentrocostoxcuentacontable__codcentrocosto__desccentrocosto"]}', # NOQA
+        ).border = border
+        _ = ws1.cell(
+            column=2,
+            row=row,
             value=f'{i["codcentrocostoxcuentacontable__codcuentacontable__desccuentacontable"]}', # NOQA
         ).border = border
-        _ = ws1.cell(column=2, row=row, value="{0}".format(i["mes"])).border = border
+        _ = ws1.cell(column=3, row=row, value="{0}".format(i["mes"])).border = border
         _ = ws1.cell(
-            column=3, row=row, value="{0}".format(i["descproducto"])
+            column=4, row=row, value="{0}".format(i["descproducto"])
         ).border = border
         _ = ws1.cell(
-            column=4, row=row, value="{0}".format(i["cantidad"])
+            column=5, row=row, value="{0}".format(i["cantidad"])
         ).border = border
         _ = ws1.cell(
-            column=5, row=row, value="{0}".format(float(i["valor"]))
+            column=6, row=row, value="{0}".format(float(i["valor"]))
         ).border = border
         _ = ws1.cell(
-            column=6, row=row, value="{0}".format(float(i["presupuestado"]))
+            column=7, row=row, value="{0}".format(float(i["presupuestado"]))
         ).border = border
         _ = ws1.cell(
-            column=7,
+            column=8,
             row=row,
             value=f'{i["justificacion"]}',
         ).border = border
 
+    desc = ''
+    fecha = str(dt.date.today())
+    if len(qs) > 0:
+        desc = qs[0]["codcentrocostoxcuentacontable__codcentrocosto__desccentrocosto"]
+        desc_last = qs[-1][
+            "codcentrocostoxcuentacontable__codcentrocosto__desccentrocosto"
+        ]
+        if desc != desc_last:
+            desc = 'Todos CECO'
     file_name = (
-        f'PPTO. INVERSION {period} '
+        f'PPTO. INVERSION '
         f'{desc} ({fecha.replace("-", "")})'
     )
 

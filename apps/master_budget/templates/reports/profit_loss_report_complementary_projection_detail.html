@@ -1,0 +1,147 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+
+{% block title %}Reporte de P&G proyección complementaria {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Reporte de P&G proyección complementaria</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'reports/profit_loss_report_complementary_projection_detail_modal.html' %}
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-12">
+          <h5 class="card-title fw-light fs-4">Reporte de P&G proyección complementaria</h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Categoria</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in detail %}
+                  <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{item.level_three}} <span class="text-danger">/</span> {{item.level_four}}</td>
+                    <td>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <button
+                        class="btn btn-sm btn-outline-safa me-2 px-3 complementary_projection"
+                        data-category_id="{{item.pk}}"
+                        > Proyectar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+
+<script>
+  $(document).ready(()=>{
+
+    $('.fill-monthly-complementary-projection').click(function(){
+      let value = $('#id_complementary_projection_month-1').val()
+      $('.complementary_projection_monthly').val( numberWithCommas(value) )
+    })
+
+    $('#save_complementary_projection').click(function(){
+      let url ='{{request.get_full_path}}';
+      let categoryId = $('#save_complementary_projection').data('category_id');
+      let data = [
+        {'month': '1', 'amount': $('#id_complementary_projection_month-1').val().replaceAll(',', '')},
+        {'month': '2', 'amount': $('#id_complementary_projection_month-2').val().replaceAll(',', '')},
+        {'month': '3', 'amount': $('#id_complementary_projection_month-3').val().replaceAll(',', '')},
+        {'month': '4', 'amount': $('#id_complementary_projection_month-4').val().replaceAll(',', '')},
+        {'month': '5', 'amount': $('#id_complementary_projection_month-5').val().replaceAll(',', '')},
+        {'month': '6', 'amount': $('#id_complementary_projection_month-6').val().replaceAll(',', '')},
+        {'month': '7', 'amount': $('#id_complementary_projection_month-7').val().replaceAll(',', '')},
+        {'month': '8', 'amount': $('#id_complementary_projection_month-8').val().replaceAll(',', '')},
+        {'month': '9', 'amount': $('#id_complementary_projection_month-9').val().replaceAll(',', '')},
+        {'month': '10', 'amount': $('#id_complementary_projection_month-10').val().replaceAll(',', '')},
+        {'month': '11', 'amount': $('#id_complementary_projection_month-11').val().replaceAll(',', '')},
+        {'month': '12', 'amount': $('#id_complementary_projection_month-12').val().replaceAll(',', '')}
+      ]
+      loaderShow(true)
+      $.ajax({
+        type: 'POST',
+        data: {
+          categoryId: categoryId,
+          data: JSON.stringify(data)
+        },
+        url: url
+      })
+      .done((res)=>{
+        loaderShow(false)
+        $('#editDetailComplementaryProjectionModal').modal('hide');
+        alert('Proyección realizada con éxito!');
+      })
+      .fail(handleError)
+    })
+
+    $('.complementary_projection').click(function(){
+      let categoryId = $(this).data('category_id');
+      $('#save_complementary_projection').data('category_id', categoryId);
+      let url ='{{request.get_full_path}}';
+      loaderShow(true)
+      $.ajax({
+        type: 'GET',
+        data: {
+          categoryId: categoryId
+        },
+        url: url
+      })
+      .done((res)=>{
+        fillTableMonth(res)
+        loaderShow(false)
+        $('#editDetailComplementaryProjectionModal').modal('show');
+      })
+      .fail(handleError)
+    })
+
+    const fillTableMonth = (res) => {
+      let data = JSON.parse(res)
+      $('#catalogComplementaryProjectionName').text(data[0].category_id__level_four)
+      $('#id_complementary_projection_month-1').val(data[0].amount)
+      $('#id_complementary_projection_month-2').val(data[1].amount)
+      $('#id_complementary_projection_month-3').val(data[2].amount)
+      $('#id_complementary_projection_month-4').val(data[3].amount)
+      $('#id_complementary_projection_month-5').val(data[4].amount)
+      $('#id_complementary_projection_month-6').val(data[5].amount)
+      $('#id_complementary_projection_month-7').val(data[6].amount)
+      $('#id_complementary_projection_month-8').val(data[7].amount)
+      $('#id_complementary_projection_month-9').val(data[8].amount)
+      $('#id_complementary_projection_month-10').val(data[9].amount)
+      $('#id_complementary_projection_month-11').val(data[10].amount)
+      $('#id_complementary_projection_month-12').val(data[11].amount)
+    }
+
+    const handleError = (e) => {
+      console.log(e);
+      loaderShow(false)
+      alert("Ha ocurrido un error!")
+    }
+  })
+</script>
+{% endblock javascript %}

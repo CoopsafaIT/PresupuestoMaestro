@@ -1,0 +1,39 @@
+<div class="modal fade" id="addScenarioModal" tabindex="-1" aria-labelledby="addScenarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light">Crear Escenario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="create">
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+          <div class="row">
+            {% for field in form.visible_fields  %}
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                  <small class="text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,138 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+
+{% block title %}Parametros de Proyección {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Parametros de Proyección</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'MB_projection_parameters/add.html' %}
+{% include 'MB_projection_parameters/delete.html' %}
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="card-title fw-light fs-4">Parametros de Proyección</h5>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-outline-safa" id="btnAddProjectionParameter">
+            Crear Proyección
+          </button>
+        </div>
+        <div class="col-md-6">
+          {% include 'master_budget/shared/search_form_with_period.html' %}
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Periodo</th>
+                  <th>Fecha Base</th>
+                  <th>Correlativo</th>
+                  <th>Estado</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in result %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{item.period_id.descperiodo}}</td>
+                  <td>{{item.date_base|date:'d/m/Y'}}</td>
+                  <td>{{item.correlative}}</td>
+                  <td>{{item.is_active|yesno:'Activo, Inactivo'}}</td>
+                  <td class="text-center">
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <a
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        href="{% url 'projection_parameter' item.pk %}"
+                        class="btn btn-sm btn-outline-safa me-2 px-3"
+                        title="Editar Parametro"
+                      > <i class="bi bi-pencil-square"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center fs-5">No Data</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'master_budget/shared/pagination_multiple.html' with qs=result %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    $('.select2-style').select2({
+      language: "es",
+      dropdownParent: $('#addProjectionModal')
+    });
+    $(
+      "#id_period option[value= '{{request.GET.period}}'] "
+    ).prop('selected', true).trigger("change");
+
+    $('.delete-projection').click(function(){
+      let url = $(this).data('url')
+      if(!!url){
+        $('#deleteProjectionForm').attr('action', url)
+        $('#deleteProjectionModal').modal('show');
+      }
+    })
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    $('#btnAddProjectionParameter').click(()=>{
+      let url ='{% url "projection_parameters" %}'
+      loaderShow(true)
+      $.ajax({
+        type: 'GET',
+        data: {},
+        url: url
+      })
+      .done((res)=>{
+        fillSelect(res)
+        $('#addProjectionModal').modal('show')
+        loaderShow(false)
+      })
+      .fail(handleError)
+    })
+  
+    const fillSelect = (resp) => {
+      $(`#id_date_base`).empty();
+      $(`#id_date_base`).append('<option value="">-- Seleccione Fecha Cierre Base --</option>');
+      $.each(resp, (key, val) => {
+        $(`#id_date_base`).append(`<option value='${val.id}'>${val.date}</option>`);
+      })
+      $(`#id_date_base`).trigger("chosen:updated");
+    }
+
+
+    const handleError = (e) => {
+      console.log(e);
+      loaderShow(false)
+      alert("No se pudo cargar fechas cierres!")
+    }
+  })
+</script>
+{% endblock javascript %}

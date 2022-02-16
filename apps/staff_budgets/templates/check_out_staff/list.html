@@ -1,0 +1,141 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Egresos de Personal {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Egresos de Personal</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'check_out_staff/require_modal.html' %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-4 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Egresos de Personal</h1>
+            </div>
+            <div class="col-md-8">
+              {% include 'checkout/search.html' %}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped align-middle mt-1">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Puesto</th>
+                  <th>Tipo Personal</th>
+                  <th>Cant.</th>
+                  <th>Disponible</th>
+                  <th>Mes Inicio</th>
+                  <th>Mes Fin</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in qs %}
+                  <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{item.codpuesto.descpuesto}}</td>
+                    <td>{{item.get_tipo_name}}</td>
+                    <td>{{item.cantidad}}</td>
+                    <td>{{item.disponible}}</td>
+                    <td>{{item.mes}}</td>
+                    <td>{% if item.tipo == 1 %}{{item.mesfin}}{% endif %}</td>
+                    <td>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <a 
+                          class="btn btn-outline-safa me-2 require_modal"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          data-id='{{item.pk}}'
+                          data-cost_center='{{item.codcentrocosto.pk}}'
+                          data-period='{{item.periodo.pk}}'
+                          data-job_id='{{item.codpuesto.pk}}'
+                          data-available='{{item.disponible}}'
+                          data-type='{{item.tipo}}'
+                          title="Requerir" 
+                        > <i class="bi bi-bag-check"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td
+                      class="fw-light text-center" 
+                      colspan="9"
+                    > No Data
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'checkout/pagination.html' with qs=qs %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+
+<script>
+  $(document).ready(()=>{
+    $(
+      "#id_period_form option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+    $(
+      "#id_cost_center_form option[value= '{{request.session.cost_center}}'] "
+    ).prop('selected', true).trigger("change");
+
+  })
+</script>
+
+<script>
+  $(document).ready(()=>{
+    $('.require_modal').click(function(){
+      $.ajax({
+        url: '{% url "check_out_staff" %}',
+        data:{
+          cost_center: $(this).data('cost_center'),
+          period: $(this).data('period'),
+          job_id: $(this).data('job_id')
+        },
+        type: 'GET'
+      })
+      .done(({data})=>{
+        $('#require_available_title').text(
+          `(Disponible: ${$(this).data('available')} )`
+        )
+        if ($(this).data('type') === 1){
+          $('#id_month_end').attr('required', true).attr('disabled', false);
+        }else{
+          $('#id_month_end').attr('required', false).attr('disabled', true);
+        }
+        $('#id_staff_require').val($(this).data('id'))
+        $('#id_quantity').attr('max', $(this).data('available'))
+        $('#id_old_comments').html('')
+        $('#id_old_comments').html(
+          data.map((item)=> `${ $('#id_old_comments').text() } <br /> ${ item.comentario }` )
+        )
+        $('#requireModal').modal('show');
+      })
+      .fail(catch_fail)
+    })
+
+    const catch_fail = (err)=>{
+      alert(`Error: ${err}`)
+    }
+  
+  })
+</script>
+
+{% endblock javascript %}

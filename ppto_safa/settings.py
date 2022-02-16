@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+
     'apps.administration',
     'apps.main',
     'apps.expenses_budgets',
@@ -37,6 +38,12 @@ INSTALLED_APPS = [
     'apps.income_budgets',
     'apps.cost_budgets',
     'apps.security',
+    'apps.master_budget',
+    'apps.master_budget.loan_portfolio',
+    'apps.master_budget.passives',
+    'apps.master_budget.non_performing_assets',
+    'apps.master_budget.payment_payroll',
+
 ]
 
 MIDDLEWARE = [
@@ -108,13 +115,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Tegucigalpa'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = False
 

@@ -4,10 +4,11 @@ from django.shortcuts import (
     render,
     redirect,
 )
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Sum, F
 from openpyxl.utils.exceptions import InvalidFileException
+from decimal import Decimal as dc
 
 from apps.main.models import (
     Periodo,
@@ -17,7 +18,7 @@ from ppto_safa.utils import (
     execute_sql_query,
     try_convert_float
 )
-from ppto_safa.constants import MONTH
+from utils.constants import MONTH
 from apps.income_budgets.reports import (
     generate_excel_file_format,
     load_excel_file
@@ -25,6 +26,9 @@ from apps.income_budgets.reports import (
 
 
 @login_required()
+@permission_required(
+    'ppto_ingresos.puede_ingresar_ppto_ingresos', raise_exception=True
+)
 def income_budget_register(request):
     if request.method == 'POST':
         if request.POST.get('method') == 'load-excel-file':
@@ -150,6 +154,27 @@ def income_budget_register(request):
             result = try_convert_float(value)
             if type(result).__name__ == 'str':
                 result = 0
+            total = dict(Presupuestoingresos.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).aggregate(
+                total_ejecutado_diciembre=Sum('ejecutadodiciembre'),
+                porcentaje=Sum('porcentaje'),
+                totalpresupuestado=Sum('total'),
+                proyeccion=Sum('proyeccion')
+            ))
+
+            Presupuestoingresos.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).update(
+                porcentaje=F('ejecutadodiciembre') / dc(
+                    total['total_ejecutado_diciembre']
+                ) * 100,
+                fechamodificacion=dt.datetime.today(),
+                usuariomodificacion=request.user,
+            )
+
             Presupuestoingresos.objects.filter(
                 codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
                 periodo=period

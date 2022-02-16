@@ -3,6 +3,9 @@
 {% load humanize %}
 
 {% block title %}Presupuestos de Gastos {% endblock title %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Presupuestos de Gastos</li>
+{% endblock breadcrumb %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/budgets.css' %}">
@@ -10,19 +13,12 @@
 
 {% block content %}
 <div class="container-fluid pt-4">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-template">
-      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Presupuestos de Gastos</li>
-    </ol>
-  </nav>
-
   <div class="card card-template">
     <div class="card-body">
       <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="inicio-tab" data-bs-toggle="tab" data-bs-target="#inicio" type="button"
-            role="tab" aria-controls="inicio" aria-selected="true">Inicio</button>
+            role="tab" aria-controls="inicio" aria-selected="true">Filtro</button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="proyecto-tab" data-bs-toggle="tab" data-bs-target="#proyecto" type="button"
@@ -42,7 +38,7 @@
           {% include 'form_create_projects.html' %}
         </div>
         <div class="tab-pane fade" id="approve" role="tabpanel" aria-labelledby="approve-tab">
-          <h5 class="my-3">Aprobación</h5>
+          <h5 class="my-3 fw-light">Aprobación</h5>
           <form 
             accept-charset="utf-8"
             action="{% url 'budget_register' %}"

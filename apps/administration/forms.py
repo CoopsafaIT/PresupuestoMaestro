@@ -1,10 +1,13 @@
+import datetime as dt
 from django import forms
 from apps.main.models import (
     Cuentascontables,
     Inversiones,
-    Puestos
+    Puestos,
+    Periodo
 )
-from utils.constants import STATUS
+from utils.constants import STATUS, PROJECTION_TYPES, MONTH_CHOICES
+from utils.create_data import create_years_base
 
 
 class CuentascontablesForm(forms.ModelForm):
@@ -112,3 +115,34 @@ class PuestosForm(forms.ModelForm):
             'sueldotemporal',
             'puestoestado',
         )
+
+
+class ProjectionForm(forms.Form):
+    projection_type = forms.ChoiceField(
+        label="Tipo de Proyección",
+        choices=PROJECTION_TYPES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select select2'})
+    )
+    year_base = forms.ChoiceField(
+        label="Año base",
+        choices=create_years_base(dt.datetime.today().year),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select select2'})
+    )
+    month_base = forms.ChoiceField(
+        label="Mes base",
+        choices=MONTH_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select select2'})
+    )
+    period = forms.ModelChoiceField(
+        label='Periodo',
+        queryset=Periodo.objects.filter(habilitado=True, cerrado=False),
+        empty_label='-- Seleccione Periodo --',
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select select2'})
+    )
+
+    class Meta:
+        fields = ('projection_type', 'year_base', 'month_base', 'period')

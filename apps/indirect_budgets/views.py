@@ -4,10 +4,11 @@ from django.shortcuts import (
     render,
     redirect,
 )
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Sum, F
 from openpyxl.utils.exceptions import InvalidFileException
+from decimal import Decimal as dc
 
 from apps.main.models import (
     Periodo,
@@ -17,7 +18,7 @@ from ppto_safa.utils import (
     execute_sql_query,
     try_convert_float
 )
-from ppto_safa.constants import MONTH
+from utils.constants import MONTH
 from apps.indirect_budgets.reports import (
     generate_excel_file_format,
     load_excel_file
@@ -25,6 +26,9 @@ from apps.indirect_budgets.reports import (
 
 
 @login_required()
+@permission_required(
+    'ppto_indirecto.puede_ingresar_ppto_indirecto', raise_exception=True
+)
 def indirect_budget_register(request):
     if request.method == 'POST':
         if request.POST.get('method') == 'load-excel-file':
@@ -99,7 +103,6 @@ def indirect_budget_register(request):
                             f'no es un valor'
                         )
                     if val.total != result:
-                        print('entrooooooo')
                         list_items_to_update.append({
                             'id': val.pk,
                             'value': result
@@ -132,7 +135,7 @@ def indirect_budget_register(request):
                         usuariomodificacion=request.user
                     )
 
-                messages.success(                    
+                messages.success(
                     request,
                     'Recalculo realizado con éxito'
                 )
@@ -151,6 +154,26 @@ def indirect_budget_register(request):
             result = try_convert_float(value)
             if type(result).__name__ == 'str':
                 result = 0
+
+            total = dict(Presupuestoindirecto.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).aggregate(
+                total_ejecutado_diciembre=Sum('ejecutadodiciembre'),
+                porcentaje=Sum('porcentaje'),
+                totalpresupuestado=Sum('total'),
+                proyeccion=Sum('proyeccion')
+            ))
+
+            Presupuestoindirecto.objects.filter(
+                codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
+                periodo=period
+            ).update(
+                porcentaje=F('ejecutadodiciembre') /dc(
+                    total['total_ejecutado_diciembre']
+                )*100
+            )
+
             Presupuestoindirecto.objects.filter(
                 codcentrocostoxcuentacontable_new__codcuentacontable__cuentapadre=account,
                 periodo=period

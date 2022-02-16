@@ -3,18 +3,19 @@
 {% load humanize %}
 {% block title %}Presupuestos de Personal {% endblock title %}
 
+{% block breadcrumb %}
+<li class="breadcrumb-item text-white ">
+  <a href="{% url 'staff_budgets_register' %}" class="text-white text-decoration-none">/ Listado Personal</a>
+</li>
+<li class="breadcrumb-item active text-white before-none" aria-current="page"> / Editar Personal</li>
+{% endblock breadcrumb %}
+
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/budgets.css' %}">
 {% endblock css %}
 
 {% block content %}
 <div class="container-fluid pt-4">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-template">
-      <li class="breadcrumb-item"><a href="{% url 'staff_budgets_register' %}">Volver a Listado</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Editar de Presupuestos de Personal</li>
-    </ol>
-  </nav>
 
   <div class="card card-template">
     <div class="card-header">

@@ -2,18 +2,14 @@
 {% load static %}
 {% load humanize %}
 {% block title %}Presupuesto de Costos {% endblock title %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Presupuestos de Costos</li>
+{% endblock breadcrumb %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/budgets.css' %}">
 {% endblock css %}
 {% block content %}
 <div class="container-fluid pt-4">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-template">
-      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Ingreso de Presupuesto de Costos</li>
-    </ol>
-  </nav>
-
   <div class="card card-template">
     <div class="card-body">
       <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -92,7 +88,7 @@
 
 <script>
   $(document).ready(()=>{
-    let urlFormat = '{% url "income_budget_generate_excel_file" 0 1 %}';
+    let urlFormat = '{% url "cost_budget_generate_excel_file" 0 1 %}';
     $('#btn-get-excel-format').click(function(){
       let period = $('#id_period').val()
       let account = $('#id_account').val()

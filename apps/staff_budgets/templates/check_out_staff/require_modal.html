@@ -1,0 +1,92 @@
+<div class="modal fade" id="requireModal" tabindex="-1" aria-labelledby="requireModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light" id="requireModalLabel">
+          Requerir Personal
+          <span id="require_available_title"></span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="method" value="require">
+          <input type="hidden" name="id" value="" id="id_staff_require"/>
+          <di class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_quantity">Cantidad</label>
+                <input
+                  type="number"
+                  min="1"
+                  id="id_quantity"
+                  required
+                  name="quantity"
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </di>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_month">Mes Inicio</label>
+                <select
+                  class="form-select"
+                  id="id_month"
+                  name="month"
+                  required
+                  style="width: 100%;"
+                >
+                  <option value="">--- Seleccione Mes ---</option>
+                  {% for month in months %}
+                  <option value="{{month}}">{{month}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="id_month_end">Mes Fin</label>
+                <select
+                  class="form-select"
+                  id="id_month_end"
+                  name="month_end"
+                  required
+                  style="width: 100%;"
+                >
+                  <option value="">--- Seleccione Mes ---</option>
+                  {% for month in months %}
+                  <option value="{{month}}">{{month}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="id_old_comments">Comentarios Anteriores:</label>
+              
+              <div class="fw-light" id="id_old_comments"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="id_comment">Comentario</label>
+              <textarea
+                class="form-control"
+                id="id_comment"
+                name="comment"
+                required
+                style="resize: none;"
+                rows="3"
+                placeholder="Ingrese Comentario... N/A en su defecto"
+                ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-safa">Aceptar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+{% load static %}
+<form method="GET">
+<div class="row align-items-end justify-content-end">
+  <div class="col-md-4">
+    <div class="form-group">
+      <select name="parameter" id="id_parameter" class="form-select">
+        <option value="">-- Parametros --</option>
+        {% for i in parameters %}
+        <option value="{{i.pk}}">{{i.date_base|date:'d/m/Y'}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  
+  {% if categories %}
+  <div class="col-md-3">
+    <div class="form-group">
+      <select name="category" id="id_category" class="form-select">
+        <option value="">-- Categorias --</option>
+        {% for i in categories %}
+        <option value="{{i.pk}}">{{i}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  {% endif %}
+    
+  <div class="col-md-3">
+    <div class="form-group">
+      <select name="status" id="id_status" class="form-select">
+        {% for key, val in status %}
+        <option value="{{key}}">{{val}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-outline-primary float-end" type="submit">Buscar</button>
+  </div>
+</div>
+</form>

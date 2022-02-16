@@ -1,0 +1,14 @@
+{% load static %}
+<form method="GET">
+  <div class="input-group">
+    <input
+      name="q"
+      value="{{request.GET.q}}"
+      type="text"
+      class="form-control"
+      placeholder="Ingrese filtro de busqueda"
+      aria-label="Ingrese filtro de busqueda"
+      aria-describedby="button-addon2">
+    <button class="btn btn-outline-primary" type="submit" id="button-addon2">Buscar</button>
+  </div>
+</form>

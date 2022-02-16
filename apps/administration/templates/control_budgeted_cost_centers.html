@@ -1,0 +1,100 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Control de Centros de Costos Presupuestados {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Control de Centros de Costos Presupuestados</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-template">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-6 d-flex align-items-center">
+              <h1 class="card-title fs-4 fw-light mb-0">Control de Centros de Costos Presupuestados</h1>
+            </div>
+            <div class="col-md-4 offset-md-2">
+              <form method="GET">
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <select name="period" id="id_period" class="form-select select2-style" required>
+                        <option value="">-- Periodo --</option>
+                        {% for i in periods %}
+                        <option {% if request.GET.period == i.pk %} selected {% endif %} 
+                        value="{{i.pk}}">{{i}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <button type="submit" class="btn btn-outline-primary float-end">Buscar</button>
+                  </div>
+                </div>
+              </form>
+          </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover table-striped align-middle mt-1">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Centro de Costos</th>
+                  <th>Proyecto</th>
+                  <th>Estado</th>
+                  <th>Cant. Cta. Restantes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in data %}
+                  <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{item.DescCentroCosto}}</td>
+                    <td>{{item.DescProyecto}}</td>
+                    <td>
+                      {% if item.Presupuestada == item.Totales %}
+                      Presupuestada
+                      {% else %}
+                      <span class="text-white bg-danger p-1">Borrador</span>
+                      {% endif %}</td>
+                    <td>
+                      {% if item.Presupuestada != item.Totales %}
+                      <span class="text-white bg-danger p-1">{{item.Diferencia|floatformat:0}}</span> 
+                      de {{item.Totales}} totales
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td
+                      class="fw-light text-center" 
+                      colspan="5"
+                    > No Data
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'checkout/pagination.html' with qs=data %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    $(
+      "#id_period option[value= '{{request.session.period}}'] "
+    ).prop('selected', true).trigger("change");
+  })
+</script>
+{% endblock javascript %}
