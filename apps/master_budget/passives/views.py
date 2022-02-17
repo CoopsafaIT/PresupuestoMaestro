@@ -9,28 +9,19 @@ from decimal import Decimal as dc
 
 from apps.master_budget.models import MasterParameters
 from .models import (
-    SavingsLiabilities,
-    SavingsLiabilitiesCategory,
-    SavingsLiabilitiesComment,
-    SavingsLiabilitiesScenario,
-    LiabilitiesLoans,
-    LiabilitiesLoansCategory,
-    LiabilitiesLoansComment,
-    LiabilitiesLoansScenario
+    SavingsLiabilities, SavingsLiabilitiesCategory, SavingsLiabilitiesComment,
+    SavingsLiabilitiesScenario, LiabilitiesLoans, LiabilitiesLoansCategory,
+    LiabilitiesLoansComment, LiabilitiesLoansScenario
 )
 from .forms import (
-    SavingsLiabilitiesForm,
-    ScenarioCloneForm,
-    ScenarioCloneUpdateParameterForm,
+    SavingsLiabilitiesForm, ScenarioCloneForm, ScenarioCloneUpdateParameterForm,
     LiabilitiesLoansScenarioForm,
 )
 from .calculations import LiabilitiesLoansCalculations, calculate_interest_generated
 from utils.pagination import pagination
-from utils.constants import STATUS_SCENARIO
 from utils.sql import execute_sql_query
 from utils.constants import (
-    LIST_SAVINGS_LIABILITIES_FIELDS,
-    LIST_LIABILITIES_LOANS_FIELDS
+    STATUS_SCENARIO, LIST_SAVINGS_LIABILITIES_FIELDS, LIST_LIABILITIES_LOANS_FIELDS
 )
 
 
@@ -49,18 +40,13 @@ def scenarios_savings_liabilities(request):
         return amount
 
     def _correlative(category_name, period, total):
-        return (
-            f'ESC-{category_name[:4].upper()}-{period}-{total}'
-        )
+        return (f'ESC-{category_name[:4].upper()}-{period}-{total}')
 
     if request.method == 'POST':
         if request.POST.get('method') == 'create':
             form = SavingsLiabilitiesForm(request.POST)
             if not form.is_valid():
-                messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
-                )
+                messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
             else:
                 if request.POST.get('is_active') == 'True':
                     SavingsLiabilitiesScenario.objects.filter(
@@ -84,13 +70,8 @@ def scenarios_savings_liabilities(request):
                 )
                 _new.annual_growth_amount = 0
                 _new.save()
-                messages.success(
-                    request,
-                    'Escenario creado con éxito!'
-                )
-                redirect_url = reverse(
-                    'scenario_savings_liabilities', kwargs={'id': _new.pk}
-                )
+                messages.success(request, 'Escenario creado con éxito!')
+                redirect_url = reverse('scenario_savings_liabilities', kwargs={'id': _new.pk}) # NOQA
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
 
@@ -137,13 +118,8 @@ def scenarios_savings_liabilities(request):
                 _upd.rate = old_item.rate
                 _upd.total_interest = old_item.total_interest
                 _upd.save()
-            messages.success(
-                request,
-                'Escenario clonado con éxito!'
-            )
-            redirect_url = reverse(
-                'scenario_savings_liabilities', kwargs={'id': _clone.pk}
-            )
+            messages.success(request, 'Escenario clonado con éxito!')
+            redirect_url = reverse('scenario_savings_liabilities', kwargs={'id': _clone.pk}) # NOQA
             full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
             return redirect(full_redirect_url)
 
@@ -367,15 +343,11 @@ def scenario_savings_liabilities_comments(request, id):
         qs = get_object_or_404(SavingsLiabilitiesScenario, pk=id)
         if request.method == 'POST':
             SavingsLiabilitiesComment.objects.create(
-                comment=request.POST.get('comment'),
-                created_by=request.user,
-                scenario_id=qs,
-                deleted=False
+                comment=request.POST.get('comment'), created_by=request.user,
+                scenario_id=qs, deleted=False
             )
         messages = SavingsLiabilitiesComment.objects.values(
-            'comment',
-            'created_by__username',
-            'created_at'
+            'comment', 'created_by__username', 'created_at'
         ).filter(scenario_id=id).order_by('-created_at')
         ctx = {
             'data': list(messages)
@@ -410,10 +382,7 @@ def scenarios_liabilities_loans(request):
         if request.POST.get('method') == 'create':
             form = LiabilitiesLoansScenarioForm(request.POST)
             if not form.is_valid():
-                messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
-                )
+                messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
             else:
                 if request.POST.get('is_active') == 'True':
                     LiabilitiesLoansScenario.objects.filter(
@@ -438,17 +407,13 @@ def scenarios_liabilities_loans(request):
                 _new.annual_growth_amount = 0
                 _new.save()
 
-                messages.success(
-                    request,
-                    'Escenario creado con éxito!'
-                )
+                messages.success(request, 'Escenario creado con éxito!')
                 redirect_url = reverse(
                     'scenario_liabilities_loans', kwargs={'id': _new.pk}
                 )
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
-            # TODO: Corregir esta funcionalidad
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
@@ -493,10 +458,7 @@ def scenarios_liabilities_loans(request):
                 _upd.new_amount = old_item.new_amount
                 _upd.save()
 
-            messages.success(
-                request,
-                'Escenario clonado con éxito!'
-            )
+            messages.success(request, 'Escenario clonado con éxito!')
             redirect_url = reverse('scenario_liabilities_loans', kwargs={'id': _clone.pk})
             full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
             return redirect(full_redirect_url)
@@ -568,12 +530,8 @@ def scenarios_liabilities_loans(request):
                 else:
                     _upd.new_amount = _upd.amount_initial + _upd.amount_growth - _upd.principal_payments # NOQA
                 _upd.save()
-            messages.success(
-                request, 'Escenario clonado y proyección actualizada con éxito'
-            )
-            redirect_url = reverse(
-                'scenario_liabilities_loans', kwargs={'id': _clone.pk}
-            )
+            messages.success(request, 'Escenario clonado y proyección actualizada con éxito') # NOQA
+            redirect_url = reverse('scenario_liabilities_loans', kwargs={'id': _clone.pk})
             return redirect(redirect_url)
 
     page = request.GET.get('page', '')
@@ -689,10 +647,7 @@ def scenario_liabilities_loans(request, id):
                     _upd.amount_initial, _upd.amount_growth, _upd.rate
                 )
                 _upd.principal_payments = abs(_upd.level_quota) - abs(_upd.total_interest)
-                if item == 12:
-                    _upd.new_amount = _upd.amount_initial + _upd.amount_growth - 0
-                else:
-                    _upd.new_amount = _upd.amount_initial + _upd.amount_growth - _upd.principal_payments # NOQA
+                _upd.new_amount = _upd.amount_initial + _upd.amount_growth - _upd.principal_payments # NOQA
                 _upd.save()
 
         elif request.POST.get('method') == 'change-status':
@@ -705,8 +660,7 @@ def scenario_liabilities_loans(request, id):
             qs.save()
             message = (
                 f'Escenario actualizado a : '
-                f'{"Principal" if qs.is_active else "Secundario"}'
-                f' con éxito!!'
+                f'{"Principal" if qs.is_active else "Secundario"} con éxito!'
             )
             messages.success(request, message)
 
@@ -746,15 +700,11 @@ def scenario_liabilities_loans_comments(request, id):
         qs = get_object_or_404(LiabilitiesLoansScenario, pk=id)
         if request.method == 'POST':
             LiabilitiesLoansComment.objects.create(
-                comment=request.POST.get('comment'),
-                created_by=request.user,
-                scenario_id=qs,
-                deleted=False
+                comment=request.POST.get('comment'), created_by=request.user,
+                scenario_id=qs, deleted=False
             )
         messages = LiabilitiesLoansComment.objects.values(
-            'comment',
-            'created_by__username',
-            'created_at'
+            'comment', 'created_by__username', 'created_at'
         ).filter(scenario_id=id).order_by('-created_at')
         ctx = {
             'data': list(messages)
