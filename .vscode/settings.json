@@ -1,4 +1,5 @@
 {
+    "workbench.settings.editor": "json",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#3399ff",
         "activityBar.activeBorder": "#bf0060",
