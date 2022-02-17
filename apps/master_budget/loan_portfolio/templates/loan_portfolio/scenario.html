@@ -255,7 +255,7 @@
       
       $('.term-monthly').change(function(){
         let val = $(this).val()
-        if(!!val === false || parseFloat(val) < 0) {
+        if(!!val === false) {
           $(this).val(0)
           return;
         }
@@ -272,7 +272,7 @@
 
       $('.commission-percentage-monthly').change(function(){
         let val = $(this).val()
-        if(!!val === false || parseFloat(val) < 0) {
+        if(!!val === false) {
           $(this).val(0)
           return;
         }
@@ -289,7 +289,7 @@
 
       $('.percentage-arrears-monthly').change(function(){
         let val = $(this).val()
-        if(!!val === false || parseFloat(val) < 0) {
+        if(!!val === false) {
           $(this).val(0)
           return;
         }
