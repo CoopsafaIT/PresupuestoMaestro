@@ -210,20 +210,11 @@ def staff_budgets_delete(request, id):
         try:
             if BudgetedPaymentPayroll.objects.filter(budgeted_id=id).exists():
                 BudgetedPaymentPayroll.objects.filter(budgeted_id=id).delete()
-                messages.warning(
-                    request,
-                    'Se ha eliminado personal presupuestado de Escenario'
-                )    
+                messages.warning(request, 'Se ha eliminado personal presupuestado de Escenario') # NOQA
             Detallexpresupuestopersonal.objects.filter(pk=id).delete()
-            messages.success(
-                request,
-                'Presupuesto de personal eliminado con éxito'
-            )
+            messages.success(request, 'Presupuesto de personal eliminado con éxito')
         except Exception as e:
-            messages.error(
-                request,
-                f'No se pudo eliminar {e.__str__()}'
-            )
+            messages.error(request, f'No se pudo eliminar {e.__str__()}')
         return redirect('staff_budgets_register')
 
 

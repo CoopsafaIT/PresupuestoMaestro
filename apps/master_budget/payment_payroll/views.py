@@ -3,7 +3,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
-# from django.db.models import Q, Sum
 from decimal import Decimal as dc
 
 from apps.main.models import Detallexpresupuestopersonal, Centroscosto
@@ -12,13 +11,10 @@ from utils.constants import STATUS_SCENARIO, MONTH
 from utils.pagination import pagination
 from utils.sql import execute_sql_query, execute_sql_query_no_return
 from .models import (
-    PaymentPayrollScenario,
-    BudgetedPaymentPayroll,
-    PaymentPayroll
+    PaymentPayrollScenario, BudgetedPaymentPayroll, PaymentPayroll
 )
 from .forms import (
-    PaymentPayrollScenarioForm,
-    CollateralPaymentScenarioForm
+    PaymentPayrollScenarioForm, CollateralPaymentScenarioForm
 )
 from .request_get import QueryGetParms
 
@@ -35,10 +31,8 @@ def scenarios_payment_payroll(request):
         if type == 2:
             permanent = 0
             qs_staff_perm = Detallexpresupuestopersonal.objects.filter(
-                periodo=_new.period_id.pk,
-                codcentrocosto=cost_center.pk,
-                mes__in=months,
-                tipo=2
+                periodo=_new.period_id.pk, codcentrocosto=cost_center.pk,
+                mes__in=months, tipo=2
             ).values('codpuesto__sueldopermanente', 'cantidad')
             for budget in qs_staff_perm:
                 salary = budget.get('codpuesto__sueldopermanente', 0)
@@ -66,12 +60,10 @@ def scenarios_payment_payroll(request):
     def _add_budgeted(qs_scenario, data):
         for staff in data:
             if not BudgetedPaymentPayroll.objects.filter(
-                scenario_id=qs_scenario.pk,
-                budgeted_id=staff.pk
+                scenario_id=qs_scenario.pk, budgeted_id=staff.pk
             ).exists():
                 BudgetedPaymentPayroll.objects.create(
-                    scenario_id=qs_scenario,
-                    budgeted_id=staff
+                    scenario_id=qs_scenario, budgeted_id=staff
                 )
 
     def _correlative(period, total):
@@ -82,8 +74,7 @@ def scenarios_payment_payroll(request):
             form = PaymentPayrollScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
+                    request, f'Formulario no válido: {form.errors.as_text()}'
                 )
             else:
                 if request.POST.get('is_active') == 'True':
@@ -102,10 +93,7 @@ def scenarios_payment_payroll(request):
                     ).count()
                 )
                 _new.save()
-                messages.success(
-                    request,
-                    'Escenario creado con éxito!'
-                )
+                messages.success(request, 'Escenario creado con éxito!')
                 qs_budgeted = Detallexpresupuestopersonal.objects.filter(
                     periodo=_new.period_id.pk
                 )
@@ -154,31 +142,22 @@ def scenarios_payment_payroll(request):
                         _new_detail.amount_temp_december = _monthly_salary(qs_cost_center, 0, 12, 1) # NOQA
                         _new_detail.save()
                 else:
-                    messages.danger(
-                        request, 'No se pudo extraer información Historica'
-                    )
-
-                redirect_url = reverse(
-                    'scenario_payment_payroll', kwargs={'id': _new.pk}
-                )
+                    messages.danger(request, 'No se pudo extraer información Historica')
+                redirect_url = reverse('scenario_payment_payroll', kwargs={'id': _new.pk})
                 full_redirect_url = f'{redirect_url}?option='
                 return redirect(full_redirect_url)
 
     query_parms = QueryGetParms(request.GET)
     qs = PaymentPayrollScenario.objects.filter(**query_parms.get_query_filters()).exclude(
         deleted=True
-    ).order_by(
-        '-parameter_id__is_active', 'correlative'
-    )
+    ).order_by('-parameter_id__is_active', 'correlative')
     parameters = MasterParameters.objects.filter(is_active=True).order_by(
         '-is_active', 'period_id'
     )
     result = pagination(qs, page=query_parms.get_page())
     ctx = {
-        'parameters': parameters,
-        'status': STATUS_SCENARIO,
-        'result': result,
-        'form': form
+        'parameters': parameters, 'status': STATUS_SCENARIO,
+        'result': result, 'form': form
     }
     return render(request, 'payment_payroll/scenarios.html', ctx)
 
@@ -363,9 +342,9 @@ def scenario_payment_payroll(request, id):
                     qs_cost_center = qs_item.budgeted_id.codcentrocosto
                     type_staff = qs_item.budgeted_id.tipo
                     qs_item.delete()
-                    qs_row = PaymentPayroll.objects.filter(
+                    qs_row, created = PaymentPayroll.objects.get_or_create(
                         scenario_id=qs.pk, cost_center_id=qs_cost_center.pk
-                    ).first()
+                    )
                     if type_staff == 2:
                         budgeted_permanent = list(BudgetedPaymentPayroll.objects.filter(
                             scenario_id=qs.pk, budgeted_id__tipo=2,
@@ -397,46 +376,32 @@ def scenario_payment_payroll(request, id):
                     qs_item.save()
                     qs_cost_center = qs_item.budgeted_id.codcentrocosto
                     type_staff = qs_item.budgeted_id.tipo
-                    qs_row = PaymentPayroll.objects.filter(
+
+                    qs_row, created = PaymentPayroll.objects.get_or_create(
                         scenario_id=qs.pk, cost_center_id=qs_cost_center.pk
-                    ).first()
+                    )
                     if type_staff == 2:
                         budgeted_permanent = list(BudgetedPaymentPayroll.objects.filter(
                             scenario_id=qs.pk, budgeted_id__tipo=2,
                             budgeted_id__codcentrocosto=qs_cost_center
                         ).values_list('budgeted_id', flat=True))
-                        initial_amount = qs_row.adjusted_permanent_amount
-                        qs_row.amount_january = _monthly_salary(budgeted_permanent, initial_amount, 1) # NOQA
-                        qs_row.amount_february = _monthly_salary(budgeted_permanent, initial_amount, 2) # NOQA
-                        qs_row.amount_march = _monthly_salary(budgeted_permanent, initial_amount, 3) # NOQA
-                        qs_row.amount_april = _monthly_salary(budgeted_permanent, initial_amount, 4) # NOQA
-                        qs_row.amount_may = _monthly_salary(budgeted_permanent, initial_amount, 5) # NOQA
-                        qs_row.amount_june = _monthly_salary(budgeted_permanent, initial_amount, 6) # NOQA
-                        qs_row.amount_july = _monthly_salary(budgeted_permanent, initial_amount, 7) # NOQA
-                        qs_row.amount_august = _monthly_salary(budgeted_permanent, initial_amount, 8) # NOQA
-                        qs_row.amount_september = _monthly_salary(budgeted_permanent, initial_amount, 9) # NOQA
-                        qs_row.amount_october = _monthly_salary(budgeted_permanent, initial_amount, 10) # NOQA
-                        qs_row.amount_november = _monthly_salary(budgeted_permanent, initial_amount, 11) # NOQA
-                        qs_row.amount_december = _monthly_salary(budgeted_permanent, initial_amount, 12) # NOQA
-                        qs_row.save()
+                        _permanent_monthly_updated_calculation(qs_row, budgeted_permanent)
+                        qs_row.refresh_from_db()
+                        _permanent_percentage_ceco_calculation(qs_row, qs)
+                        qs_row.refresh_from_db()
+                        _permanent_percentage_ceco_calculation(qs_row, qs_row)
+
                     elif type_staff == 1:
                         budgeted_temp = list(BudgetedPaymentPayroll.objects.filter(
                             scenario_id=qs.pk, budgeted_id__tipo=1,
                             budgeted_id__codcentrocosto=qs_cost_center
                         ).values_list('budgeted_id', flat=True))
-                        qs_row.amount_temp_january = _monthly_salary(budgeted_temp, 0, 1, 1) # NOQA
-                        qs_row.amount_temp_february = _monthly_salary(budgeted_temp, 0, 2, 1) # NOQA
-                        qs_row.amount_temp_march = _monthly_salary(budgeted_temp, 0, 3, 1)
-                        qs_row.amount_temp_april = _monthly_salary(budgeted_temp, 0, 4, 1)
-                        qs_row.amount_temp_may = _monthly_salary(budgeted_temp, 0, 5, 1)
-                        qs_row.amount_temp_june = _monthly_salary(budgeted_temp, 0, 6, 1)
-                        qs_row.amount_temp_july = _monthly_salary(budgeted_temp, 0, 7, 1)
-                        qs_row.amount_temp_august = _monthly_salary(budgeted_temp, 0, 8, 1)
-                        qs_row.amount_temp_september = _monthly_salary(budgeted_temp, 0, 9, 1) # NOQA
-                        qs_row.amount_temp_october = _monthly_salary(budgeted_temp, 0, 10, 1) # NOQA
-                        qs_row.amount_temp_november = _monthly_salary(budgeted_temp, 0, 11, 1) # NOQA
-                        qs_row.amount_temp_december = _monthly_salary(budgeted_temp, 0, 12, 1) # NOQA
-                        qs_row.save()
+                        _temporary_monthly_updated_calculation(qs_row, budgeted_temp)
+                        qs_row.refresh_from_db()
+                        _temporary_percentage_ceco_calculation(qs_row, qs)
+                        qs_row.refresh_from_db()
+                        _temporary_percentage_ceco_calculation(qs_row, qs_row)
+
 
             messages.success(request, 'Actualización realizada con éxito!')
 
@@ -520,8 +485,7 @@ def scenario_payment_payroll(request, id):
             qs.save()
             message = (
                 f'Escenario actualizado a : '
-                f'{"Principal" if qs.is_active else "Secundario"}'
-                f' con éxito!!'
+                f'{"Principal" if qs.is_active else "Secundario"} con éxito!!'
             )
             messages.success(request, message)
 
@@ -562,8 +526,7 @@ def scenario_payment_payroll(request, id):
             form = CollateralPaymentScenarioForm(request.POST, instance=qs)
             if not form.is_valid():
                 messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
+                    request, f'Formulario no válido: {form.errors.as_text()}'
                 )
             else:
                 form.save()
@@ -573,13 +536,11 @@ def scenario_payment_payroll(request, id):
                 )
                 execute_sql_query_no_return(
                     f"EXEC [dbo].[sp_pptoMaestrPlanillaMigrarPresupuestoIndirecto"
-                    f"ColateralesTreceavosCatorceavoPrestaciones] "
-                    f"@EscenarioId = {qs.pk}"
+                    f"ColateralesTreceavosCatorceavoPrestaciones] @EscenarioId = {qs.pk}"
                 )
                 execute_sql_query_no_return(
                     f"EXEC [dbo].[sp_pptoMasterPlanillaMigrarPresupuestoIndirecto"
-                    f"ColateralesConFormula] "
-                    f"@EscenarioId = {qs.pk}"
+                    f"ColateralesConFormula] @EscenarioId = {qs.pk}"
                 )
                 messages.success(request, 'Actualización realizada con éxito!')
 
@@ -593,11 +554,10 @@ def scenario_payment_payroll(request, id):
         'sum_sep_perm': 'SUM(MontoSep)', 'sum_oct_perm': 'SUM(MontoOct)',
         'sum_nov_perm': 'SUM(MontoNov)', 'sum_dic_perm': 'SUM(MontoDic)',
     }).values(
-        'sum_base_perm', 'sum_ene_perm', 'sum_feb_perm',
-        'sum_mar_perm', 'sum_abr_perm', 'sum_may_perm',
-        'sum_jul_perm', 'sum_jun_perm', 'sum_ago_perm',
-        'sum_sep_perm', 'sum_oct_perm', 'sum_nov_perm',
-        'sum_dic_perm'
+        'sum_base_perm', 'sum_ene_perm', 'sum_feb_perm', 'sum_mar_perm',
+        'sum_abr_perm', 'sum_may_perm', 'sum_jul_perm',
+        'sum_jun_perm', 'sum_ago_perm', 'sum_sep_perm',
+        'sum_oct_perm', 'sum_nov_perm', 'sum_dic_perm'
     )
 
     qs_sum_temp = details.extra({
@@ -609,39 +569,33 @@ def scenario_payment_payroll(request, id):
         'sum_sep_temp': 'SUM(MontoTemporalSep)', 'sum_oct_temp': 'SUM(MontoTemporalOct)',
         'sum_nov_temp': 'SUM(MontoTemporalNov)', 'sum_dic_temp': 'SUM(MontoTemporalDic)',
     }).values(
-        'sum_base_temp', 'sum_ene_temp', 'sum_feb_temp',
-        'sum_mar_temp', 'sum_abr_temp', 'sum_may_temp',
-        'sum_jul_temp', 'sum_jun_temp', 'sum_ago_temp',
-        'sum_sep_temp', 'sum_oct_temp', 'sum_nov_temp',
-        'sum_dic_temp'
+        'sum_base_temp', 'sum_ene_temp', 'sum_feb_temp', 'sum_mar_temp',
+        'sum_abr_temp', 'sum_may_temp', 'sum_jul_temp',
+        'sum_jun_temp', 'sum_ago_temp', 'sum_sep_temp',
+        'sum_oct_temp', 'sum_nov_temp', 'sum_dic_temp'
     )
     sum_total_perm = 0
     sum_total_temp = 0
     qs_sum_perm = qs_sum_perm[0]
     qs_sum_temp = qs_sum_temp[0]
     for item, value in enumerate(qs_sum_perm):
-        sum_total_perm = sum_total_perm + qs_sum_perm[value]
+        if value != 'sum_base_perm':
+            sum_total_perm = sum_total_perm + qs_sum_perm[value]
 
     for item, value in enumerate(qs_sum_temp):
-        sum_total_temp = sum_total_temp + qs_sum_temp[value]
+        if value != 'sum_base_temp':
+            sum_total_temp = sum_total_temp + qs_sum_temp[value]
 
-    budgeted = Detallexpresupuestopersonal.objects.filter(
-        periodo=qs.period_id.pk
-    )
+    budgeted = Detallexpresupuestopersonal.objects.filter(periodo=qs.period_id.pk)
     qs_budgeted_for_scenario = BudgetedPaymentPayroll.objects.filter(
         scenario_id=id
     ).values_list('budgeted_id', flat=True)
     form_update_cta = CollateralPaymentScenarioForm(instance=qs)
 
     ctx = {
-        'qs': qs,
-        'details': details,
-        'qs_sum_perm': qs_sum_perm,
-        'qs_sum_temp': qs_sum_temp,
-        'sum_total_perm': sum_total_perm,
-        'sum_total_temp': sum_total_temp,
-        'budgeted': budgeted,
-        'form_update_cta': form_update_cta,
-        'qs_budgeted_for_scenario': qs_budgeted_for_scenario
+        'qs': qs, 'details': details, 'qs_sum_perm': qs_sum_perm,
+        'qs_sum_temp': qs_sum_temp, 'sum_total_perm': sum_total_perm,
+        'sum_total_temp': sum_total_temp, 'form_update_cta': form_update_cta,
+        'budgeted': budgeted, 'qs_budgeted_for_scenario': qs_budgeted_for_scenario
     }
     return render(request, 'payment_payroll/scenario.html', ctx)
