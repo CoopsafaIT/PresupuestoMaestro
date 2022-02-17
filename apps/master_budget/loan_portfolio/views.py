@@ -8,29 +8,18 @@ from django.contrib import messages
 from decimal import Decimal as dc
 
 from .models import (
-    LoanPortfolioScenario,
-    LoanPortfolioCategory,
-    LoanPortfolioCategoryMap,
-    LoanPortfolioComment,
-    LoanPortfolio,
-    FinancialInvestmentsCategory,
-    FinancialInvestments,
-    FinancialInvestmentsComment,
-    FinancialInvestmentsScenario
+    LoanPortfolioScenario, LoanPortfolioCategory, LoanPortfolioCategoryMap,
+    LoanPortfolioComment, LoanPortfolio, FinancialInvestmentsCategory,
+    FinancialInvestments, FinancialInvestmentsComment, FinancialInvestmentsScenario
 )
 from .forms import (
-    LoanPortfolioScenarioForm,
-    ScenarioCloneForm,
-    ScenarioCloneUpdateParameterForm,
-    FinancialInvestmentsScenarioForm,
-    FinancialInvestmentsScenarioCloneForm,
+    LoanPortfolioScenarioForm, ScenarioCloneForm, ScenarioCloneUpdateParameterForm,
+    FinancialInvestmentsScenarioForm, FinancialInvestmentsScenarioCloneForm,
 )
 from apps.master_budget.models import MasterParameters
 from utils.pagination import pagination
 from utils.constants import (
-    STATUS_SCENARIO,
-    LIST_LOAN_PORTFOLIO_FIELDS,
-    LIST_FINANCIAL_INVESTMENTS_FIELDS
+    STATUS_SCENARIO, LIST_LOAN_PORTFOLIO_FIELDS, LIST_FINANCIAL_INVESTMENTS_FIELDS
 )
 from utils.sql import execute_sql_query
 from .calculations import LoanPortfolioCalculations
@@ -500,14 +489,9 @@ def scenario_loan_portfolio(request, id):
                     _upd.amount_initial, _upd.amount_growth, _upd.rate
                 )
                 _upd.principal_payments = abs(_upd.level_quota) - abs(_upd.total_interest)
-                if item == 12:
-                    _upd.new_amount = calculations.new_amount(
-                        _upd.amount_initial, _upd.amount_growth, 0
-                    )
-                else:
-                    _upd.new_amount = calculations.new_amount(
-                        _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
-                    )
+                _upd.new_amount = calculations.new_amount(
+                    _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
+                )
                 _upd.commission_amount = calculations.commission_amount(
                     qs.annual_growth_amount,
                     dc(_upd.percent_growth),
