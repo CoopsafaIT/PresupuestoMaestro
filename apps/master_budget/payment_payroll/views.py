@@ -237,43 +237,44 @@ def scenario_payment_payroll(request, id):
         qs_item.save()
 
     def _temporary_percentage_ceco_calculation(qs_item, qs_per):
-        qs_item.amount_temp_january = qs_item.amount_temp_january + (
-            qs_item.amount_temp_january * dc(qs_per.percentage_increase_january) / 100
-        )
-        qs_item.amount_temp_february = qs_item.amount_temp_february + (
-            qs_item.amount_temp_february * dc(qs_per.percentage_increase_february) / 100 # NOQA
-        )
-        qs_item.amount_temp_march = qs_item.amount_temp_march + (
-            qs_item.amount_temp_march * dc(qs_per.percentage_increase_march) / 100
-        )
-        qs_item.amount_temp_april = qs_item.amount_temp_april + (
-            qs_item.amount_temp_april * dc(qs_per.percentage_increase_april) / 100
-        )
-        qs_item.amount_temp_may = qs_item.amount_temp_may + (
-            qs_item.amount_temp_may * dc(qs_per.percentage_increase_may) / 100
-        )
-        qs_item.amount_temp_june = qs_item.amount_temp_june + (
-            qs_item.amount_temp_june * dc(qs_per.percentage_increase_june) / 100
-        )
-        qs_item.amount_temp_july = qs_item.amount_temp_july + (
-            qs_item.amount_temp_july * dc(qs_per.percentage_increase_july) / 100
-        )
-        qs_item.amount_temp_august = qs_item.amount_temp_august + (
-            qs_item.amount_temp_august * dc(qs_per.percentage_increase_august) / 100
-        )
-        qs_item.amount_temp_september = qs_item.amount_temp_september + (
-            qs_item.amount_temp_september * dc(qs_per.percentage_increase_september) / 100 # NOQA
-        )
-        qs_item.amount_temp_october = qs_item.amount_temp_october + (
-            qs_item.amount_temp_october * dc(qs_per.percentage_increase_october) / 100
-        )
-        qs_item.amount_temp_november = qs_item.amount_temp_november + (
-            qs_item.amount_temp_november * dc(qs_per.percentage_increase_november) / 100 # NOQA
-        )
-        qs_item.amount_temp_december = qs_item.amount_temp_december + (
-            qs_item.amount_temp_december * dc(qs_per.percentage_increase_december) / 100 # NOQA
-        )
-        qs_item.save()
+        pass
+        # qs_item.amount_temp_january = qs_item.amount_temp_january + (
+        #     qs_item.amount_temp_january * dc(qs_per.percentage_increase_january) / 100
+        # )
+        # qs_item.amount_temp_february = qs_item.amount_temp_february + (
+        #     qs_item.amount_temp_february * dc(qs_per.percentage_increase_february) / 100 # NOQA
+        # )
+        # qs_item.amount_temp_march = qs_item.amount_temp_march + (
+        #     qs_item.amount_temp_march * dc(qs_per.percentage_increase_march) / 100
+        # )
+        # qs_item.amount_temp_april = qs_item.amount_temp_april + (
+        #     qs_item.amount_temp_april * dc(qs_per.percentage_increase_april) / 100
+        # )
+        # qs_item.amount_temp_may = qs_item.amount_temp_may + (
+        #     qs_item.amount_temp_may * dc(qs_per.percentage_increase_may) / 100
+        # )
+        # qs_item.amount_temp_june = qs_item.amount_temp_june + (
+        #     qs_item.amount_temp_june * dc(qs_per.percentage_increase_june) / 100
+        # )
+        # qs_item.amount_temp_july = qs_item.amount_temp_july + (
+        #     qs_item.amount_temp_july * dc(qs_per.percentage_increase_july) / 100
+        # )
+        # qs_item.amount_temp_august = qs_item.amount_temp_august + (
+        #     qs_item.amount_temp_august * dc(qs_per.percentage_increase_august) / 100
+        # )
+        # qs_item.amount_temp_september = qs_item.amount_temp_september + (
+        #     qs_item.amount_temp_september * dc(qs_per.percentage_increase_september) / 100 # NOQA
+        # )
+        # qs_item.amount_temp_october = qs_item.amount_temp_october + (
+        #     qs_item.amount_temp_october * dc(qs_per.percentage_increase_october) / 100
+        # )
+        # qs_item.amount_temp_november = qs_item.amount_temp_november + (
+        #     qs_item.amount_temp_november * dc(qs_per.percentage_increase_november) / 100 # NOQA
+        # )
+        # qs_item.amount_temp_december = qs_item.amount_temp_december + (
+        #     qs_item.amount_temp_december * dc(qs_per.percentage_increase_december) / 100 # NOQA
+        # )
+        # qs_item.save()
 
     def _monthly_salary(budgeted_list, acumulated=0, month=1, type=2):
         keys_start = [x for x in range(1, month+1)]
