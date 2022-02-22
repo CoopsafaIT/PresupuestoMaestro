@@ -344,7 +344,7 @@ def scenario_payment_payroll(request, id):
                     type_staff = qs_item.budgeted_id.tipo
                     qs_item.delete()
                     qs_row, created = PaymentPayroll.objects.get_or_create(
-                        scenario_id=qs.pk, cost_center_id=qs_cost_center.pk
+                        scenario_id=qs, cost_center_id=qs_cost_center
                     )
                     if type_staff == 2:
                         budgeted_permanent = list(BudgetedPaymentPayroll.objects.filter(

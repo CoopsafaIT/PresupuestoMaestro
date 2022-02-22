@@ -7,16 +7,10 @@ from apps.master_budget.models import MasterParameters
 from apps.main.models import Periodo
 from utils.constants import MONTH_CHOICES
 from apps.master_budget.models import (
-    AuditDataMixin,
-    AmountIncreasesMonthlyMixin,
-    AmountDecreasesMonthlyMixin,
-    AmountAccountsReceivableMonthlyMixin,
-    CommentMixin,
-    CommissionPercentageMonthlyMixin,
-    GrowthPercentageMonthlyMixin,
-    PercentageArrearsMonthlyMixin,
-    RateMonthlyMixin,
-    TermMonthlyMixin,
+    AuditDataMixin, AmountIncreasesMonthlyMixin, AmountDecreasesMonthlyMixin,
+    AmountAccountsReceivableMonthlyMixin, MonthlyAdjustmentAmountMixin, CommentMixin,
+    CommissionPercentageMonthlyMixin, GrowthPercentageMonthlyMixin,
+    PercentageArrearsMonthlyMixin, RateMonthlyMixin, TermMonthlyMixin,
 )
 
 
@@ -88,12 +82,9 @@ class LoanPortfolioCategoryMap(AuditDataMixin):
 
 
 class LoanPortfolioScenario(
-    AuditDataMixin,
-    CommissionPercentageMonthlyMixin,
-    GrowthPercentageMonthlyMixin,
-    PercentageArrearsMonthlyMixin,
-    RateMonthlyMixin,
-    TermMonthlyMixin,
+    AuditDataMixin, CommissionPercentageMonthlyMixin,
+    GrowthPercentageMonthlyMixin, PercentageArrearsMonthlyMixin,
+    RateMonthlyMixin, TermMonthlyMixin, MonthlyAdjustmentAmountMixin
 ):
     id = models.AutoField(primary_key=True, db_column="Id")
     period_id = models.ForeignKey(
@@ -124,23 +115,16 @@ class LoanPortfolioScenario(
         db_column="PorcentajeCrecimientoAnual", null=True, blank=True
     )
     annual_growth_amount = models.DecimalField(
-        db_column="MontoCrecimientoAnual",
-        max_digits=23,
-        decimal_places=2,
-        null=True,
-        blank=True,
+        db_column="MontoCrecimientoAnual", max_digits=23,
+        decimal_places=2, null=True, blank=True,
     )
 
     created_by = models.ForeignKey(
         User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
     )
     updated_by = models.ForeignKey(
-        User,
-        models.DO_NOTHING,
-        db_column="ActualizadoPor",
-        related_name="user_upd_loan_portfolio_scenario",
-        null=True,
-        blank=True,
+        User, models.DO_NOTHING, db_column="ActualizadoPor",
+        related_name="user_upd_loan_portfolio_scenario", null=True, blank=True
     )
 
     class Meta:
@@ -175,97 +159,58 @@ class LoanPortfolio(AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
 
     scenario_id = models.ForeignKey(
-        LoanPortfolioScenario,
-        models.DO_NOTHING,
-        db_column="EscenarioId",
-        null=True,
-        blank=True,
+        LoanPortfolioScenario, models.DO_NOTHING,
+        db_column="EscenarioId", null=True, blank=True,
     )
     month = models.IntegerField(
         db_column="Mes", null=True, blank=True, choices=MONTH_CHOICES
     )
     amount_initial = models.DecimalField(
-        db_column="MontoInicial",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="MontoInicial", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     percent_growth = models.FloatField(
         db_column="PorcentajeCrecimiento", blank=True, null=True, default=0
     )
     amount_growth = models.DecimalField(
-        db_column="MontoCrecimiento",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="MontoCrecimiento", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     new_amount = models.DecimalField(
-        db_column="MontoNuevo",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="MontoNuevo", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     rate = models.FloatField(db_column="Tasa", blank=True, null=True, default=0)
     term = models.IntegerField(db_column="Plazo", blank=True, null=True, default=0)
     level_quota = models.DecimalField(
-        db_column="CuotaNivelada",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="CuotaNivelada", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     total_interest = models.DecimalField(
-        db_column="InteresesTotales",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="InteresesTotales", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0,
     )
     principal_payments = models.DecimalField(
-        db_column="PagosCapital",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="PagosCapital", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     percentage_arrears = models.FloatField(
         db_column="PorcentajeMora", blank=True, null=True, default=0
     )
     amount_arrears = models.DecimalField(
-        db_column="MontoMora",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="MontoMora", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     default_interest = models.DecimalField(
-        db_column="InteresesMoratorios",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="InteresesMoratorios", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     commission_percentage = models.FloatField(
         db_column="PorcentajeComision", blank=True, null=True, default=0
     )
     commission_amount = models.DecimalField(
-        db_column="MontoComision",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="MontoComision", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
     )
     comment = models.CharField(
         null=True, blank=True, max_length=500, db_column="Comentario"
@@ -274,12 +219,8 @@ class LoanPortfolio(AuditDataMixin):
         User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
     )
     updated_by = models.ForeignKey(
-        User,
-        models.DO_NOTHING,
-        db_column="ActualizadoPor",
-        related_name="user_upd_loan_portfolio",
-        null=True,
-        blank=True,
+        User, models.DO_NOTHING, db_column="ActualizadoPor",
+        related_name="user_upd_loan_portfolio", null=True, blank=True
     )
 
     class Meta:

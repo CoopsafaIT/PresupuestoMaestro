@@ -223,6 +223,30 @@
   </script>
   <script>
     $(document).ready(()=>{
+      $('#fill-amount_adjustment-monthly-jan').click(()=>{
+        let val = $('#id_amount_adjustment_january').val()
+        if(!!val === false) return;
+        $('.amount_adjustment-monthly').val(val)
+      })
+      
+      $('.amount_adjustment-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false) {
+          $(this).val(0)
+          return;
+        }
+        val = parseFloat(val)
+        if( val < 0 ){
+          $(this).val(0)
+          return;
+        }
+
+
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
       $('#fill-rate-monthly-jan').click(()=>{
         let val = $('#id_rate_january').val()
         if(!!val === false) return;
@@ -304,6 +328,10 @@
         // $('#id_annual_growth_percentage').val(anual_percentage.replaceAll(',', ''))
         $('#id_annual_growth_amount').val(anual_amount.replaceAll(',', ''))
 
+        $.each($('.amount_adjustment-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
         $.each($('.commission-percentage-monthly'), function(key, input){
           let toClean = $(input).val()
           $(input).val(toClean.replaceAll(',', ''))
