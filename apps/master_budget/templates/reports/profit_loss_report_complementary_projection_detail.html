@@ -70,24 +70,25 @@
       let url ='{{request.get_full_path}}';
       let categoryId = $('#save_complementary_projection').data('category_id');
       let data = [
-        {'month': '1', 'amount': $('#id_complementary_projection_month-1').val().replaceAll(',', '')},
-        {'month': '2', 'amount': $('#id_complementary_projection_month-2').val().replaceAll(',', '')},
-        {'month': '3', 'amount': $('#id_complementary_projection_month-3').val().replaceAll(',', '')},
-        {'month': '4', 'amount': $('#id_complementary_projection_month-4').val().replaceAll(',', '')},
-        {'month': '5', 'amount': $('#id_complementary_projection_month-5').val().replaceAll(',', '')},
-        {'month': '6', 'amount': $('#id_complementary_projection_month-6').val().replaceAll(',', '')},
-        {'month': '7', 'amount': $('#id_complementary_projection_month-7').val().replaceAll(',', '')},
-        {'month': '8', 'amount': $('#id_complementary_projection_month-8').val().replaceAll(',', '')},
-        {'month': '9', 'amount': $('#id_complementary_projection_month-9').val().replaceAll(',', '')},
-        {'month': '10', 'amount': $('#id_complementary_projection_month-10').val().replaceAll(',', '')},
-        {'month': '11', 'amount': $('#id_complementary_projection_month-11').val().replaceAll(',', '')},
-        {'month': '12', 'amount': $('#id_complementary_projection_month-12').val().replaceAll(',', '')}
+        {'month': '1', 'percentage': $('#id_complementary_projection_month-1').val().replaceAll(',', '')},
+        {'month': '2', 'percentage': $('#id_complementary_projection_month-2').val().replaceAll(',', '')},
+        {'month': '3', 'percentage': $('#id_complementary_projection_month-3').val().replaceAll(',', '')},
+        {'month': '4', 'percentage': $('#id_complementary_projection_month-4').val().replaceAll(',', '')},
+        {'month': '5', 'percentage': $('#id_complementary_projection_month-5').val().replaceAll(',', '')},
+        {'month': '6', 'percentage': $('#id_complementary_projection_month-6').val().replaceAll(',', '')},
+        {'month': '7', 'percentage': $('#id_complementary_projection_month-7').val().replaceAll(',', '')},
+        {'month': '8', 'percentage': $('#id_complementary_projection_month-8').val().replaceAll(',', '')},
+        {'month': '9', 'percentage': $('#id_complementary_projection_month-9').val().replaceAll(',', '')},
+        {'month': '10', 'percentage': $('#id_complementary_projection_month-10').val().replaceAll(',', '')},
+        {'month': '11', 'percentage': $('#id_complementary_projection_month-11').val().replaceAll(',', '')},
+        {'month': '12', 'percentage': $('#id_complementary_projection_month-12').val().replaceAll(',', '')}
       ]
       loaderShow(true)
       $.ajax({
         type: 'POST',
         data: {
           categoryId: categoryId,
+          amountBase: $('#id_amountBase_last_year').val().replaceAll(',',''),
           data: JSON.stringify(data)
         },
         url: url
@@ -120,21 +121,37 @@
       .fail(handleError)
     })
 
-    const fillTableMonth = (res) => {
-      let data = JSON.parse(res)
+    const fillTableMonth = (resString) => {
+      let resp = JSON.parse(resString)
+      let {qs: data, amount_base: amountBase} = resp
+      
       $('#catalogComplementaryProjectionName').text(data[0].category_id__level_four)
-      $('#id_complementary_projection_month-1').val(data[0].amount)
-      $('#id_complementary_projection_month-2').val(data[1].amount)
-      $('#id_complementary_projection_month-3').val(data[2].amount)
-      $('#id_complementary_projection_month-4').val(data[3].amount)
-      $('#id_complementary_projection_month-5').val(data[4].amount)
-      $('#id_complementary_projection_month-6').val(data[5].amount)
-      $('#id_complementary_projection_month-7').val(data[6].amount)
-      $('#id_complementary_projection_month-8').val(data[7].amount)
-      $('#id_complementary_projection_month-9').val(data[8].amount)
-      $('#id_complementary_projection_month-10').val(data[9].amount)
-      $('#id_complementary_projection_month-11').val(data[10].amount)
-      $('#id_complementary_projection_month-12').val(data[11].amount)
+      $('#id_complementary_projection_month-1').val(data[0].percentage || 0)
+      $('#id_complementary_projection_month-2').val(data[1].percentage || 0)
+      $('#id_complementary_projection_month-3').val(data[2].percentage || 0)
+      $('#id_complementary_projection_month-4').val(data[3].percentage || 0)
+      $('#id_complementary_projection_month-5').val(data[4].percentage || 0)
+      $('#id_complementary_projection_month-6').val(data[5].percentage || 0)
+      $('#id_complementary_projection_month-7').val(data[6].percentage || 0)
+      $('#id_complementary_projection_month-8').val(data[7].percentage || 0)
+      $('#id_complementary_projection_month-9').val(data[8].percentage || 0)
+      $('#id_complementary_projection_month-10').val(data[9].percentage || 0)
+      $('#id_complementary_projection_month-11').val(data[10].percentage || 0)
+      $('#id_complementary_projection_month-12').val(data[11].percentage || 0)
+      $('#id_complementary_projection_month-amount-1').val(data[0].amount || 0)
+      $('#id_complementary_projection_month-amount-2').val(data[1].amount || 0)
+      $('#id_complementary_projection_month-amount-3').val(data[2].amount || 0)
+      $('#id_complementary_projection_month-amount-4').val(data[3].amount || 0)
+      $('#id_complementary_projection_month-amount-5').val(data[4].amount || 0)
+      $('#id_complementary_projection_month-amount-6').val(data[5].amount || 0)
+      $('#id_complementary_projection_month-amount-7').val(data[6].amount || 0)
+      $('#id_complementary_projection_month-amount-8').val(data[7].amount || 0)
+      $('#id_complementary_projection_month-amount-9').val(data[8].amount || 0)
+      $('#id_complementary_projection_month-amount-10').val(data[9].amount || 0)
+      $('#id_complementary_projection_month-amount-11').val(data[10].amount || 0)
+      $('#id_complementary_projection_month-amount-12').val(data[11].amount || 0)
+      $('#id_amountBase_last_year').val(amountBase || 0)
+
     }
 
     const handleError = (e) => {
