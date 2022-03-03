@@ -964,6 +964,12 @@ class LossesEarningsComplementaryProjection(models.Model):
         decimal_places=2,
         default=0
     )
+    percentage = models.FloatField(
+        db_column="Porcentaje",
+        null=True,
+        blank=True,
+        default=0
+    )
 
     class Meta:
         default_permissions = []
