@@ -170,19 +170,23 @@ def profit_loss_report_complementary_projection_detail(request, period_id):
     if request.is_ajax():
         if request.method == 'GET':
             category_id = request.GET.get('categoryId')
+            period = Periodo.objects.get(pk=period_id)
             qs = list(LossesEarningsComplementaryProjection.objects.filter(
                 period_id=period_id, category_id=category_id
             ).values('month', 'amount', 'category_id__level_four', 'percentage').order_by('month'))
-            amount = 0
+            amount_base = 0
             query = (
                 f'EXEC dbo.sp_pptoMaestroEstadoPerdidasGananciasMensual '
-                f"@AñoProyectado = '{2022}'"
+                f"@AñoProyectado = {period.descperiodo}"
             )
+
             result = execute_sql_query(query)
             if result.get('status') == 'ok':
-                amount_base = 1000000
-            else:
-                amount_base = 1000000
+                data = result.get('data')
+                for item in data:
+                    if str(item["CategoriaId"]) == category_id:
+                        amount_base = item.get('SaldoAñoAnterior', 0)
+
             ctx = {
                 'qs': qs,
                 'amount_base': amount_base
