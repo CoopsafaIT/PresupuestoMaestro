@@ -180,9 +180,9 @@ def profit_loss_report_complementary_projection_detail(request, period_id):
             )
             result = execute_sql_query(query)
             if result.get('status') == 'ok':
-                amount_base = 10000
+                amount_base = 1000000
             else:
-                amount_base = 10000
+                amount_base = 1000000
             ctx = {
                 'qs': qs,
                 'amount_base': amount_base
