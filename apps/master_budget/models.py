@@ -1015,13 +1015,14 @@ class SurplusDistribution(models.Model):
     # type = ''
 
 
+
     class Meta:
         """Meta definition for SurplusDistribution."""
         default_permissions = []
         db_table = "pptoMaestroDistribucionExcedentes"
 
 
-class GlobalGoalPeriod(models.Model):
+class GlobalGoalPeriod(AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     description = models.CharField(
         null=True, blank=True, max_length=500, db_column="Descripcion"
@@ -1029,13 +1030,24 @@ class GlobalGoalPeriod(models.Model):
     period_id = models.ForeignKey(
         Periodo, models.DO_NOTHING, null=True, blank=True, db_column="PeriodoId"
     )
+    created_by = models.ForeignKey(
+        User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="ActualizadoPor",
+        related_name="user_update",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         default_permissions = []
         db_table = "MetasGlobalPeriodo"
 
 
-class Goal(models.Model):
+class Goal(AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     description = models.CharField(
         null=True, blank=True, max_length=500, db_column="Descripcion"
@@ -1049,6 +1061,17 @@ class Goal(models.Model):
     )
     manual_execution = models.CharField(
         null=True, blank=True, max_length=200, db_column="EjecucionManual"
+    )
+    created_by = models.ForeignKey(
+        User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="ActualizadoPor",
+        related_name="user_update",
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -1085,6 +1108,7 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     created_by = models.ForeignKey(
         User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
     )
+
     updated_by = models.ForeignKey(
         User,
         models.DO_NOTHING,
@@ -1095,17 +1119,17 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     )
 
 
+
     class Meta:
         default_permissions = []
         db_table = "MetaGlobalDetalle"
 
+
 class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
-
     id_global_goal_period = models.ForeignKey(
         GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="MetasGlobalesPeriodo"
     )
-
     annual_amount_subsidiary = models.DecimalField(
         db_column="MontoAnualFilial", null=True, blank=True,
         max_digits=23, decimal_places=2, default=0
@@ -1117,12 +1141,12 @@ class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         blank=True,
         default=0
     )
-
     percentage = models.FloatField(
         db_column="Porcentaje",
         null=True,
         blank=True,
         default=0
+  
     )
 
     created_by = models.ForeignKey(
@@ -1136,7 +1160,6 @@ class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         null=True,
         blank=True,
     )
-
     class Meta:
         default_permissions = []
         db_table = "MetasFilialDetalle"
