@@ -8,29 +8,18 @@ from django.contrib import messages
 from decimal import Decimal as dc
 
 from .models import (
-    LoanPortfolioScenario,
-    LoanPortfolioCategory,
-    LoanPortfolioCategoryMap,
-    LoanPortfolioComment,
-    LoanPortfolio,
-    FinancialInvestmentsCategory,
-    FinancialInvestments,
-    FinancialInvestmentsComment,
-    FinancialInvestmentsScenario
+    LoanPortfolioScenario, LoanPortfolioCategory, LoanPortfolioCategoryMap,
+    LoanPortfolioComment, LoanPortfolio, FinancialInvestmentsCategory,
+    FinancialInvestments, FinancialInvestmentsComment, FinancialInvestmentsScenario
 )
 from .forms import (
-    LoanPortfolioScenarioForm,
-    ScenarioCloneForm,
-    ScenarioCloneUpdateParameterForm,
-    FinancialInvestmentsScenarioForm,
-    FinancialInvestmentsScenarioCloneForm,
+    LoanPortfolioScenarioForm, ScenarioCloneForm, ScenarioCloneUpdateParameterForm,
+    FinancialInvestmentsScenarioForm, FinancialInvestmentsScenarioCloneForm,
 )
 from apps.master_budget.models import MasterParameters
 from utils.pagination import pagination
 from utils.constants import (
-    STATUS_SCENARIO,
-    LIST_LOAN_PORTFOLIO_FIELDS,
-    LIST_FINANCIAL_INVESTMENTS_FIELDS
+    STATUS_SCENARIO, LIST_LOAN_PORTFOLIO_FIELDS, LIST_FINANCIAL_INVESTMENTS_FIELDS
 )
 from utils.sql import execute_sql_query
 from .calculations import LoanPortfolioCalculations
@@ -171,8 +160,7 @@ def scenarios_loan_portfolio(request):
             form = LoanPortfolioScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
+                    request, f'Formulario no válido: {form.errors.as_text()}'
                 )
             else:
                 if request.POST.get('is_active') == 'True':
@@ -188,8 +176,7 @@ def scenarios_loan_portfolio(request):
                 category_name = _new.category_id.name
                 period = _new.parameter_id.period_id.descperiodo
                 total = LoanPortfolioScenario.objects.filter(
-                    period_id=_new.period_id,
-                    category_id=_new.category_id
+                    period_id=_new.period_id, category_id=_new.category_id
                 ).count()
                 correlative = _correlative(category_name, period, total)
                 _new.correlative = correlative
@@ -201,10 +188,7 @@ def scenarios_loan_portfolio(request):
                 _new.annual_growth_amount = 0
                 _new.save()
 
-                messages.success(
-                    request,
-                    'Escenario creado con éxito!'
-                )
+                messages.success(request, 'Escenario creado con éxito!')
                 redirect_url = reverse('scenario_loan_portfolio', kwargs={'id': _new.pk})
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
@@ -257,10 +241,7 @@ def scenarios_loan_portfolio(request):
                 _upd.amount_arrears = old_item.amount_arrears
                 _upd.default_interest = old_item.default_interest
                 _upd.save()
-            messages.success(
-                request,
-                'Escenario clonado con éxito!'
-            )
+            messages.success(request, 'Escenario clonado con éxito!')
             redirect_url = reverse('scenario_loan_portfolio', kwargs={'id': _clone.pk})
             full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
             return redirect(full_redirect_url)
@@ -405,6 +386,19 @@ def scenario_loan_portfolio(request, id):
         qs.growth_percentage_november = dc(post.get('growth_percentage_november').replace(',', '')) # NOQA
         qs.growth_percentage_december = dc(post.get('growth_percentage_december').replace(',', '')) # NOQA
 
+        qs.amount_adjustment_january = dc(post.get('amount_adjustment_january').replace(',', '')) # NOQA
+        qs.amount_adjustment_february = dc(post.get('amount_adjustment_february').replace(',', '')) # NOQA
+        qs.amount_adjustment_march = dc(post.get('amount_adjustment_march').replace(',', '')) # NOQA
+        qs.amount_adjustment_april = dc(post.get('amount_adjustment_april').replace(',', '')) # NOQA
+        qs.amount_adjustment_may = dc(post.get('amount_adjustment_may').replace(',', ''))
+        qs.amount_adjustment_june = dc(post.get('amount_adjustment_june').replace(',', ''))
+        qs.amount_adjustment_july = dc(post.get('amount_adjustment_july').replace(',', ''))
+        qs.amount_adjustment_august = dc(post.get('amount_adjustment_august').replace(',', '')) # NOQA
+        qs.amount_adjustment_september = dc(post.get('amount_adjustment_september').replace(',', '')) # NOQA
+        qs.amount_adjustment_october = dc(post.get('amount_adjustment_october').replace(',', '')) # NOQA
+        qs.amount_adjustment_november = dc(post.get('amount_adjustment_november').replace(',', '')) # NOQA
+        qs.amount_adjustment_december = dc(post.get('amount_adjustment_december').replace(',', '')) # NOQA
+
         qs.rate_january = dc(post.get('rate_january').replace(',', ''))
         qs.rate_february = dc(post.get('rate_february').replace(',', ''))
         qs.rate_march = dc(post.get('rate_march').replace(',', ''))
@@ -468,6 +462,7 @@ def scenario_loan_portfolio(request, id):
             for item in range(1, 13):
                 fields = LIST_LOAN_PORTFOLIO_FIELDS[item-1]
                 growth_percentage = request.POST.get(fields.get('growth_percentage'))
+                amount_adjustment = request.POST.get(fields.get('amount_adjustment'))
                 percentage_arrears = request.POST.get(fields.get('percentage_arrears'))
                 commission_percentage = request.POST.get(fields.get('commission_percentage')) # NOQA
                 rate = request.POST.get(fields.get('rate'))
@@ -486,7 +481,7 @@ def scenario_loan_portfolio(request, id):
                 _upd.percent_growth = growth_percentage
                 amount_growth = (
                     qs.annual_growth_amount * (dc(growth_percentage) / 100)
-                ) + principal_payments_before
+                ) + principal_payments_before + dc(amount_adjustment)
                 _upd.amount_growth = amount_growth
                 _upd.rate = float(rate)
                 _upd.term = float(term)
@@ -500,17 +495,11 @@ def scenario_loan_portfolio(request, id):
                     _upd.amount_initial, _upd.amount_growth, _upd.rate
                 )
                 _upd.principal_payments = abs(_upd.level_quota) - abs(_upd.total_interest)
-                if item == 12:
-                    _upd.new_amount = calculations.new_amount(
-                        _upd.amount_initial, _upd.amount_growth, 0
-                    )
-                else:
-                    _upd.new_amount = calculations.new_amount(
-                        _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
-                    )
+                _upd.new_amount = calculations.new_amount(
+                    _upd.amount_initial, _upd.amount_growth, _upd.principal_payments
+                )
                 _upd.commission_amount = calculations.commission_amount(
-                    qs.annual_growth_amount,
-                    dc(_upd.percent_growth),
+                    qs.annual_growth_amount, dc(_upd.percent_growth),
                     dc(_upd.commission_percentage)
                 )
                 _upd.amount_arrears = calculations.amount_arrears(
@@ -520,10 +509,7 @@ def scenario_loan_portfolio(request, id):
                     _upd.amount_arrears, _upd.rate
                 )
                 _upd.save()
-            messages.success(
-                request,
-                'Escenario editado con éxito!'
-            )
+            messages.success(request, 'Escenario editado con éxito!')
         elif request.POST.get('method') == 'change-status':
             if not qs.is_active:
                 LoanPortfolioScenario.objects.filter(
@@ -534,8 +520,7 @@ def scenario_loan_portfolio(request, id):
             qs.save()
             message = (
                 f'Escenario actualizado a : '
-                f'{"Principal" if qs.is_active else "Secundario"}'
-                f' con éxito!!'
+                f'{"Principal" if qs.is_active else "Secundario"} con éxito!!'
             )
             messages.success(request, message)
         elif request.POST.get('method') == 'delete':
@@ -623,8 +608,7 @@ def scenarios_financial_investments(request):
             form = FinancialInvestmentsScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
+                    request, f'Formulario no válido: {form.errors.as_text()}'
                 )
             else:
                 if request.POST.get('is_active') == 'True':
@@ -653,10 +637,7 @@ def scenarios_financial_investments(request):
                 )
                 _new.save()
 
-                messages.success(
-                    request,
-                    'Escenario creado con éxito!'
-                )
+                messages.success(request, 'Escenario creado con éxito!')
                 redirect_url = reverse(
                     'scenario_financial_investments', kwargs={'id': _new.pk}
                 )
@@ -706,10 +687,7 @@ def scenarios_financial_investments(request):
                 _upd.amount_interest_earned = old_item.amount_interest_earned
                 _upd.amount_accounts_receivable = old_item.amount_accounts_receivable
                 _upd.save()
-            messages.success(
-                request,
-                'Escenario clonado con éxito!'
-            )
+            messages.success(request, 'Escenario clonado con éxito!')
             redirect_url = reverse(
                 'scenario_financial_investments', kwargs={'id': _clone.pk}
             )

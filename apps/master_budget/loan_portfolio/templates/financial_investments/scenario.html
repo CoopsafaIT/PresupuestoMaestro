@@ -193,28 +193,28 @@
 
       $('.amount_accounts_receivable-monthly').change(function(){
         let val = $(this).val()
-        if(!!val === false || parseFloat(val) < 0) {
+        if(!!val === false) {
           $(this).val('0.00')
           return;
         }
       })
       $('.increases-monthly').change(function(){
         let val = $(this).val()
-        if(!!val === false || parseFloat(val) < 0) {
+        if(!!val === false) {
           $(this).val('0.00')
           return;
         }
       })
       $('.decreases-monthly').change(function(){
         let val = $(this).val()
-        if(!!val === false || parseFloat(val) < 0) {
+        if(!!val === false) {
           $(this).val('0.00')
           return;
         }
       })
       $('.rate-monthly').change(function(){
         let val = $(this).val()
-        if(!!val === false || parseFloat(val) < 0) {
+        if(!!val === false) {
           $(this).val('0.00')
           return;
         }

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.master_budget.passives',
     'apps.master_budget.non_performing_assets',
     'apps.master_budget.payment_payroll',
+    'apps.goals',
 
 ]
 

@@ -5,10 +5,7 @@ from django.dispatch import receiver
 
 from apps.main.models import Periodo
 from utils.constants import (
-    STATUS,
-    TYPE_COMPLEMENTARY_PROJECTION,
-    MONTH_CHOICES,
-    SURPLUS_DISTRIBUTION_CRITERIA,
+    STATUS, TYPE_COMPLEMENTARY_PROJECTION, MONTH_CHOICES,
 )
 
 
@@ -67,6 +64,60 @@ class GrowthPercentageMonthlyMixin(models.Model):
     )
     growth_percentage_december = models.FloatField(
         db_column="PorcentajeCrecimientoDic", null=True, blank=True, default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
+class MonthlyAdjustmentAmountMixin(models.Model):
+    amount_adjustment_january = models.DecimalField(
+        db_column="MontoAjusteCrecimientoEne", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_february = models.DecimalField(
+        db_column="MontoAjusteCrecimientoFeb", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_march = models.DecimalField(
+        db_column="MontoAjusteCrecimientoMar", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_april = models.DecimalField(
+        db_column="MontoAjusteCrecimientoAbr", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_may = models.DecimalField(
+        db_column="MontoAjusteCrecimientoMay", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_june = models.DecimalField(
+        db_column="MontoAjusteCrecimientoJun", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_july = models.DecimalField(
+        db_column="MontoAjusteCrecimientoJul", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_august = models.DecimalField(
+        db_column="MontoAjusteCrecimientoAgo", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_september = models.DecimalField(
+        db_column="MontoAjusteCrecimientoSep", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_october = models.DecimalField(
+        db_column="MontoAjusteCrecimientoOct", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_november = models.DecimalField(
+        db_column="MontoAjusteCrecimientoNov", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    amount_adjustment_december = models.DecimalField(
+        db_column="MontoAjusteCrecimientoDic", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
     )
 
     class Meta:
@@ -910,6 +961,12 @@ class LossesEarningsComplementaryProjection(models.Model):
         decimal_places=2,
         default=0
     )
+    percentage = models.FloatField(
+        db_column="Porcentaje",
+        null=True,
+        blank=True,
+        default=0
+    )
 
     class Meta:
         default_permissions = []
@@ -952,7 +1009,6 @@ class SurplusDistribution(models.Model):
     #     default=0
     # )
     # type = ''
-
 
     class Meta:
         """Meta definition for SurplusDistribution."""

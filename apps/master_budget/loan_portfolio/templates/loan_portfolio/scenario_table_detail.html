@@ -37,7 +37,11 @@
             <td class="text-end">{{qs_detail.9.amount_initial|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.amount_initial|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.amount_initial|floatformat:2|intcomma}}</td>
-            <td class="text-end">{{qs_sum.MontoInicial|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.11.amount_initial|floatformat:2|intcomma}}</td>
+            <!--
+              <td class="text-end">{{qs_sum.MontoInicial|floatformat:2|intcomma}}</td>
+              Se comenta por que se solicito que total nuevo saldo sea igual a diciembre
+            -->
           </tr>
           <tr>
             <td class=" fw-bold">Monto Crecimiento</td>
@@ -258,7 +262,11 @@
             <td class="text-end">{{qs_detail.9.new_amount|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.10.new_amount|floatformat:2|intcomma}}</td>
             <td class="text-end">{{qs_detail.11.new_amount|floatformat:2|intcomma}}</td>
-            <td class="text-end">{{qs_sum.MontoNuevo|floatformat:2|intcomma}}</td>
+            <td class="text-end">{{qs_detail.11.new_amount|floatformat:2|intcomma}}</td>
+            <!-- 
+              <td class="text-end">{{qs_sum.MontoNuevo|floatformat:2|intcomma}}</td>
+              Se comento por que se solicito que total nuevo saldo sea igual a diciembre
+            -->
           </tr>
           <tr>
             <td class=" fw-bold">Capital Mora</td>

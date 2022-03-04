@@ -125,6 +125,7 @@ MONTH_CHOICES_REVERSE = (
 LIST_LOAN_PORTFOLIO_FIELDS = [
     {
         'growth_percentage': 'growth_percentage_january',
+        'amount_adjustment': 'amount_adjustment_january',
         'percentage_arrears': 'percentage_arrears_january',
         'commission_percentage': 'commission_percentage_january',
         'rate': 'rate_january',
@@ -132,6 +133,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_february',
+        'amount_adjustment': 'amount_adjustment_february',
         'percentage_arrears': 'percentage_arrears_february',
         'commission_percentage': 'commission_percentage_february',
         'rate': 'rate_february',
@@ -139,6 +141,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_march',
+        'amount_adjustment': 'amount_adjustment_march',
         'percentage_arrears': 'percentage_arrears_march',
         'commission_percentage': 'commission_percentage_march',
         'rate': 'rate_march',
@@ -146,6 +149,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_april',
+        'amount_adjustment': 'amount_adjustment_april',
         'percentage_arrears': 'percentage_arrears_april',
         'commission_percentage': 'commission_percentage_april',
         'rate': 'rate_april',
@@ -153,6 +157,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_may',
+        'amount_adjustment': 'amount_adjustment_may',
         'percentage_arrears': 'percentage_arrears_may',
         'commission_percentage': 'commission_percentage_may',
         'rate': 'rate_may',
@@ -160,6 +165,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_june',
+        'amount_adjustment': 'amount_adjustment_june',
         'percentage_arrears': 'percentage_arrears_june',
         'commission_percentage': 'commission_percentage_june',
         'rate': 'rate_june',
@@ -167,6 +173,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_july',
+        'amount_adjustment': 'amount_adjustment_july',
         'percentage_arrears': 'percentage_arrears_july',
         'commission_percentage': 'commission_percentage_july',
         'rate': 'rate_july',
@@ -174,6 +181,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_august',
+        'amount_adjustment': 'amount_adjustment_august',
         'percentage_arrears': 'percentage_arrears_august',
         'commission_percentage': 'commission_percentage_august',
         'rate': 'rate_august',
@@ -181,6 +189,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_september',
+        'amount_adjustment': 'amount_adjustment_september',
         'percentage_arrears': 'percentage_arrears_september',
         'commission_percentage': 'commission_percentage_september',
         'rate': 'rate_september',
@@ -188,6 +197,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_october',
+        'amount_adjustment': 'amount_adjustment_october',
         'percentage_arrears': 'percentage_arrears_october',
         'commission_percentage': 'commission_percentage_october',
         'rate': 'rate_october',
@@ -195,6 +205,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_november',
+        'amount_adjustment': 'amount_adjustment_november',
         'percentage_arrears': 'percentage_arrears_november',
         'commission_percentage': 'commission_percentage_november',
         'rate': 'rate_november',
@@ -202,6 +213,7 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
     },
     {
         'growth_percentage': 'growth_percentage_december',
+        'amount_adjustment': 'amount_adjustment_december',
         'percentage_arrears': 'percentage_arrears_december',
         'commission_percentage': 'commission_percentage_december',
         'rate': 'rate_december',
@@ -413,6 +425,11 @@ TYPE_COMPLEMENTARY_PROJECTION = (
     ('P', 'Perdidas'),
 )
 
+TYPE_GOALS = (
+    ('A', 'Automaticas'),
+    ('S', 'Semi Automaticas'),
+    ('M', 'Manuales'),
+)
 
 SURPLUS_DISTRIBUTION_CRITERIA = (
     (1, 'Porcentaje'),
