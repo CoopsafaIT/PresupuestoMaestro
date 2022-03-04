@@ -1181,7 +1181,7 @@ class GlobalGoalDetail(AmountMonthlyMixin):
 
     class Meta:
         default_permissions = []
-        db_table = "pptoMetaGlobalDetalle"
+        db_table = "MetaGlobalDetalle"
 
 class SubsidiaryGoalDetail(AmountMonthlyMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
