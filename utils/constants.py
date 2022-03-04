@@ -425,6 +425,11 @@ TYPE_COMPLEMENTARY_PROJECTION = (
     ('P', 'Perdidas'),
 )
 
+TYPE_GOALS = (
+    ('A', 'Automaticas'),
+    ('S', 'Semi Automaticas'),
+    ('M', 'Manuales'),
+)
 
 SURPLUS_DISTRIBUTION_CRITERIA = (
     (1, 'Porcentaje'),
