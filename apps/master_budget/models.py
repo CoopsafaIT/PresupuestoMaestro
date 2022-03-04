@@ -1081,102 +1081,18 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         blank=True,
         default=0
     )
-    # goal_amount_january = models.DecimalField(
-    #     db_column="MontoMetaEne",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_february = models.DecimalField(
-    #     db_column="MontoMetaFeb",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_march = models.DecimalField(
-    #     db_column="MontoMetaMar",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_april = models.DecimalField(
-    #     db_column="MontoMetaAbr",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_may = models.DecimalField(
-    #     db_column="MontoMetaMay",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_june = models.DecimalField(
-    #     db_column="MontoMetaJun",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_july = models.DecimalField(
-    #     db_column="MontoMetaJul",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_August = models.DecimalField(
-    #     db_column="MontoMetaAgo",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_september = models.DecimalField(
-    #     db_column="MontoMetaSep",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_october = models.DecimalField(
-    #     db_column="MontoMetaOct",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_november = models.DecimalField(
-    #     db_column="MontoMetaNov",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_december = models.DecimalField(
-    #     db_column="MontoMetaDic",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
+
+    created_by = models.ForeignKey(
+        User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="ActualizadoPor",
+        related_name="user_update_parameter",
+        null=True,
+        blank=True,
+    )
 
 
     class Meta:
@@ -1195,102 +1111,6 @@ class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         max_digits=23, decimal_places=2, default=0
     )
 
-    # goal_amount_january = models.DecimalField(
-    #     db_column="MontoMetaEne",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_february = models.DecimalField(
-    #     db_column="MontoMetaFeb",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_march = models.DecimalField(
-    #     db_column="MontoMetaMar",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_april = models.DecimalField(
-    #     db_column="MontoMetaAbr",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_may = models.DecimalField(
-    #     db_column="MontoMetaMay",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_june = models.DecimalField(
-    #     db_column="MontoMetaJun",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_july = models.DecimalField(
-    #     db_column="MontoMetaJul",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_August = models.DecimalField(
-    #     db_column="MontoMetaAgo",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_september = models.DecimalField(
-    #     db_column="MontoMetaSep",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_october = models.DecimalField(
-    #     db_column="MontoMetaOct",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_november = models.DecimalField(
-    #     db_column="MontoMetaNov",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
-    # goal_amount_december = models.DecimalField(
-    #     db_column="MontoMetaDic",
-    #     null=True,
-    #     blank=True,
-    #     max_digits=23,
-    #     decimal_places=2,
-    #     default=0
-    # )
     ponderation = models.FloatField(
         db_column="Ponderacion",
         null=True,
@@ -1303,6 +1123,18 @@ class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         null=True,
         blank=True,
         default=0
+    )
+
+    created_by = models.ForeignKey(
+        User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="ActualizadoPor",
+        related_name="user_update_parameter",
+        null=True,
+        blank=True,
     )
 
     class Meta:
