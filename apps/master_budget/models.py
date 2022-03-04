@@ -1,3 +1,4 @@
+from django import db
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -1018,3 +1019,306 @@ class SurplusDistribution(models.Model):
         """Meta definition for SurplusDistribution."""
         default_permissions = []
         db_table = "pptoMaestroDistribucionExcedentes"
+
+
+class GlobalGoalPeriod(models.Model):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    description = models.CharField(
+        null=True, blank=True, max_length=500, db_column="Descripcion"
+    )
+    period_id = models.ForeignKey(
+        Periodo, models.DO_NOTHING, null=True, blank=True, db_column="PeriodoId"
+    )
+
+    class Meta:
+        default_permissions = []
+
+
+class Goal(models.Model):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    description = models.CharField(
+        null=True, blank=True, max_length=500, db_column="Descripcion"
+    )
+    type = models.CharField(
+        db_column="Tipo", max_length=1, null=True,
+        blank=True, choices=TYPE_COMPLEMENTARY_PROJECTION
+    )
+    manual_definition = models.CharField(
+        null=True, blank=True, max_length=200, db_column="DefinicionManual"
+    )
+    manual_execution = models.CharField(
+        null=True, blank=True, max_length=200, db_column="EjecucionManual"
+    )
+
+    class Meta:
+        default_permissions = []
+ 
+
+class GlobalGoalDetail(models.Model):
+    id = models.AutoField(primary_key = True, db_column="Id")
+    id_global_goal_period = models.ForeignKey(
+        GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="MetasGlobalesPeriodo"
+    )
+    id_goal = models.ForeignKey(
+        Goal, models.DO_NOTHING, null=True, db_column="Metas"
+    )
+    annual_amount = models.DecimalField(
+        db_column="MontoAnual", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+    goal_amount_january = models.DecimalField(
+        db_column="MontoMetaEne",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_february = models.DecimalField(
+        db_column="MontoMetaFeb",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_march = models.DecimalField(
+        db_column="MontoMetaMar",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_april = models.DecimalField(
+        db_column="MontoMetaAbr",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_may = models.DecimalField(
+        db_column="MontoMetaMay",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_june = models.DecimalField(
+        db_column="MontoMetaJun",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_july = models.DecimalField(
+        db_column="MontoMetaJul",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_August = models.DecimalField(
+        db_column="MontoMetaAgo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_september = models.DecimalField(
+        db_column="MontoMetaSep",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_october = models.DecimalField(
+        db_column="MontoMetaOct",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_november = models.DecimalField(
+        db_column="MontoMetaNov",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_december = models.DecimalField(
+        db_column="MontoMetaDic",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    ponderation = models.FloatField(
+        db_column="Ponderacion",
+        null=True,
+        blank=True,
+        default=0
+    )
+
+    percentage = models.FloatField(
+        db_column="Porcentaje",
+        null=True,
+        blank=True,
+        default=0
+    )
+
+    class Meta:
+        default_permissions = []
+
+
+
+class SubsidiaryGoalDetail(models.Model):
+    id = models.AutoField(primary_key=True, db_column="Id")
+
+    id_global_goal_period = models.ForeignKey(
+        GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="MetasGlobalesPeriodo"
+    )
+
+    annual_amount_subsidiary = models.DecimalField(
+        db_column="MontoAnualFilial", null=True, blank=True,
+        max_digits=23, decimal_places=2, default=0
+    )
+
+    goal_amount_january = models.DecimalField(
+        db_column="MontoMetaEne",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_february = models.DecimalField(
+        db_column="MontoMetaFeb",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_march = models.DecimalField(
+        db_column="MontoMetaMar",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_april = models.DecimalField(
+        db_column="MontoMetaAbr",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_may = models.DecimalField(
+        db_column="MontoMetaMay",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_june = models.DecimalField(
+        db_column="MontoMetaJun",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_july = models.DecimalField(
+        db_column="MontoMetaJul",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_August = models.DecimalField(
+        db_column="MontoMetaAgo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_september = models.DecimalField(
+        db_column="MontoMetaSep",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_october = models.DecimalField(
+        db_column="MontoMetaOct",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_november = models.DecimalField(
+        db_column="MontoMetaNov",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    goal_amount_december = models.DecimalField(
+        db_column="MontoMetaDic",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    ponderation = models.FloatField(
+        db_column="Ponderacion",
+        null=True,
+        blank=True,
+        default=0
+    )
+
+    percentage = models.FloatField(
+        db_column="Porcentaje",
+        null=True,
+        blank=True,
+        default=0
+    )
+    ponderation = models.FloatField(
+        db_column="Ponderacion",
+        null=True,
+        blank=True,
+        default=0
+    )
+
+    percentage = models.FloatField(
+        db_column="Porcentaje",
+        null=True,
+        blank=True,
+        default=0
+    )
+
+    class Meta:
+        default_permissions = []
+ 
+
+
+
