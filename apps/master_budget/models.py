@@ -1056,7 +1056,7 @@ class Goal(models.Model):
         db_table = "Metas"
  
 
-class GlobalGoalDetail(AmountMonthlyMixin):
+class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     id_global_goal_period = models.ForeignKey(
         GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="MetasGlobalesPeriodo"
@@ -1183,7 +1183,7 @@ class GlobalGoalDetail(AmountMonthlyMixin):
         default_permissions = []
         db_table = "MetaGlobalDetalle"
 
-class SubsidiaryGoalDetail(AmountMonthlyMixin):
+class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
 
     id_global_goal_period = models.ForeignKey(
