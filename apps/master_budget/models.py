@@ -1037,7 +1037,7 @@ class GlobalGoalPeriod(AuditDataMixin):
         User,
         models.DO_NOTHING,
         db_column="ActualizadoPor",
-        related_name="user_update",
+        related_name="user_update_global_goal_period",
         null=True,
         blank=True,
     )
@@ -1069,7 +1069,7 @@ class Goal(AuditDataMixin):
         User,
         models.DO_NOTHING,
         db_column="ActualizadoPor",
-        related_name="user_update",
+        related_name="user_update_goal",
         null=True,
         blank=True,
     )
@@ -1082,10 +1082,10 @@ class Goal(AuditDataMixin):
 class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     id_global_goal_period = models.ForeignKey(
-        GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="MetasGlobalesPeriodo"
+        GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="IdMetasGlobalesPeriodo"
     )
     id_goal = models.ForeignKey(
-        Goal, models.DO_NOTHING, null=True, db_column="Metas"
+        Goal, models.DO_NOTHING, null=True, db_column="IdMetas"
     )
     annual_amount = models.DecimalField(
         db_column="MontoAnual", null=True, blank=True,
@@ -1113,12 +1113,10 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         User,
         models.DO_NOTHING,
         db_column="ActualizadoPor",
-        related_name="user_update_parameter",
+        related_name="user_update_global_goal_detail",
         null=True,
         blank=True,
     )
-
-
 
     class Meta:
         default_permissions = []
@@ -1128,7 +1126,7 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
 class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     id_global_goal_period = models.ForeignKey(
-        GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="MetasGlobalesPeriodo"
+        GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="IdMetasGlobalesPeriodo"
     )
     annual_amount_subsidiary = models.DecimalField(
         db_column="MontoAnualFilial", null=True, blank=True,
@@ -1156,7 +1154,7 @@ class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         User,
         models.DO_NOTHING,
         db_column="ActualizadoPor",
-        related_name="user_update_parameter",
+        related_name="user_update_subsidiary_goal_detail",
         null=True,
         blank=True,
     )
