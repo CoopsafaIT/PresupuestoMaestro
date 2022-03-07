@@ -9,6 +9,11 @@ from.forms import (GoalsForm)
 
 
 @login_required()
+def goals(request):
+    return render(request, 'goals/dashboard.html')
+
+
+@login_required()
 def goals_for_period(request):
     form = GoalsForm()
     if request.method == 'POST':

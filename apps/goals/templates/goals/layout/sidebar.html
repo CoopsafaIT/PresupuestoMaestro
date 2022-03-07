@@ -1,0 +1,34 @@
+{% load static %}
+<div class="sidebar close">
+  <div class="logo-details">
+    <span class="logo_name">
+      <img src="{% static 'img/white-icon.png' %}" alt="" srcset="" width="60%" style="text-align: center;">
+    </span>
+  </div>
+  <ul class="nav-links">
+    <li>
+      <a href="{% url 'dashboard' %}" class="institutional-golden-color">
+        <i class="bi bi-arrow-left"></i>
+        <span class="link_name">Volver Ingreso PPTO</span>
+      </a>
+      <ul class="sub-menu blank">
+        <li><a class="link_name" href="{% url 'dashboard' %}">Volver Ingreso PPTO.</a></li>
+      </ul>
+    </li>
+    
+    <li>
+      <div class="icon-link">
+        <a href="#">
+          <i class="bi bi-cash"></i>
+          <span class="link_name">Metas</span>
+        </a>
+        <i class='bi bi-chevron-down arrow'></i>
+      </div>
+      <ul class="sub-menu">
+        <li><a class="link_name" href="#">Metas</a></li>
+        <li><a href="{% url 'goals_for_period' %}">Metas por periodo</a></li>
+      </ul>
+    </li>
+
+  </ul>
+</div>

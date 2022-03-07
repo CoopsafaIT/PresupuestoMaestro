@@ -62,6 +62,15 @@
       </ul>
     </li>
     {% endif %}
+    <li>
+      <a href="{% url 'goals' %}" class="institutional-golden-color">
+        <i class="bi bi-bar-chart"></i>
+        <span class="link_name">Metas</span>
+      </a>
+      <ul class="sub-menu blank">
+        <li><a class="link_name" href="{% url 'goals' %}">Metas</a></li>
+      </ul>
+    </li>
     {% with s1=perms.admin.puede_listar_proyectos %}
     {% with s2=perms.admin.puede_ingresar_proyeccion %}
     {% with s3=perms.admin.puede_listar_periodos %}
