@@ -1,12 +1,12 @@
 import datetime as dt
 import json
-from unicodedata import decimal
+
 from django.shortcuts import (
     render,
     get_object_or_404,
     redirect,
 )
-from django.http import HttpResponse, QueryDict
+from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.contrib import messages
@@ -27,6 +27,7 @@ from utils.pagination import pagination
 from utils.sql import execute_sql_query
 
 from decimal import Decimal as dc
+
 
 @login_required()
 def master_budget_dashboard(request):
@@ -173,7 +174,12 @@ def profit_loss_report_complementary_projection_detail(request, period_id):
             period = Periodo.objects.get(pk=period_id)
             qs = list(LossesEarningsComplementaryProjection.objects.filter(
                 period_id=period_id, category_id=category_id
-            ).values('month', 'amount', 'category_id__level_four', 'percentage').order_by('month'))
+            ).values(
+                'month',
+                'amount',
+                'category_id__level_four',
+                'percentage'
+                ).order_by('month'))
             amount_base = 0
             query = (
                 f'EXEC dbo.sp_pptoMaestroEstadoPerdidasGananciasMensual '
