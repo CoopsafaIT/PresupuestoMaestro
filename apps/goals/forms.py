@@ -4,7 +4,7 @@ from apps.main.models import Periodo
 from .models import GlobalGoalPeriod
 
 
-class GoalsParametersForm(forms.ModelForm):
+class GoalsForm(forms.ModelForm):
     period_id = forms.ModelChoiceField(
         label="Periodo",
         queryset=Periodo.objects.filter(habilitado=True),

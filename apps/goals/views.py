@@ -5,14 +5,14 @@ from django.db.models import Q
 
 from utils.pagination import pagination
 from .models import (GlobalGoalPeriod)
-from.forms import (GoalsParametersForm)
+from.forms import (GoalsForm)
 
 
 @login_required()
 def goals_for_period(request):
-    form = GoalsParametersForm()
+    form = GoalsForm()
     if request.method == 'POST':
-        form = GoalsParametersForm(request.POST)
+        form = GoalsForm(request.POST)
         if not form.is_valid():
             messages.warning(
                 request, f'Formulario no válido: {form.errors.as_text()}'
@@ -42,11 +42,11 @@ def goals_for_period(request):
 @login_required()
 def goals_period(request, id):
     qs = get_object_or_404(GlobalGoalPeriod, pk=id)
-    form = GoalsParametersForm(instance=qs)
+    form = GoalsForm(instance=qs)
 
     if request.method == 'POST':
         if request.POST.get('method') == 'edit':
-            form = GoalsParametersForm(request.POST, instance=qs)
+            form = GoalsForm(request.POST, instance=qs)
             if not form.is_valid():
                 messages.warning(
                     request,
