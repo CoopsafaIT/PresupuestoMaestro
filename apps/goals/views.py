@@ -4,13 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 from utils.pagination import pagination
-from .models import (
-    GlobalGoalPeriod,
-)
-from.forms import (
-    GoalsParametersForm,
-    GoalsParametersEditForm
-)
+from .models import (GlobalGoalPeriod)
+from.forms import (GoalsParametersForm)
 
 
 @login_required()
@@ -47,11 +42,11 @@ def goals_for_period(request):
 @login_required()
 def goals_period(request, id):
     qs = get_object_or_404(GlobalGoalPeriod, pk=id)
-    form = GoalsParametersEditForm(instance=qs)
+    form = GoalsParametersForm(instance=qs)
 
     if request.method == 'POST':
         if request.POST.get('method') == 'edit':
-            form = GoalsParametersEditForm(request.POST, instance=qs)
+            form = GoalsParametersForm(request.POST, instance=qs)
             if not form.is_valid():
                 messages.warning(
                     request,

@@ -4,7 +4,7 @@
 {% block title %} Metas por Periodo {% endblock title %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item active text-white" aria-current="page">/ Metas por Periodo</li>
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Metas </li>
 {% endblock breadcrumb %}
 
 {% block content %}
@@ -101,30 +101,4 @@
   })
 </script>
 
-<script>
-  $(document).ready(()=>{
-    $('#btnAddGoalsPeriod').click(()=>{
-      let url ='{% url "goals_for_period" %}'
-      loaderShow(true)
-      $.ajax({
-        type: 'GET',
-        data: {},
-        url: url
-      })
-      .done((res)=>{
-        fillSelect(res)
-        $('#addGoalsModal').modal('show')
-        loaderShow(false)
-      })
-      .fail(handleError)
-    })
-
-
-    const handleError = (e) => {
-      console.log(e);
-      loaderShow(false)
-      alert("No se pudo cargar fechas cierres!")
-    }
-  })
-</script>
 {% endblock javascript %}
