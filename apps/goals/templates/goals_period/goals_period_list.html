@@ -90,14 +90,6 @@
     $(
       "#id_period option[value= '{{request.GET.period}}'] "
     ).prop('selected', true).trigger("change");
-
-    $('.delete-goals-period').click(function(){
-      let url = $(this).data('url')
-      if(!!url){
-        $('#deleteGoalsForm').attr('action', url)
-        $('#deleteGoalsModal').modal('show');
-      }
-    })
   })
 </script>
 
