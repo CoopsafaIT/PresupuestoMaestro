@@ -41,11 +41,11 @@ def goals_for_period(request):
         'result': result,
         'form': form
     }
-    return render(request, 'goals_period/goals_for_period.html', ctx)
+    return render(request, 'goals_period/goals_period_list.html', ctx)
 
 
 @login_required()
-def add_goals_period(request, id):
+def goals_period(request, id):
     qs = get_object_or_404(GlobalGoalPeriod, pk=id)
     form = GoalsParametersEditForm(instance=qs)
 
@@ -73,4 +73,4 @@ def add_goals_period(request, id):
     ctx = {
         'form': form
     }
-    return render(request, 'goals_period/edit_goals_period.html', ctx)
+    return render(request, 'goals_period/goals_period_edit.html', ctx)

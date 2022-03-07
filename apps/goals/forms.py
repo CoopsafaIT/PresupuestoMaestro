@@ -27,6 +27,8 @@ class GoalsParametersForm(forms.ModelForm):
             'period_id',
             'description',
         )
+
+
 class GoalsParametersEditForm(forms.ModelForm):
     period_id = forms.ModelChoiceField(
         label="Periodo",

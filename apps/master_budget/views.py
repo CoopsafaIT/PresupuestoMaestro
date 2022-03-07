@@ -2,10 +2,9 @@ import datetime as dt
 import json
 
 from django.shortcuts import (
-    render,
-    get_object_or_404,
-    redirect,
+    render, get_object_or_404, redirect,
 )
+from decimal import Decimal as dc
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
@@ -22,11 +21,8 @@ from .forms import (
     MasterParametersForm,
     MasterParametersEditForm,
 )
-
 from utils.pagination import pagination
 from utils.sql import execute_sql_query
-
-from decimal import Decimal as dc
 
 
 @login_required()
@@ -203,11 +199,9 @@ def profit_loss_report_complementary_projection_detail(request, period_id):
             category_id = request.POST.get('categoryId')
             amount_base = dc(request.POST.get('amountBase'))
             data = json.loads(request.POST.get('data'))
-            print(data)
             for item in data:
                 percentage = dc(item.get('percentage', 0))
                 amount = amount_base * percentage / 100
-                print(amount, amount_base)
                 LossesEarningsComplementaryProjection.objects.filter(
                     period_id=period_id,
                     category_id=category_id,

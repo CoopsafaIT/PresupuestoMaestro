@@ -8,7 +8,7 @@
 {% endblock breadcrumb %}
 
 {% block content %}
-{% include 'goals_period/add_goals_period.html' %}
+{% include 'goals_period/goals_period_modal_add.html' %}
 
 <div class="container-fluid pt-4">
   <div class="card card-template">
@@ -54,7 +54,7 @@
                       <a
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
-                        href="{% url 'edit-goals-period' item.pk%}"
+                        href="{% url 'goals-period-edit' item.pk%}"
                         class="btn btn-sm btn-outline-safa me-2 px-3"
                         title="Editar Meta"
                       > <i class="bi bi-pencil-square"></i>
@@ -104,7 +104,7 @@
 <script>
   $(document).ready(()=>{
     $('#btnAddGoalsPeriod').click(()=>{
-      let url ='{% url "add-goals-period" %}'
+      let url ='{% url "goals_for_period" %}'
       loaderShow(true)
       $.ajax({
         type: 'GET',
