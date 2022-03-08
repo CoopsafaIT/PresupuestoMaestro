@@ -5,7 +5,7 @@ from apps.goals.views import (
     goals_period,
     goals_global_definition,
     goals,
-    goals_edit
+    goal
 )
 
 
@@ -19,5 +19,5 @@ urlpatterns = [
         name="goals_global_definition"
     ),
     path('goals-list/', goals, name="goals"),
-    path('goals-edit/<int:id>/', goals_edit, name="goals_edit")
+    path('goal/<int:id>/', goal, name="goal")
 ]

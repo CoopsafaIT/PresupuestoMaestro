@@ -131,7 +131,7 @@ def goals(request):
 
 
 @login_required()
-def goals_edit(request, id):
+def goal(request, id):
     qs = get_object_or_404(Goal, pk=id)
     form = GoalsGlobalForm(instance=qs)
 
