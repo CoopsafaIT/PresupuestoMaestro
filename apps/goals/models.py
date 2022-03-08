@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 from apps.main.models import Periodo
 from apps.master_budget.models import AuditDataMixin, AmountMonthlyMixin
-from utils.constants import TYPE_GOALS
+from utils.constants import TYPE_GOALS, DEFINITION_EXECUTION_GOALS
 
 
 class GlobalGoalPeriod(AuditDataMixin):
@@ -56,10 +56,18 @@ class Goal(AuditDataMixin):
         null=True, blank=True, max_length=300, db_column="SQLQuery"
     )
     definition = models.CharField(
-        null=True, blank=True, max_length=1, db_column="Definicion"
+        null=True,
+        blank=True,
+        max_length=1,
+        db_column="Definicion",
+        choices=DEFINITION_EXECUTION_GOALS
     )
     execution = models.CharField(
-        null=True, blank=True, max_length=1, db_column="Ejecucion"
+        null=True,
+        blank=True,
+        max_length=1,
+        db_column="Ejecucion",
+        choices=DEFINITION_EXECUTION_GOALS
     )
     created_by = models.ForeignKey(
         User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
