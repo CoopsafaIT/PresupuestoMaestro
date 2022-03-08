@@ -15,20 +15,19 @@
         <li><a class="link_name" href="{% url 'dashboard' %}">Volver Ingreso PPTO.</a></li>
       </ul>
     </li>
-    
+
     <li>
-      <div class="icon-link">
-        <a href="#">
-          <i class="bi bi-cash"></i>
-          <span class="link_name">Metas</span>
-        </a>
-        <i class='bi bi-chevron-down arrow'></i>
-      </div>
-      <ul class="sub-menu">
-        <li><a class="link_name" href="#">Metas</a></li>
-        <li><a href="{% url 'goals_for_period' %}">Metas por periodo</a></li>
+      <a href="{% url 'goals_for_period' %}" class="institutional-golden-color">
+        <i class="bi bi-diagram-3-fill"></i>
+        <span class="link_name">Definición de Metas</span>
+      </a>
+      <ul class="sub-menu blank">
+        <li><a class="link_name" href="{% url 'goals_for_period' %}">Definición de Metas</a></li>
       </ul>
     </li>
+    
+
+
 
   </ul>
 </div>

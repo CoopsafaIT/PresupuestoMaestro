@@ -4,8 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 from utils.pagination import pagination
-from .models import (GlobalGoalPeriod)
-from.forms import (GoalsForm)
+from .models import (
+    GlobalGoalPeriod, GlobalGoalDetail, Goal
+)
+from .forms import GoalsForm
 
 
 @login_required()
@@ -74,3 +76,23 @@ def goals_period(request, id):
         'form': form
     }
     return render(request, 'goals_period/goals_period_edit.html', ctx)
+
+
+@login_required()
+def goals_global_definition(request, id_global_goal_period):
+    qs_global_goal_period = get_object_or_404(GlobalGoalPeriod, pk=id_global_goal_period)
+    if request.is_ajax():
+        pass
+    if request.method == 'POST':
+        pass
+
+    qs_goals = Goal.objects.all().order_by('description')
+    qs_global_goal_detail = GlobalGoalDetail.objects.filter(
+        id_global_goal_period=qs_global_goal_period.pk
+    )
+    ctx = {
+        'qs_goals': qs_goals,
+        'qs_global_goal_detail': qs_global_goal_detail
+    }
+
+    return render(request, 'goals_definition/goals_global_definition.html', ctx)

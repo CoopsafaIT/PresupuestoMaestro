@@ -4,7 +4,7 @@
 {% block title %} Metas por Periodo {% endblock title %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item active text-white" aria-current="page">/ Definición </li>
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Detalle </li>
 {% endblock breadcrumb %}
 
 {% block content %}
@@ -15,15 +15,7 @@
     <div class="card-header">
       <div class="row">
         <div class="col-md-4">
-          <h5 class="card-title fw-light fs-4">Definicion de Metas Globales</h5>
-        </div>
-        <div class="col-md-2">
-          <button
-            type="button"
-            class="btn btn-outline-safa"
-            data-bs-toggle="modal"
-            data-bs-target="#addGoalsModal"
-          >Crear Metas</button>
+          <h5 class="card-title fw-light fs-4">Definicion de Metas</h5>
         </div>
         <div class="col-md-6">
           {% include 'master_budget/shared/search_form_simple.html' %}
@@ -37,47 +29,64 @@
             <table class="table table-hover table-bordered table-striped table-sm">
               <thead>
                 <tr>
-                  <th class="text-center">#</th>
                   <th>Metas</th>
-                  <th>Periodo</th>
+                  <th>Monto anual</th>
+                  <th>Ponderacion</th>
                   <th class="text-center">Acción</th>
                 </tr>
               </thead>
               <tbody>
-                {% for item in result %}
+                
                 <tr>
-                  <td class="text-center">{{forloop.counter}}</td>
-                  <td>{{item.description}}</td>
-                  <td>{{item.period_id.descperiodo}}</td>
+                  <td>
+                    <select name="period" id="id_goal" class="form-select" style="width: 100%;">
+                      <option value="">-- Metas --</option>
+                      {% for i in result %}
+                      <option {% if request.GET.goal == i.pk %} selected {% endif %} 
+                      value="{{i.pk}}">{{i.description}}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <input 
+                        type="number"
+                        class="form-control"
+                        name="ene" id="#"
+                        required 
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <input 
+                        type="number"
+                        class="form-control"
+                        name="ene" id="#"
+                        required 
+                      />
+                    </div>
+                  </td>
                   <td class="text-center">
                     <div class="d-grid gap-2 d-flex justify-content-center">
                       <a
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
-                        href="{% url 'goals_period_edit' item.pk %}"
-                        class="btn btn-sm btn-outline-danger me-2 px-3"
-                        title="Editar Meta"
-                      > <i class="bi bi-pencil-square"></i>
+                        href="#"
+                        class="btn btn-outline-success me-2 px-3"
+                        title="Asignar"
+                      > <i class="bi bi-check-lg"></i>
                       </a>
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        href="{% url 'goals_global_definition' item.pk %}"
-                        class="btn btn-sm btn-outline-primary me-2 px-3"
-                        title="Definición"
-                      > <i class="bi bi-calendar-plus"></i>
-                      </a>
-
                     </div>
-
                   </td>
-                
                 </tr>
-                {% empty %}
+                <tr>
+                  </td>
+                </tr>
+
                 <tr>
                   <td colspan="6" class="text-center fs-5">No Data</td>
                 </tr>
-                {% endfor %}
               </tbody>
             </table>
             {% include 'master_budget/shared/pagination_multiple.html' with qs=result %}
