@@ -9,12 +9,11 @@ from .models import (
 )
 from .forms import (
     GoalsForm, GoalsGlobalForm
-
 )
 
 
 @login_required()
-def goals(request):
+def goals_dashboard(request):
     return render(request, 'goals/dashboard.html')
 
 
@@ -70,10 +69,7 @@ def goals_period(request, id):
                 _new = form.save()
                 _new.updated_by = request.user
                 _new.save()
-                messages.success(
-                    request,
-                    'Meta editada con éxito!'
-                )
+                messages.success(request, 'Meta editada con éxito!')
                 return redirect('goals_for_period')
     ctx = {
         'form': form
@@ -102,7 +98,7 @@ def goals_global_definition(request, id_global_goal_period):
 
 
 @login_required()
-def goals_(request):
+def goals(request):
     form = GoalsGlobalForm()
     if request.method == 'POST':
         form = GoalsGlobalForm(request.POST)
@@ -155,10 +151,7 @@ def goals_edit(request, id):
                 _new = form.save()
                 _new.updated_by = request.user
                 _new.save()
-                messages.success(
-                    request,
-                    'Meta editada con éxito!'
-                )
+                messages.success(request, 'Meta editada con éxito!')
                 return redirect('goals')
     ctx = {
         'form': form

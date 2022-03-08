@@ -1,7 +1,7 @@
 {% extends 'goals/layout/base.html' %}
 {% load static %}
 
-{% block title %} Metas {% endblock title %}
+{% block title %} Listado de Metas {% endblock title %}
 
 {% block breadcrumb %}
   <li class="breadcrumb-item active text-white" aria-current="page">/ Creación de metas </li>
@@ -83,18 +83,3 @@
   </div>
 </div>
 {% endblock content %}
-
-{% block javascript %}
-<script>
-  $(document).ready(()=>{
-    $('.select2-style').select2({
-      language: "es",
-      dropdownParent: $('#addGoalsCreatModal')
-    });
-    $(
-      "#id_period option[value= '{{request.GET.period}}'] "
-    ).prop('selected', true).trigger("change");
-  })
-</script>
-
-{% endblock javascript %}

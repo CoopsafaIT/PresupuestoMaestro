@@ -1,16 +1,16 @@
 from django.urls import path
 from apps.goals.views import (
-    goals,
+    goals_dashboard,
     goals_for_period,
     goals_period,
     goals_global_definition,
-    goals_,
+    goals,
     goals_edit
 )
 
 
 urlpatterns = [
-    path('', goals, name="goals"),
+    path('', goals_dashboard, name="goals_dashboard"),
     path('goal-period-list/', goals_for_period, name="goals_for_period"),
     path('goal-period-edit/<int:id>/', goals_period, name="goals_period_edit"),
     path(
@@ -18,6 +18,6 @@ urlpatterns = [
         goals_global_definition,
         name="goals_global_definition"
     ),
-    path('goals-list/', goals_, name="goals"),
+    path('goals-list/', goals, name="goals"),
     path('goals-edit/<int:id>/', goals_edit, name="goals_edit")
 ]
