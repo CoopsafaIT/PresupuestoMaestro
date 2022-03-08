@@ -1,0 +1,105 @@
+{% extends 'goals/layout/base.html' %}
+{% load static %}
+
+{% block title %} Metas por Periodo {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Metas </li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'goals_period/goals_period_modal_add.html' %}
+
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="card-title fw-light fs-4">Definicion de Metas Globales</h5>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-outline-safa"
+            data-bs-toggle="modal"
+            data-bs-target="#addGoalsModal"
+          >Crear Metas</button>
+        </div>
+        <div class="col-md-6">
+          {% include 'master_budget/shared/search_form_simple.html' %}
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Metas</th>
+                  <th>Periodo</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in result %}
+                <tr>
+                  <td class="text-center">{{forloop.counter}}</td>
+                  <td>{{item.description}}</td>
+                  <td>{{item.period_id.descperiodo}}</td>
+                  <td class="text-center">
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <a
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        href="{% url 'goals_period_edit' item.pk%}"
+                        class="btn btn-sm btn-outline-safa me-2 px-3"
+                        title="Editar Meta"
+                      > <i class="bi bi-pencil-square"></i>
+                      </a>
+                      <a
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        href="{% url 'goals_detail' %}"
+                        class="btn btn-sm btn-outline-primary me-2 px-3"
+                        title="Definicion"
+                      > <i class="bi bi-pencil-square"></i>
+                      </a>
+
+                    </div>
+
+                  </td>
+                
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center fs-5">No Data</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'master_budget/shared/pagination_multiple.html' with qs=result %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    $('.select2-style').select2({
+      language: "es",
+      dropdownParent: $('#addGoalsModal')
+    });
+    $(
+      "#id_period option[value= '{{request.GET.period}}'] "
+    ).prop('selected', true).trigger("change");
+  })
+</script>
+
+{% endblock javascript %}
