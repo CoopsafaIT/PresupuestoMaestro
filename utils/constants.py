@@ -435,3 +435,8 @@ SURPLUS_DISTRIBUTION_CRITERIA = (
     (1, 'Porcentaje'),
     (2, 'Monto'),
 )
+
+DEFINITION_EXECUTION_GOALS = (
+    ('A', 'Automaticas'),
+    ('M', 'Manuales')
+)

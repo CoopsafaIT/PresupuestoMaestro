@@ -7,11 +7,13 @@ from utils.pagination import pagination
 from .models import (
     GlobalGoalPeriod, GlobalGoalDetail, Goal
 )
-from .forms import GoalsForm
+from .forms import (
+    GoalsForm, GoalsGlobalForm
+)
 
 
 @login_required()
-def goals(request):
+def goals_dashboard(request):
     return render(request, 'goals/dashboard.html')
 
 
@@ -67,10 +69,7 @@ def goals_period(request, id):
                 _new = form.save()
                 _new.updated_by = request.user
                 _new.save()
-                messages.success(
-                    request,
-                    'Meta editada con éxito!'
-                )
+                messages.success(request, 'Meta editada con éxito!')
                 return redirect('goals_for_period')
     ctx = {
         'form': form
@@ -96,3 +95,65 @@ def goals_global_definition(request, id_global_goal_period):
     }
 
     return render(request, 'goals_definition/goals_global_definition.html', ctx)
+
+
+@login_required()
+def goals(request):
+    form = GoalsGlobalForm()
+    if request.method == 'POST':
+        form = GoalsGlobalForm(request.POST)
+        if not form.is_valid():
+            messages.warning(
+                request, f'Formulario no válido: {form.errors.as_text()}'
+            )
+        else:
+            _new = form.save()
+            _new.created_by = request.user
+            _new.updated_by = request.user
+            _new.save()
+            messages.success(request, 'Meta creada con éxito!')
+
+    page = request.GET.get('page', 1)
+    q = request.GET.get('q', '')
+    qs = Goal.objects.filter(
+        Q(description__icontains=q) |
+        Q(type__icontains=q) |
+        Q(definition__icontains=q) |
+        Q(execution__icontains=q)
+    ).order_by('description')
+    result = pagination(qs, page)
+
+    ctx = {
+        'result': result,
+        'form': form
+    }
+    return render(request, 'goals_definition/goals.html', ctx)
+
+
+@login_required()
+def goal(request, id):
+    qs = get_object_or_404(Goal, pk=id)
+    form = GoalsGlobalForm(instance=qs)
+
+    if request.method == 'POST':
+        if request.POST.get('method') == 'edit':
+            form = GoalsGlobalForm(request.POST, instance=qs)
+            if not form.is_valid():
+                messages.warning(
+                    request,
+                    f'Formulario no válido: {form.errors.as_text()}'
+                )
+            else:
+                if request.POST.get('is_active') == 'True':
+                    Goal.objects.filter(
+                        id=qs.id
+                    ).update(is_active=False)
+                _new = form.save()
+                _new.updated_by = request.user
+                _new.save()
+                messages.success(request, 'Meta editada con éxito!')
+                return redirect('goals')
+    ctx = {
+        'form': form
+    }
+    return render(request, 'goals_definition/goals_edit.html', ctx)

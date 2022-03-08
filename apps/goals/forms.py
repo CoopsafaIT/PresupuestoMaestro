@@ -1,7 +1,7 @@
 from django import forms
 
 from apps.main.models import Periodo
-from .models import GlobalGoalPeriod
+from .models import GlobalGoalPeriod, Goal
 
 
 class GoalsForm(forms.ModelForm):
@@ -23,3 +23,18 @@ class GoalsForm(forms.ModelForm):
     class Meta:
         model = GlobalGoalPeriod
         fields = ('period_id', 'description')
+
+
+class GoalsGlobalForm(forms.ModelForm):
+    description = forms.CharField(
+        label="Descripción",
+        widget=forms.Textarea(
+            attrs={"rows": 3, "style": 'resize:none', 'class': 'form-control'}
+        )
+    )
+
+    class Meta:
+        model = Goal
+        fields = (
+            'description',
+        )
