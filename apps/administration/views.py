@@ -338,8 +338,7 @@ def periods(request):
         period.cerrado = False
         period.save()
         messages.success(
-            request,
-            f'Periodo: {period.descperiodo} creado con éxito'
+            request, f'Periodo: {period.descperiodo} creado con éxito'
         )
 
     qs = Periodo.objects.filter(

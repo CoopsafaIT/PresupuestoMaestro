@@ -1,0 +1,95 @@
+{% extends 'goals/layout/base.html' %}
+{% load static %}
+
+{% block title %} Metas por Periodo {% endblock title %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Definición de metas periodo {{qs_global_goal_period.period_id}} </li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'goals_period/goals_period_modal_add.html' %}
+
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="card-title fw-light fs-4">Definición de Metas</h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>Metas</th>
+                  <th>Monto anual</th>
+                  <th>Ponderación</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+                <tr>
+                  <th>
+                    <select name="period" id="id_goal" class="form-select" style="width: 100%;">
+                      <option value="">---- Seleccione meta a definir ----</option>
+                      {% for i in qs_goals %}
+                      <option value="{{i.pk}}">{{i.description}}</option>
+                      {% endfor %}
+                    </select>
+                  </th>
+                  <th>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <input 
+                        type="number"
+                        class="form-control"
+                        name="ene" id="#"
+                        required 
+                      />
+                    </div>
+                  </th>
+                  <th>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <input 
+                        type="number"
+                        class="form-control"
+                        name="ene" id="#"
+                        required 
+                      />
+                    </div>
+                  </th>
+                  <th>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <a
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        href="#"
+                        class="btn btn-outline-success me-2 px-3"
+                        title="Asignar"
+                      > <i class="bi bi-check-lg"></i>
+                      </a>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    $('.select2-st-yle').select2({language: "es"});
+  })
+</script>
+
+{% endblock javascript %}

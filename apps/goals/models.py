@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from apps.main.models import Periodo
 from apps.master_budget.models import AuditDataMixin, AmountMonthlyMixin
@@ -11,7 +13,7 @@ class GlobalGoalPeriod(AuditDataMixin):
     description = models.CharField(
         null=True, blank=True, max_length=500, db_column="Descripcion"
     )
-    period_id = models.ForeignKey(
+    period_id = models.OneToOneField(
         Periodo, models.DO_NOTHING, null=True, blank=True, db_column="PeriodoId"
     )
     created_by = models.ForeignKey(
@@ -31,6 +33,16 @@ class GlobalGoalPeriod(AuditDataMixin):
         db_table = "MetasGlobalPeriodo"
 
 
+@receiver(post_save, sender=Periodo)
+def post_save_period(sender, instance, created, **kwargs):
+    qs = instance
+    global_goal_period = GlobalGoalPeriod.objects.filter(period_id=qs.pk).first()
+    if not global_goal_period:
+        GlobalGoalPeriod.objects.create(
+            period_id=qs, description='Creado desde el sistema'
+        )
+
+
 class Goal(AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     description = models.CharField(
@@ -43,11 +55,11 @@ class Goal(AuditDataMixin):
     query = models.CharField(
         null=True, blank=True, max_length=300, db_column="SQLQuery"
     )
-    manual_definition = models.CharField(
-        null=True, blank=True, max_length=1, db_column="DefinicionManual"
+    definition = models.CharField(
+        null=True, blank=True, max_length=1, db_column="Definicion"
     )
-    manual_execution = models.CharField(
-        null=True, blank=True, max_length=1, db_column="EjecucionManual"
+    execution = models.CharField(
+        null=True, blank=True, max_length=1, db_column="Ejecucion"
     )
     created_by = models.ForeignKey(
         User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True

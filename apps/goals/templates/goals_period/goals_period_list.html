@@ -4,7 +4,7 @@
 {% block title %} Metas por Periodo {% endblock title %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item active text-white" aria-current="page">/ Metas </li>
+  <li class="breadcrumb-item active text-white" aria-current="page">/ Definición </li>
 {% endblock breadcrumb %}
 
 {% block content %}
@@ -54,18 +54,18 @@
                       <a
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
-                        href="{% url 'goals_period_edit' item.pk%}"
-                        class="btn btn-sm btn-outline-safa me-2 px-3"
+                        href="{% url 'goals_period_edit' item.pk %}"
+                        class="btn btn-sm btn-outline-danger me-2 px-3"
                         title="Editar Meta"
                       > <i class="bi bi-pencil-square"></i>
                       </a>
                       <a
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
-                        href="{% url 'goals_detail' %}"
+                        href="{% url 'goals_global_definition' item.pk %}"
                         class="btn btn-sm btn-outline-primary me-2 px-3"
-                        title="Definicion"
-                      > <i class="bi bi-pencil-square"></i>
+                        title="Definición"
+                      > <i class="bi bi-calendar-plus"></i>
                       </a>
 
                     </div>
