@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 from utils.pagination import pagination
-from .models import (GlobalGoalPeriod)
+from .models import (GlobalGoalPeriod, Goal)
 from.forms import (GoalsForm)
 
 
@@ -74,3 +74,18 @@ def goals_period(request, id):
         'form': form
     }
     return render(request, 'goals_period/goals_period_edit.html', ctx)
+
+
+@login_required()
+def goals_detail(request):
+
+    page = request.GET.get('page', 1)
+    q = request.GET.get('q', '')
+    qs = Goal.objects.filter(Q(description__icontains=q)).order_by('description')
+    result = pagination(qs, page)
+
+    ctx = {
+        'result': result
+    }
+
+    return render(request, 'goals_period/goals_detail.html', ctx)
