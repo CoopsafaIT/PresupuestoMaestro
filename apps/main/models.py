@@ -129,6 +129,12 @@ class Centroscosto(models.Model):
     agencia = models.CharField(
         db_column="Agencia", max_length=5, blank=True, null=True
     )
+    code_zone = models.IntegerField(
+        db_column="CodZona", blank=True, null=True
+    )
+    zone = models.CharField(
+        db_column="Zona", max_length=50, blank=True, null=True
+    )
 
     class Meta:
         default_permissions = []
