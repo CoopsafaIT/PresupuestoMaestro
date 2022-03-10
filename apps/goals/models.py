@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models.constraints import UniqueConstraint
 
 from apps.main.models import Periodo
 from apps.master_budget.models import AuditDataMixin, AmountMonthlyMixin
-from utils.constants import TYPE_GOALS
+from utils.constants import TYPE_GOALS, DEFINITION_EXECUTION_GOALS
 
 
 class GlobalGoalPeriod(AuditDataMixin):
@@ -56,10 +57,18 @@ class Goal(AuditDataMixin):
         null=True, blank=True, max_length=300, db_column="SQLQuery"
     )
     definition = models.CharField(
-        null=True, blank=True, max_length=1, db_column="Definicion"
+        null=True,
+        blank=True,
+        max_length=1,
+        db_column="Definicion",
+        choices=DEFINITION_EXECUTION_GOALS
     )
     execution = models.CharField(
-        null=True, blank=True, max_length=1, db_column="Ejecucion"
+        null=True,
+        blank=True,
+        max_length=1,
+        db_column="Ejecucion",
+        choices=DEFINITION_EXECUTION_GOALS
     )
     created_by = models.ForeignKey(
         User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
@@ -120,6 +129,9 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     class Meta:
         default_permissions = []
         db_table = "MetasGlobalDetalle"
+        UniqueConstraint(fields=[
+            'id_global_goal_period', 'id_goal'
+            ], name='unique_goal_period')
 
 
 class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):

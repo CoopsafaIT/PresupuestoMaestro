@@ -1,0 +1,60 @@
+{% extends 'goals/layout/base.html' %}
+{% load static %}
+
+{% block title %}Editar Metas{% endblock title %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active text-white before-none" aria-current="page"> / Editar</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="card-title fw-light fs-4"> Metas </h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="post">
+        <input type="hidden" name="method" value="edit">
+        {% csrf_token %}
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+          <div class="row">
+            {% for field in form.visible_fields  %}
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                  <small class="text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-safa float-end">Aceptar</button>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(()=>{
+    
+  })
+</script>
+{% endblock javascript %}

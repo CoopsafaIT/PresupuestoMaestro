@@ -32,49 +32,66 @@
                   <th class="text-center">Acción</th>
                 </tr>
                 <tr>
-                  <th>
-                    <select name="period" id="id_goal" class="form-select" style="width: 100%;">
-                      <option value="">---- Seleccione meta a definir ----</option>
-                      {% for i in qs_goals %}
-                      <option value="{{i.pk}}">{{i.description}}</option>
-                      {% endfor %}
-                    </select>
-                  </th>
-                  <th>
-                    <div class="d-grid gap-2 d-flex justify-content-center">
-                      <input 
-                        type="number"
-                        class="form-control"
-                        name="ene" id="#"
-                        required 
-                      />
-                    </div>
-                  </th>
-                  <th>
-                    <div class="d-grid gap-2 d-flex justify-content-center">
-                      <input 
-                        type="number"
-                        class="form-control"
-                        name="ene" id="#"
-                        required 
-                      />
-                    </div>
-                  </th>
-                  <th>
-                    <div class="d-grid gap-2 d-flex justify-content-center">
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        href="#"
-                        class="btn btn-outline-success me-2 px-3"
-                        title="Asignar"
-                      > <i class="bi bi-check-lg"></i>
-                      </a>
-                    </div>
-                  </th>
+                  <form method="post">
+                    {% csrf_token %}
+                    <th>
+                      <select name="goal_id" class="form-select goals_definition" id="id_goal" data-live-search="true" style="width: 100%;">
+                        <option  value="">---- Seleccione meta a definir ----</option>
+                        {% for i in qs_goals %}
+                        <option value="{{i.pk}}">{{i.description}}</option>
+                        {% endfor %}
+                      </select>
+                    </th>
+                    <th>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <input 
+                          type="number"
+                          class="form-control"
+                          id="id_annual_amount"
+                          required 
+                        />
+                      </div>
+                    </th>
+                    <th>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <input 
+                          type="number"
+                          class="form-control"
+                          max="100"
+                          min="0"
+                          id="#"
+                          required 
+                        />
+                      </div>
+                    </th>
+                    <th>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <input 
+                          class="btn btn-success bi bi-check-lg"
+                          type="submit"
+                          data-bs-toggle="tooltip"
+                          title="Asignar"
+                          >
+                      </div>
+                    </th>
+                  </form>
                 </tr>
               </thead>
               <tbody>
+                {% for item in result %}
+                  <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{item.id_goal}}</td>
+                    <td>{{item.id_global_goal_period}}</td>
+                    <td>{{item.description}}</td>
+                    <td>{{item.period_id.descperiodo}}</td>
+
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="6" class="text-center fs-5">No Data</td>
+                  </tr>
+                  {% endfor %}
               </tbody>
             </table>
           </div>
@@ -90,6 +107,29 @@
   $(document).ready(()=>{
     $('.select2-st-yle').select2({language: "es"});
   })
-</script>
 
+  $("#id_goal").on("change", function(){
+      let goalId = $('#id_goal').val();
+      loaderShow(true)
+      $.ajax({
+        type: 'GET',
+        data: {goalId: goalId},
+        url: '{{request.get_full_path}}'
+      }).done((res)=>{
+        let data = JSON.parse(res)
+        data.definition === 'A' && $('#id_annual_amount').attr('readonly', true)
+        data.definition === 'A' || $('#id_annual_amount').attr('readonly', false)
+        $('#id_annual_amount').val(data.annual_amount)
+        loaderShow(false)
+      })
+      .fail(handleError)
+    })
+
+    const handleError = (e) => {
+      console.log(e);
+      loaderShow(false)
+      alert("Ha ocurrido un error!")
+    }
+
+</script>
 {% endblock javascript %}
