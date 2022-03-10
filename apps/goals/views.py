@@ -1,7 +1,13 @@
+import json
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
+
+from decimal import Decimal as dc
 
 from utils.pagination import pagination
 from .models import (
@@ -10,6 +16,8 @@ from .models import (
 from .forms import (
     GoalsForm, GoalsGlobalForm
 )
+
+# from utils.sql import execute_sql_query
 
 
 @login_required()
@@ -80,10 +88,34 @@ def goals_period(request, id):
 @login_required()
 def goals_global_definition(request, id_global_goal_period):
     qs_global_goal_period = get_object_or_404(GlobalGoalPeriod, pk=id_global_goal_period)
+
     if request.is_ajax():
-        pass
-    if request.method == 'POST':
-        pass
+        if request.method == 'GET':
+            goal_id = request.GET.get('goalId')
+
+            qs = Goal.objects.get(pk=goal_id)
+            if qs.definition == "A":
+                annual_amount = 10000
+            else:
+                annual_amount = 0
+            ctx = {
+                'annual_amount': annual_amount,
+                'definition': qs.definition
+            }
+            return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
+
+        elif request.method == 'POST':
+            goal_id = request.POST.get('goalId')
+            annual_amount = dc(request.POST.get('annualAmount'))
+            data = json.loads(request.POST.get('data'))
+            for item in data:
+                amount = GlobalGoalDetail.object.get("annual_amount")
+                GlobalGoalDetail.objects.filter(
+                    id_global_goal_period=id_global_goal_period,
+                    goal_id=goal_id,
+                    goals_definition=item.get('annual_amount'),
+                ).update(amount=amount, annual_amoutn=annual_amount)
+            return HttpResponse(json.dumps({}, cls=DjangoJSONEncoder))
 
     qs_goals = Goal.objects.all().order_by('description')
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(
