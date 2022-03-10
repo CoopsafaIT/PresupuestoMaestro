@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models.constraints import UniqueConstraint
 
 from apps.main.models import Periodo
 from apps.master_budget.models import AuditDataMixin, AmountMonthlyMixin
@@ -128,6 +129,9 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     class Meta:
         default_permissions = []
         db_table = "MetasGlobalDetalle"
+        UniqueConstraint(fields=[
+            'id_global_goal_period', 'id_goal'
+            ], name='unique_goal_period')
 
 
 class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):

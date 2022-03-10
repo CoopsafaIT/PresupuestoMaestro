@@ -1,7 +1,8 @@
+
 from django import forms
 
 from apps.main.models import Periodo
-from .models import GlobalGoalPeriod, Goal
+from .models import GlobalGoalPeriod, GlobalGoalDetail, Goal
 
 
 class GoalsForm(forms.ModelForm):
@@ -38,3 +39,24 @@ class GoalsGlobalForm(forms.ModelForm):
         fields = (
             'description',
         )
+
+
+class GlobalGoalDetailForm(forms.ModelForm):
+    class Meta:
+        model = GlobalGoalDetail
+        fields = '__all__'
+        widgets = {
+                'ponderation': forms.TextInput(attrs={'class': 'form-control'})
+            }
+
+    def validate(self, ponderation):
+        super(GlobalGoalDetailForm, self).validate(ponderation)
+        pon = Goal.object.get(pk=id)
+        pon_goal = pon.ponderation
+        sum_ponderation = ponderation + pon_goal
+        if sum_ponderation > 100:
+            self._errors['sum_ponderation'] = self.error_class([
+                'La ponderacion sobrepasa el limite'
+                ])
+
+        return self.sum_ponderation
