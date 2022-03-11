@@ -6,9 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
-
-
-from decimal import Decimal as dc
+# from decimal import Decimal as dc
 
 from utils.pagination import pagination
 from .models import (
@@ -17,8 +15,6 @@ from .models import (
 from .forms import (
     GoalsForm, GoalsGlobalForm, GlobalGoalDetailForm
 )
-
-# from utils.sql import execute_sql_query
 
 
 @login_required()
@@ -91,7 +87,6 @@ def goals_global_definition(request, id_global_goal_period):
     qs_global_goal_period = get_object_or_404(GlobalGoalPeriod, pk=id_global_goal_period)
 
     if request.method == 'POST':
-        print(request.POST)
         form = GlobalGoalDetailForm(request.POST)
         if not form.is_valid():
             messages.warning(
@@ -107,38 +102,82 @@ def goals_global_definition(request, id_global_goal_period):
     if request.is_ajax():
         if request.method == 'GET':
             goal_id = request.GET.get('goalId')
-
-            qs = Goal.objects.get(pk=goal_id)
-            if qs.definition == "A":
-                annual_amount = 10000
-            else:
-                annual_amount = 0
-            ctx = {
-                'annual_amount': annual_amount,
-                'definition': qs.definition
-            }
-            return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
-
-        elif request.method == 'POST':
-            goal_id = request.POST.get('goalId')
-            annual_amount = dc(request.POST.get('annualAmount'))
-            data = json.loads(request.POST.get('data'))
-            for item in data:
-                amount = GlobalGoalDetail.object.get("annual_amount")
-                GlobalGoalDetail.objects.filter(
-                    id_global_goal_period=id_global_goal_period,
-                    goal_id=goal_id,
-                    goals_definition=item.get('annual_amount'),
-                ).update(amount=amount, annual_amoutn=annual_amount)
-            return HttpResponse(json.dumps({}, cls=DjangoJSONEncoder))
-
+            if request.GET.get('method') == 'get-goal-detail':
+                qs = Goal.objects.filter(pk=goal_id).first()
+                if qs.definition == "A":
+                    goal_monthly_definition = {
+                        'annual_amount': 10000,
+                        'ene': 10000 / 12,
+                        'feb': 10000 / 12,
+                        'mar': 10000 / 12,
+                        'abr': 10000 / 12,
+                        'may': 10000 / 12,
+                        'jun': 10000 / 12,
+                        'jul': 10000 / 12,
+                        'ago': 10000 / 12,
+                        'sep': 10000 / 12,
+                        'oct': 10000 / 12,
+                        'nov': 10000 / 12,
+                        'dic': 10000 / 12,
+                    }
+                else:
+                    goal_monthly_definition = {
+                        'annual_amount': 0,
+                        'ene': 0,
+                        'feb': 0,
+                        'mar': 0,
+                        'abr': 0,
+                        'may': 0,
+                        'jun': 0,
+                        'jul': 0,
+                        'ago': 0,
+                        'sep': 0,
+                        'oct': 0,
+                        'nov': 0,
+                        'dic': 0,
+                    }
+                ctx = {
+                    'goal_monthly_definition': goal_monthly_definition,
+                    'definition': qs.definition
+                }
+                return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
+            elif request.GET.get('method') == 'get-global-goal-detail':
+                qs_goal = Goal.objects.values(
+                    'id', 'description', 'definition'
+                ).get(pk=goal_id)
+                qs_global_goal = GlobalGoalDetail.objects.values(
+                    'amount_january', 'amount_february', 'amount_march',
+                    'amount_april', 'amount_may', 'amount_june',
+                    'amount_july', 'amount_august', 'amount_september',
+                    'amount_october', 'amount_november', 'amount_december',
+                    'annual_amount', 'ponderation'
+                ).filter(
+                    id_goal=qs_goal.get('id'),
+                    id_global_goal_period=qs_global_goal_period.pk
+                ).first()
+                print(qs_goal)
+                print(type(qs_goal))
+                print(qs_global_goal)
+                print(type(qs_global_goal))
+                ctx = {
+                    'qs_goal': qs_goal,
+                    'qs_global_goal': qs_global_goal
+                }
+                return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
     qs_goals = Goal.objects.all().order_by('description')
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(
         id_global_goal_period=qs_global_goal_period.pk
     )
+    qs_sum = qs_global_goal_detail.extra({
+        'sum_amount': 'SUM(MontoAnual)',
+        'sum_ponderation': 'SUM(Ponderacion)'
+    }).values('sum_amount', 'sum_ponderation')
+    qs_sum = qs_sum[0]
     ctx = {
         'qs_global_goal_period': qs_global_goal_period,
         'qs_goals': qs_goals,
+        'sum_amount': qs_sum.get('sum_amount'),
+        'sum_ponderation': qs_sum.get('sum_ponderation'),
         'qs_global_goal_detail': qs_global_goal_detail
     }
 

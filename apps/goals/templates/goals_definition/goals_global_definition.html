@@ -5,11 +5,13 @@
 {% block title %} Metas por Periodo {% endblock title %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item active text-white" aria-current="page">/ Definición de metas periodo {{qs_global_goal_period.period_id}} </li>
+<li class="breadcrumb-item active text-white" aria-current="page">/ Definición de metas periodo
+  {{qs_global_goal_period.period_id}} </li>
 {% endblock breadcrumb %}
 
 {% block content %}
 {% include 'goals_period/goals_period_modal_add.html' %}
+{% include 'goals_definition/global_goal_definition_detail_modal.html' %}
 
 <div class="container-fluid pt-4">
   <div class="card card-template">
@@ -24,7 +26,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="table-responsive">
-            
+
             <table class="table table-hover table-bordered table-striped table-sm">
               <thead>
                 <tr>
@@ -40,8 +42,8 @@
                     <input type="hidden" name="id_global_goal_period" value="{{qs_global_goal_period.pk}}">
                     <th></th>
                     <th>
-                      <select name="id_goal" class="form-select goals_definition" id="id_goal" data-live-search="true" style="width: 100%;">
-                        <option  value="">---- Seleccione meta a definir ----</option>
+                      <select name="id_goal" class="form-select" id="id_goal" required style="width: 100%;">
+                        <option value="">---- Seleccione meta a definir ----</option>
                         {% for i in qs_goals %}
                         <option value="{{i.pk}}">{{i.description}}</option>
                         {% endfor %}
@@ -49,36 +51,20 @@
                     </th>
                     <th>
                       <div class="d-grid gap-2 d-flex justify-content-center">
-                        <input
-                          name="annual_amount"
-                          min="0" 
-                          type="number"
-                          class="form-control"
-                          id="id_annual_amount"
-                          required 
-                        />
+                        <input name="annual_amount" min="0" type="number" class="form-control" id="id_annual_amount" step="any"
+                          required />
                       </div>
                     </th>
                     <th>
                       <div class="d-grid gap-2 d-flex justify-content-center">
-                        <input 
-                          type="number"
-                          class="form-control"
-                          max="100"
-                          min="0"
-                          name="ponderation"
-                          required 
-                        />
+                        <input type="number" class="form-control" required max="100" min="0" name="ponderation" />
                       </div>
                     </th>
                     <th>
                       <div class="d-grid gap-2 d-flex justify-content-center">
-                        <input 
-                          class="btn btn-success bi bi-check-lg"
-                          type="submit"
-                          data-bs-toggle="tooltip"
-                          title="Asignar"
-                          >
+                        <button class="btn btn-success" type="submit">
+                          <i class="bi bi-check-lg"></i>
+                        </button>
                       </div>
                     </th>
                   </form>
@@ -86,19 +72,35 @@
               </thead>
               <tbody>
                 {% for item in qs_global_goal_detail %}
-                  <tr>
-                    <td class="text-center">{{forloop.counter}}</td>
-                    <td>{{item.id_goal}}</td>
-                    <td>{{item.annual_amount|intcomma}}</td>
-                    <td>{{item.ponderation}}</td>
-                    <td>{{item.ponderation_suma}}</td>
-                  </tr>
-                  {% empty %}
-                  <tr>
-                    <td colspan="6" class="text-center fs-5">No Data</td>
-                  </tr>
-                  {% endfor %}
+                <tr>
+                  <td class="text-center">{{forloop.counter}}</td>
+                  <td>{{item.id_goal}}</td>
+                  <td>{{item.annual_amount|intcomma}}</td>
+                  <td>{{item.ponderation}}</td>
+                  <td>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <button class="btn btn-outline-primary show-global-goal-detail" data-id="{{item.pk}}"
+                        data-goal-id="{{item.id_goal.pk}}" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="Detalle Mensual"><i class="bi bi-calendar-week"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center fs-5">No Data</td>
+                </tr>
+                {% endfor %}
               </tbody>
+              <tfoot>
+                <tr style="background-color: #017224 !important; color: white;">
+                  <td></td>
+                  <td></td>
+                  <td>{{sum_amount|intcomma}}</td>
+                  <td>{{sum_ponderation|intcomma}}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
             </table>
 
           </div>
@@ -111,32 +113,75 @@
 
 {% block javascript %}
 <script>
-  $(document).ready(()=>{
-    $('.select2-st-yle').select2({language: "es"});
+  $(document).ready(() => {
+    $('.select2-st-yle').select2({
+      language: "es"
+    });
   })
 
-  $("#id_goal").on("change", function(){
-      let goalId = $('#id_goal').val();
-      loaderShow(true)
-      $.ajax({
+  $('.show-global-goal-detail').click(function () {
+    let goalId = $(this).data('goal-id');
+    loaderShow(true)
+    $.ajax({
         type: 'GET',
-        data: {goalId: goalId},
+        data: {
+          goalId: goalId,
+          method: 'get-global-goal-detail'
+        },
         url: '{{request.get_full_path}}'
-      }).done((res)=>{
+      }).done((res) => {
         let data = JSON.parse(res)
-        data.definition === 'A' && $('#id_annual_amount').attr('readonly', true)
-        data.definition === 'A' || $('#id_annual_amount').attr('readonly', false)
-        $('#id_annual_amount').val(data.annual_amount)
+        $('#spanModalGoalName').html(data.qs_goal.description)
+        $('#id_goal_definition_annual_amount').val(parseFloat(data.qs_global_goal.annual_amount).toLocaleString('en-US'))
+
+        $('#id_goal_definition_month_amount-1').val(parseFloat(data.qs_global_goal.amount_january).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-2').val(parseFloat(data.qs_global_goal.amount_february).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-3').val(parseFloat(data.qs_global_goal.amount_march).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-4').val(parseFloat(data.qs_global_goal.amount_april).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-5').val(parseFloat(data.qs_global_goal.amount_may).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-6').val(parseFloat(data.qs_global_goal.amount_june).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-7').val(parseFloat(data.qs_global_goal.amount_july).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-8').val(parseFloat(data.qs_global_goal.amount_august).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-9').val(parseFloat(data.qs_global_goal.amount_september).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-10').val(parseFloat(data.qs_global_goal.amount_october).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-11').val(parseFloat(data.qs_global_goal.amount_november).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-12').val(parseFloat(data.qs_global_goal.amount_december).toLocaleString('en-US'))
+        data.qs_goal.definition === 'A'
+          ? $('.goal_definition_month_amount, #id_goal_definition_annual_amount').attr('readonly', true)
+          : $('.goal_definition_month_amount, #id_goal_definition_annual_amount').removeAttr('readony')
+
+
+        $('#globalGoalDefinitionDetail').modal('show');
         loaderShow(false)
       })
       .fail(handleError)
-    })
+  })
 
-    const handleError = (e) => {
-      console.log(e);
-      loaderShow(false)
-      alert("Ha ocurrido un error!")
-    }
+  $("#id_goal").on("change", function () {
+    let goalId = $('#id_goal').val();
+    loaderShow(true)
+    $.ajax({
+        type: 'GET',
+        data: {
+          goalId: goalId,
+          method: 'get-goal-detail'
+        },
+        url: '{{request.get_full_path}}'
+      }).done((res) => {
+        let data = JSON.parse(res)
+        data.definition === 'A' && $('#id_annual_amount').attr('readonly', true)
+        data.definition === 'A' || $('#id_annual_amount').attr('readonly', false)
+        amounts = data.goal_monthly_definition
+        $('#id_annual_amount').val(amounts.annual_amount)
+        loaderShow(false)
+      })
+      .fail(handleError)
+  })
 
+  const handleError = (e) => {
+    console.log(e);
+    loaderShow(false)
+    alert("Ha ocurrido un error!")
+  }
 </script>
 {% endblock javascript %}
