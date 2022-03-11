@@ -1,5 +1,6 @@
 {% extends 'goals/layout/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %} Metas por Periodo {% endblock title %}
 
@@ -26,6 +27,7 @@
             <table class="table table-hover table-bordered table-striped table-sm">
               <thead>
                 <tr>
+                  <th>#</th>
                   <th>Metas</th>
                   <th>Monto anual</th>
                   <th>Ponderación</th>
@@ -34,8 +36,10 @@
                 <tr>
                   <form method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="id_global_goal_period" value="{{qs_global_goal_period.pk}}">
+                    <th></th>
                     <th>
-                      <select name="goal_id" class="form-select goals_definition" id="id_goal" data-live-search="true" style="width: 100%;">
+                      <select name="id_goal" class="form-select goals_definition" id="id_goal" data-live-search="true" style="width: 100%;">
                         <option  value="">---- Seleccione meta a definir ----</option>
                         {% for i in qs_goals %}
                         <option value="{{i.pk}}">{{i.description}}</option>
@@ -44,7 +48,9 @@
                     </th>
                     <th>
                       <div class="d-grid gap-2 d-flex justify-content-center">
-                        <input 
+                        <input
+                          name="annual_amount"
+                          min="0" 
                           type="number"
                           class="form-control"
                           id="id_annual_amount"
@@ -59,7 +65,7 @@
                           class="form-control"
                           max="100"
                           min="0"
-                          id="#"
+                          name="ponderation"
                           required 
                         />
                       </div>
@@ -78,14 +84,12 @@
                 </tr>
               </thead>
               <tbody>
-                {% for item in result %}
+                {% for item in qs_global_goal_detail %}
                   <tr>
                     <td class="text-center">{{forloop.counter}}</td>
                     <td>{{item.id_goal}}</td>
-                    <td>{{item.id_global_goal_period}}</td>
-                    <td>{{item.description}}</td>
-                    <td>{{item.period_id.descperiodo}}</td>
-
+                    <td>{{item.annual_amount|intcomma}}</td>
+                    <td>{{item.ponderation}}</td>
                   </tr>
                   {% empty %}
                   <tr>

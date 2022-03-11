@@ -91,9 +91,8 @@ def goals_global_definition(request, id_global_goal_period):
     qs_global_goal_period = get_object_or_404(GlobalGoalPeriod, pk=id_global_goal_period)
 
     if request.method == 'POST':
-
+        print(request.POST)
         form = GlobalGoalDetailForm(request.POST)
-
         if not form.is_valid():
             messages.warning(
                 request, f'formulario no valido: {form.errors.as_text()}'
@@ -103,24 +102,8 @@ def goals_global_definition(request, id_global_goal_period):
             _new.created_by = request.user
             _new.updated_by = request.user
             _new.save()
-            messages.success(request, 'Ponderacion agregada')
+            messages.success(request, 'Meta agregada con éxito')
 
-        page = request.GET.get('page', 1)
-        q = request.GET.get('q', '')
-        qs = GlobalGoalDetail.objects.filter(
-            Q(id_global_goal_period__icontains__name=q) |
-            Q(id_goal__icontains__name=q) |
-            Q(annual_amount__icontains=q) |
-            Q(ponderation__icontains=q)
-        ).order_by('id_goal')
-        result = pagination(qs, page)
-
-        ctx = {
-            'result': result,
-            'form': form
-        }
-        return render(request, 'goals_definition/goals_global_definition.html', ctx)
-        # id_meta, ponderacion, monto
     if request.is_ajax():
         if request.method == 'GET':
             goal_id = request.GET.get('goalId')
@@ -154,6 +137,7 @@ def goals_global_definition(request, id_global_goal_period):
         id_global_goal_period=qs_global_goal_period.pk
     )
     ctx = {
+        'qs_global_goal_period': qs_global_goal_period,
         'qs_goals': qs_goals,
         'qs_global_goal_detail': qs_global_goal_detail
     }

@@ -86,6 +86,9 @@ class Goal(AuditDataMixin):
         default_permissions = []
         db_table = "Metas"
 
+    def __str__(self):
+        return f'{self.description}'
+
 
 class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
@@ -129,9 +132,7 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     class Meta:
         default_permissions = []
         db_table = "MetasGlobalDetalle"
-        UniqueConstraint(fields=[
-            'id_global_goal_period', 'id_goal'
-            ], name='unique_goal_period')
+        unique_together = ('id_global_goal_period', 'id_goal')
 
 
 class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
