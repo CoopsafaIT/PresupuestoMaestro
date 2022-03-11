@@ -49,15 +49,14 @@ class GlobalGoalDetailForm(forms.ModelForm):
             }
 
     def validate(self, data):
+        super(GlobalGoalDetailForm, self).validate(data)
+        pon = GlobalGoalDetail.objecst.filter(
+            id_global_goal_period=data.id_global_goal_period,
+            id_goal=data.id_goal,
+            ponderation=data.ponderation
+            )
+        ponderation = pon.ponderation + data.ponderation
         print(ponderation)
-        print('jdvnjdnjcndj')
-        super(GlobalGoalDetailForm, self).validate()data
-        pon = GlobalGoalDetail.objecst.filter(id_global_goal_period=)
-        pon_goal = pon.ponderation
-        sum_ponderation = ponderation + pon_goal
-        if sum_ponderation > 100:
-            self._errors['sum_ponderation'] = self.error_class([
-                'La ponderacion sobrepasa el limite'
-                ])
-
+        if ponderation > 100:
+            raise forms.ValidationError('La ponderacion sobrepasa el limite')
         return data
