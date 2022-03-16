@@ -88,7 +88,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                  <td colspan="6" class="text-center fs-5">No Data</td>
+                  <td colspan="5" class="text-center fs-5">No Data</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -120,23 +120,21 @@
 
     function calculateMissing(){
       let sum = 0;
-      let annual_amount = parseFloat($('#id_goal_definition_annual_amount').val().replaceAll(',', ''))
+      let annualAmount = parseFloat($('#id_goal_definition_annual_amount').val().replaceAll(',', ''))
       $('.goal_definition_month_amount').each(function(){
         let value = $(this).val().replaceAll(',', '')
         sum += parseFloat(value)
       })
       $('#id_monthly_distribution').val(sum.toLocaleString('en-US'))
-      $('#id_missing').val((annual_amount - sum).toLocaleString('en-US'))
-      $('#id_annual_amount').val((annual_amount).toLocaleString('en-US'))
+      $('#id_missing').val((annualAmount - sum).toLocaleString('en-US'))
+      $('#id_annual_amount').val((annualAmount).toLocaleString('en-US'))
 
     }
-    
     $('.goal_definition_month_amount').change(()=> calculateMissing())
-
 
     $('.show-global-goal-detail').click(function () {
       let goalId = $(this).data('goal-id');
-      let monthly_distribution = $('#id_monthly_distribution').val()
+      let monthlyDistribution = $('#id_monthly_distribution').val()
       loaderShow(true)
       $.ajax({
         type: 'GET',
@@ -188,7 +186,7 @@
         let data = JSON.parse(res)
         data.definition === 'A' && $('#id_annual_amount').attr('readonly', true)
         data.definition === 'A' || $('#id_annual_amount').attr('readonly', false)
-        amounts = data.goal_monthly_definition
+        let amount = data.goal_monthly_definition
         $('#id_annual_amount').val(amounts.annual_amount)
         loaderShow(false)
       })
@@ -227,13 +225,11 @@
             'amount_december': $('#id_goal_definition_month_amount-12').val().replaceAll(',', ''),
             'annual_amount':annual_amount,
           }   
-          
           let url = '{% url "goals_global_definition" qs_global_goal_period.pk %}'
           loaderShow(true)
           $.ajax({
             type: 'POST',
             data: {
-              
               data: JSON.stringify(data)
             },
             url: url
@@ -246,12 +242,9 @@
             let erroMessage = JSON.parse(err.responseText)
             err.status === 400 && alert(erroMessage.message) 
             err.status === 500 && alert('Server Internal Error!!')
-            
           })
-          
         }
     })
   })
-
 </script>
 {% endblock javascript %}

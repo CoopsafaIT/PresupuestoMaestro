@@ -7,9 +7,6 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 
-
-# from decimal import Decimal as dc
-
 from utils.pagination import pagination
 from .models import (
     GlobalGoalPeriod, GlobalGoalDetail, Goal
@@ -92,8 +89,7 @@ def goals_global_definition(request, id_global_goal_period):
         id_global_goal_period=qs_global_goal_period.pk
     )
 
-    def _validate():
-        data = json.loads(request.POST.get('data'))
+    def _validate(data):
         annual_amount = float(data.get('annual_amount'))
         amount_january = float(data.get('amount_january'))
         amount_february = float(data.get('amount_february'))
@@ -127,7 +123,7 @@ def goals_global_definition(request, id_global_goal_period):
             data = json.loads(request.POST.get('data'))
             goal_id = data.pop('goal_id')
 
-            result = _validate()
+            result = _validate(data)
 
             if result.get('status') == 'ok':
                 GlobalGoalDetail.objects.filter(
@@ -164,18 +160,9 @@ def goals_global_definition(request, id_global_goal_period):
                 else:
                     goal_monthly_definition = {
                         'annual_amount': 0,
-                        'ene': 0,
-                        'feb': 0,
-                        'mar': 0,
-                        'abr': 0,
-                        'may': 0,
-                        'jun': 0,
-                        'jul': 0,
-                        'ago': 0,
-                        'sep': 0,
-                        'oct': 0,
-                        'nov': 0,
-                        'dic': 0,
+                        'ene': 0, 'feb': 0, 'mar': 0, 'abr': 0,
+                        'may': 0, 'jun': 0, 'jul': 0, 'ago': 0,
+                        'sep': 0, 'oct': 0, 'nov': 0, 'dic': 0,
                     }
                 ctx = {
                     'goal_monthly_definition': goal_monthly_definition,
