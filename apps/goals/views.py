@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
+
+
 # from decimal import Decimal as dc
 
 from utils.pagination import pagination
@@ -85,22 +87,61 @@ def goals_period(request, id):
 @login_required()
 def goals_global_definition(request, id_global_goal_period):
     qs_global_goal_period = get_object_or_404(GlobalGoalPeriod, pk=id_global_goal_period)
+    qs_goals = Goal.objects.all().order_by('description')
+    qs_global_goal_detail = GlobalGoalDetail.objects.filter(
+        id_global_goal_period=qs_global_goal_period.pk
+    )
 
-    if request.method == 'POST':
-        form = GlobalGoalDetailForm(request.POST)
-        if not form.is_valid():
-            messages.warning(
-                request, f'formulario no valido: {form.errors.as_text()}'
-            )
+    def _validate():
+        data = json.loads(request.POST.get('data'))
+        annual_amount = float(data.get('annual_amount'))
+        amount_january = float(data.get('amount_january'))
+        amount_february = float(data.get('amount_february'))
+        amount_march = float(data.get('amount_march'))
+        amount_april = float(data.get('amount_april'))
+        amount_may = float(data.get('amount_may'))
+        amount_june = float(data.get('amount_june'))
+        amount_july = float(data.get('amount_july'))
+        amount_august = float(data.get('amount_august'))
+        amount_september = float(data.get('amount_september'))
+        amount_october = float(data.get('amount_october'))
+        amount_november = float(data.get('amount_november'))
+        amount_december = float(data.get('amount_december'))
+        sum = (
+            amount_january + amount_february + amount_march + amount_april + amount_may +
+            amount_june + amount_july + amount_august + amount_september + amount_october +
+            amount_november + amount_december
+        )
+        if annual_amount == sum:
+            return {
+                'status': 'ok', 'message': ''
+            }
         else:
-            _new = form.save()
-            _new.created_by = request.user
-            _new.updated_by = request.user
-            _new.save()
-            messages.success(request, 'Meta agregada con éxito')
+            return {
+                'status': 'error',
+                'message': 'Monto distribución mensaual no es igual a monto anual'
+            }
 
     if request.is_ajax():
-        if request.method == 'GET':
+        if request.method == 'POST':
+            data = json.loads(request.POST.get('data'))
+            goal_id = data.pop('goal_id')
+
+            result = _validate()
+
+            if result.get('status') == 'ok':
+                GlobalGoalDetail.objects.filter(
+                    id_goal=goal_id, id_global_goal_period=qs_global_goal_period.pk
+                ).update(**data)
+                return HttpResponse(json.dumps({}, cls=DjangoJSONEncoder))
+            else:
+                return HttpResponse(json.dumps(
+                    {'message': result.get('message')},
+                    cls=DjangoJSONEncoder), status=400
+                )
+            # Validar que suma de meses sea igual a monto anual
+
+        elif request.method == 'GET':
             goal_id = request.GET.get('goalId')
             if request.GET.get('method') == 'get-goal-detail':
                 qs = Goal.objects.filter(pk=goal_id).first()
@@ -155,15 +196,25 @@ def goals_global_definition(request, id_global_goal_period):
                     id_goal=qs_goal.get('id'),
                     id_global_goal_period=qs_global_goal_period.pk
                 ).first()
-                print(qs_goal)
-                print(type(qs_goal))
-                print(qs_global_goal)
-                print(type(qs_global_goal))
                 ctx = {
                     'qs_goal': qs_goal,
                     'qs_global_goal': qs_global_goal
                 }
                 return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
+
+    elif request.method == 'POST':
+        form = GlobalGoalDetailForm(request.POST)
+        if not form.is_valid():
+            messages.warning(
+                request, f'formulario no valido: {form.errors.as_text()}'
+            )
+        else:
+            _new = form.save()
+            _new.created_by = request.user
+            _new.updated_by = request.user
+            _new.save()
+            messages.success(request, 'Meta agregada con éxito')
+
     qs_goals = Goal.objects.all().order_by('description')
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(
         id_global_goal_period=qs_global_goal_period.pk

@@ -19,6 +19,12 @@ class GoalsForm(forms.ModelForm):
             attrs={"rows": 3, "style": 'resize:none', 'class': 'form-control'}
         )
     )
+    definition = forms.CharField(
+        label="Definición",
+        widget=forms.TextInput(
+            attrs={"rows": 3, "style": 'resize:none', 'class': 'form-control'}
+        )
+    )
 
     class Meta:
         model = GlobalGoalPeriod
@@ -59,6 +65,7 @@ class GlobalGoalDetailForm(forms.ModelForm):
         }).values('sum_ponderation')
         sum_ponderation_recorded = sum_ponderation_recorded[0].get('sum_ponderation')
         total = sum_ponderation_recorded + ponderation
+
         if total > 100:
             self._errors['ponderation'] = self.error_class([
                 f'Poderación excede el 100% ({total})'])

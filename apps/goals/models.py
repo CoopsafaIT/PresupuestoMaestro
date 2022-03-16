@@ -50,6 +50,7 @@ class Goal(AuditDataMixin):
         null=True, blank=True, max_length=500, db_column="Descripcion"
     )
     type = models.CharField(
+        default='M',
         db_column="Tipo", max_length=1, null=True,
         blank=True, choices=TYPE_GOALS
     )
@@ -57,6 +58,7 @@ class Goal(AuditDataMixin):
         null=True, blank=True, max_length=300, db_column="SQLQuery"
     )
     definition = models.CharField(
+        default='M',
         null=True,
         blank=True,
         max_length=1,
@@ -64,6 +66,7 @@ class Goal(AuditDataMixin):
         choices=DEFINITION_EXECUTION_GOALS
     )
     execution = models.CharField(
+        default='M',
         null=True,
         blank=True,
         max_length=1,
