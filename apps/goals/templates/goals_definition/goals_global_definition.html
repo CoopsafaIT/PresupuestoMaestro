@@ -1,14 +1,17 @@
 {% extends 'goals/layout/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %} Metas por Periodo {% endblock title %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item active text-white" aria-current="page">/ Definición de metas periodo {{qs_global_goal_period.period_id}} </li>
+<li class="breadcrumb-item active text-white" aria-current="page">/ Definición de metas periodo
+  {{qs_global_goal_period.period_id}} </li>
 {% endblock breadcrumb %}
 
 {% block content %}
 {% include 'goals_period/goals_period_modal_add.html' %}
+{% include 'goals_definition/global_goal_definition_detail_modal.html' %}
 
 <div class="container-fluid pt-4">
   <div class="card card-template">
@@ -23,60 +26,83 @@
       <div class="row">
         <div class="col-md-12">
           <div class="table-responsive">
+
             <table class="table table-hover table-bordered table-striped table-sm">
               <thead>
                 <tr>
+                  <th>#</th>
                   <th>Metas</th>
                   <th>Monto anual</th>
                   <th>Ponderación</th>
                   <th class="text-center">Acción</th>
                 </tr>
                 <tr>
-                  <th>
-                    <select name="period" id="id_goal" class="form-select" style="width: 100%;">
-                      <option value="">---- Seleccione meta a definir ----</option>
-                      {% for i in qs_goals %}
-                      <option value="{{i.pk}}">{{i.description}}</option>
-                      {% endfor %}
-                    </select>
-                  </th>
-                  <th>
-                    <div class="d-grid gap-2 d-flex justify-content-center">
-                      <input 
-                        type="number"
-                        class="form-control"
-                        name="ene" id="#"
-                        required 
-                      />
-                    </div>
-                  </th>
-                  <th>
-                    <div class="d-grid gap-2 d-flex justify-content-center">
-                      <input 
-                        type="number"
-                        class="form-control"
-                        name="ene" id="#"
-                        required 
-                      />
-                    </div>
-                  </th>
-                  <th>
-                    <div class="d-grid gap-2 d-flex justify-content-center">
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        href="#"
-                        class="btn btn-outline-success me-2 px-3"
-                        title="Asignar"
-                      > <i class="bi bi-check-lg"></i>
-                      </a>
-                    </div>
-                  </th>
+                  <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_global_goal_period" value="{{qs_global_goal_period.pk}}">
+                    <th></th>
+                    <th>
+                      <select name="id_goal" class="form-select" id="id_goal" required style="width: 100%;">
+                        <option value="">---- Seleccione meta a definir ----</option>
+                        {% for i in qs_goals %}
+                        <option value="{{i.pk}}">{{i.description}}</option>
+                        {% endfor %}
+                      </select>
+                    </th>
+                    <th>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <input name="annual_amount" min="0" type="number" class="form-control" id="id_annual_amount"
+                          step="any" required />
+                      </div>
+                    </th>
+                    <th>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <input type="number" class="form-control" required max="100" min="0" name="ponderation" />
+                      </div>
+                    </th>
+                    <th>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        <button class="btn btn-success" type="submit">
+                          <i class="bi bi-check-lg"></i>
+                        </button>
+                      </div>
+                    </th>
+                  </form>
                 </tr>
               </thead>
               <tbody>
+                {% for item in qs_global_goal_detail %}
+                <tr>
+                  <td class="text-center">{{forloop.counter}}</td>
+                  <td>{{item.id_goal}}</td>
+                  <td>{{item.annual_amount|intcomma}}</td>
+                  <td>{{item.ponderation}}</td>
+                  <td>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      <button class="btn btn-outline-primary show-global-goal-detail" data-id="{{item.pk}}"
+                        data-goal-id="{{item.id_goal.pk}}" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="Detalle Mensual"><i class="bi bi-calendar-week"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center fs-5">No Data</td>
+                </tr>
+                {% endfor %}
               </tbody>
+              <tfoot>
+                <tr style="background-color: #017224 !important; color: white;">
+                  <td></td>
+                  <td></td>
+                  <td>{{sum_amount|intcomma}}</td>
+                  <td>{{sum_ponderation|intcomma}}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
             </table>
+
           </div>
         </div>
       </div>
@@ -87,9 +113,138 @@
 
 {% block javascript %}
 <script>
-  $(document).ready(()=>{
-    $('.select2-st-yle').select2({language: "es"});
+  $(document).ready(() => {
+    $('.select2-st-yle').select2({
+      language: "es",
+    });
+
+    function calculateMissing(){
+      let sum = 0;
+      let annualAmount = parseFloat($('#id_goal_definition_annual_amount').val().replaceAll(',', ''))
+      $('.goal_definition_month_amount').each(function(){
+        let value = $(this).val().replaceAll(',', '')
+        sum += parseFloat(value)
+      })
+      $('#id_monthly_distribution').val(sum.toLocaleString('en-US'))
+      $('#id_missing').val((annualAmount - sum).toLocaleString('en-US'))
+      $('#id_annual_amount').val((annualAmount).toLocaleString('en-US'))
+
+    }
+    $('.goal_definition_month_amount').change(()=> calculateMissing())
+
+    $('.show-global-goal-detail').click(function () {
+      let goalId = $(this).data('goal-id');
+      let monthlyDistribution = $('#id_monthly_distribution').val()
+      loaderShow(true)
+      $.ajax({
+        type: 'GET',
+        data: {
+          goalId: goalId,
+          method: 'get-global-goal-detail'
+        },
+        url: '{{request.get_full_path}}'
+      }).done((res) => {
+        let data = JSON.parse(res)
+        $('#spanModalGoalName').html(data.qs_goal.description)
+        $('#id_goal_definition_annual_amount').val(parseFloat(data.qs_global_goal.annual_amount).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-1').val(parseFloat(data.qs_global_goal.amount_january).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-2').val(parseFloat(data.qs_global_goal.amount_february).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-3').val(parseFloat(data.qs_global_goal.amount_march).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-4').val(parseFloat(data.qs_global_goal.amount_april).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-5').val(parseFloat(data.qs_global_goal.amount_may).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-6').val(parseFloat(data.qs_global_goal.amount_june).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-7').val(parseFloat(data.qs_global_goal.amount_july).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-8').val(parseFloat(data.qs_global_goal.amount_august).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-9').val(parseFloat(data.qs_global_goal.amount_september).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-10').val(parseFloat(data.qs_global_goal.amount_october).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-11').val(parseFloat(data.qs_global_goal.amount_november).toLocaleString('en-US'))
+        $('#id_goal_definition_month_amount-12').val(parseFloat(data.qs_global_goal.amount_december).toLocaleString('en-US'))
+        data.qs_goal.definition === 'A'
+          ? $('.goal_definition_month_amount, #id_goal_definition_annual_amount').attr('readonly', true)
+          : $('.goal_definition_month_amount, #id_goal_definition_annual_amount').removeAttr('readonly')
+
+        calculateMissing()
+        $('#id_goal_definition_modal').val(goalId)
+        $('#globalGoalDefinitionDetail').modal('show');
+
+        loaderShow(false)
+      })
+        .fail(handleError)
+    })
+
+    $("#id_goal").on("change", function () {
+      let goalId = $('#id_goal').val();
+      loaderShow(true)
+      $.ajax({
+        type: 'GET',
+        data: {
+          goalId: goalId,
+          method: 'get-goal-detail'
+        },
+        url: '{{request.get_full_path}}'
+      }).done((res) => {
+        let data = JSON.parse(res)
+        data.definition === 'A' && $('#id_annual_amount').attr('readonly', true)
+        data.definition === 'A' || $('#id_annual_amount').attr('readonly', false)
+        let amount = data.goal_monthly_definition
+        $('#id_annual_amount').val(amounts.annual_amount)
+        loaderShow(false)
+      })
+        .fail(handleError)
+    })
+
+    const handleError = (e) => {
+      console.log(e);
+      loaderShow(false)
+      alert("Ha ocurrido un error!")
+    }
+
+    $("#save_goal_month_definition").click(function () {
+      let goalId = $('#id_goal_definition_modal').val()
+      let annual_amount = parseFloat($('#id_goal_definition_annual_amount').val().replaceAll(',', ''))
+      let monthly_distribution = parseFloat($('#id_monthly_distribution').val().replaceAll(',', ''))
+
+        if (monthly_distribution !== annual_amount){
+          alert('Debe distribuir todo el monto anual!')
+          return 
+        }
+        if (monthly_distribution === annual_amount){
+          let data = {
+            'goal_id': goalId,
+            'amount_january': $('#id_goal_definition_month_amount-1').val().replaceAll(',', ''),
+            'amount_february': $('#id_goal_definition_month_amount-2').val().replaceAll(',', ''),
+            'amount_march': $('#id_goal_definition_month_amount-3').val().replaceAll(',', ''),
+            'amount_april': $('#id_goal_definition_month_amount-4').val().replaceAll(',', ''),
+            'amount_may': $('#id_goal_definition_month_amount-5').val().replaceAll(',', ''),
+            'amount_june': $('#id_goal_definition_month_amount-6').val().replaceAll(',', ''),
+            'amount_july': $('#id_goal_definition_month_amount-7').val().replaceAll(',', ''),
+            'amount_august': $('#id_goal_definition_month_amount-8').val().replaceAll(',', ''),
+            'amount_september': $('#id_goal_definition_month_amount-9').val().replaceAll(',', ''),
+            'amount_october': $('#id_goal_definition_month_amount-10').val().replaceAll(',', ''),
+            'amount_november': $('#id_goal_definition_month_amount-11').val().replaceAll(',', ''),
+            'amount_december': $('#id_goal_definition_month_amount-12').val().replaceAll(',', ''),
+            'annual_amount':annual_amount,
+          }   
+          let url = '{% url "goals_global_definition" qs_global_goal_period.pk %}'
+          loaderShow(true)
+          $.ajax({
+            type: 'POST',
+            data: {
+              data: JSON.stringify(data)
+            },
+            url: url
+          }).done((res) => {
+            loaderShow(false)
+            alert('Guardado con exito!')
+            location.reload()
+          })
+          .fail((err)=>{
+            let erroMessage = JSON.parse(err.responseText)
+            err.status === 400 && alert(erroMessage.message) 
+            err.status === 500 && alert('Server Internal Error!!')
+          })
+        }
+    })
   })
 </script>
-
 {% endblock javascript %}
