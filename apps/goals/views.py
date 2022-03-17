@@ -22,7 +22,7 @@ def goals_dashboard(request):
 
 
 @login_required()
-def goals_for_period(request):
+def global_goals_period(request):
     form = GoalsForm()
     if request.method == 'POST':
         form = GoalsForm(request.POST)
@@ -53,7 +53,7 @@ def goals_for_period(request):
 
 
 @login_required()
-def goals_period(request, id):
+def goals_period_edit(request, id):
     qs = get_object_or_404(GlobalGoalPeriod, pk=id)
     form = GoalsForm(instance=qs)
 
@@ -74,11 +74,11 @@ def goals_period(request, id):
                 _new.updated_by = request.user
                 _new.save()
                 messages.success(request, 'Meta editada con éxito!')
-                return redirect('goals_for_period')
+                return redirect('global_goals_period')
     ctx = {
         'form': form
     }
-    return render(request, 'goals_period/goals_period_edit.html', ctx)
+    return render(request, 'goals_definition/goals_edit.html', ctx)
 
 
 @login_required()
@@ -256,7 +256,7 @@ def goals(request):
 
 
 @login_required()
-def goal(request, id):
+def goal_edit(request, id):
     qs = get_object_or_404(Goal, pk=id)
     form = GoalsGlobalForm(instance=qs)
 
