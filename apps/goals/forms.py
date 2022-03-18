@@ -56,9 +56,11 @@ class GlobalGoalDetailForm(forms.ModelForm):
         sum_ponderation_recorded = GlobalGoalDetail.objects.filter(
             id_global_goal_period=id_global_goal_period
         ).extra({
-            'sum_ponderation': 'SUM(Ponderacion)'
+            'sum_ponderation': 'ISNULL(SUM(Ponderacion), 0)'
         }).values('sum_ponderation')
+        print(sum_ponderation_recorded)
         sum_ponderation_recorded = sum_ponderation_recorded[0].get('sum_ponderation')
+        print(ponderation)
         total = sum_ponderation_recorded + ponderation
 
         if total > 100:

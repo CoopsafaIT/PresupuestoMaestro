@@ -125,9 +125,29 @@ def goals_global_definition(request, id_global_goal_period):
             goal_id = data.pop('goal_id')
             qs = Goal.objects.filter(pk=goal_id).first()
             if qs.definition == 'A':
-                # TODO: Return un 400 con mensaje de error por que no se puede 
-                # actualizar una meta de definicion automatica
-                pass 
+                return messages.warning(
+                    request,
+                    'No se puede actualizar una meta con definicion automatica',
+                    status=400
+                )
+            else:
+                # data = result.get('data')
+                # data = data[0]
+                # _new.amount_january = data.get('Ene')
+                # _new.amount_february = data.get('Feb')
+                # _new.amount_march = data.get('Mar')
+                # _new.amount_april = data.get('Apr')
+                # _new.amount_may = data.get('May')
+                # _new.amount_june = data.get('jun')
+                # _new.amount_july = data.get('Jul')
+                # _new.amount_august = data.get('Agu')
+                # _new.amount_september = data.get('Sep')
+                # _new.amount_october = data.get('Oct')
+                # _new.amount_november = data.get('Nov')
+                # _new.amount_december = data.get('Dec')
+                # _new.annual_amount = data.get('annual_amount')
+                pass
+
             result = _validate(data)
 
             if result.get('status') == 'ok':
@@ -152,8 +172,11 @@ def goals_global_definition(request, id_global_goal_period):
                     )
                     result = execute_sql_query(query)
                     if result.get('status') != 'ok':
+                        ctx = {
+                            'message': 'No se pudo obtener el monto de la meta'
+                        }
                         return HttpResponse(
-                            json.dumps({}, cls=DjangoJSONEncoder), status=500
+                            json.dumps(ctx, cls=DjangoJSONEncoder), status=500
                         )
                     data = result.get('data')
                     data = data[0]
@@ -193,7 +216,12 @@ def goals_global_definition(request, id_global_goal_period):
                 return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
 
     elif request.method == 'POST':
-        form = GlobalGoalDetailForm(request.POST)
+        print(request.POST)
+        post = request.POST.copy()
+        post['annual_amount'] = post.get('annual_amount').replace(',', '')
+        print(post)
+
+        form = GlobalGoalDetailForm(post)
         if not form.is_valid():
             messages.warning(
                 request, f'formulario no valido: {form.errors.as_text()}'
@@ -206,11 +234,29 @@ def goals_global_definition(request, id_global_goal_period):
 
             definition = _new.id_goal.definition
             if definition == 'A':
-                # TODO: Consumir SP y asignar monto mensuales como el total
-                # TODO: Si SP devuelve error, agregado un mensaje message.warning
-                # indicando el problema.
-                # TODO: _new.id_goal.query
-                pass
+                query = f'EXEC {_new.id_goal.query}'
+                query = query.replace(
+                    '__periodId__', f'{qs_global_goal_period.period_id.pk}'
+                )
+                result = execute_sql_query(query)
+                if result.get('status') != 'ok':
+                    messages.warning(request, '')
+                else:
+                    data = result.get('data')
+                    data = data[0]
+                    _new.amount_january = data.get('Ene')
+                    _new.amount_february = data.get('Feb')
+                    _new.amount_march = data.get('Mar')
+                    _new.amount_april = data.get('Apr')
+                    _new.amount_may = data.get('May')
+                    _new.amount_june = data.get('jun')
+                    _new.amount_july = data.get('Jul')
+                    _new.amount_august = data.get('Agu')
+                    _new.amount_september = data.get('Sep')
+                    _new.amount_october = data.get('Oct')
+                    _new.amount_november = data.get('Nov')
+                    _new.amount_december = data.get('Dec')
+                    _new.annual_amount = data.get('Total')
             messages.success(request, 'Meta agregada con éxito')
 
     qs_goals = Goal.objects.all().order_by('description')

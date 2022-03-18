@@ -51,7 +51,7 @@
                     </th>
                     <th>
                       <div class="d-grid gap-2 d-flex justify-content-center">
-                        <input name="annual_amount" min="0" type="number" class="form-control" id="id_annual_amount"
+                        <input name="annual_amount" min="0" type="text" class="form-control" id="id_annual_amount"
                           step="any" required />
                       </div>
                     </th>
@@ -128,7 +128,6 @@
       $('#id_monthly_distribution').val(sum.toLocaleString('en-US'))
       $('#id_missing').val((annualAmount - sum).toLocaleString('en-US'))
       $('#id_annual_amount').val((annualAmount).toLocaleString('en-US'))
-
     }
     $('.goal_definition_month_amount').change(()=> calculateMissing())
 
@@ -162,11 +161,11 @@
         data.qs_goal.definition === 'A'
           ? $('.goal_definition_month_amount, #id_goal_definition_annual_amount').attr('readonly', true)
           : $('.goal_definition_month_amount, #id_goal_definition_annual_amount').removeAttr('readonly')
-
+        console.log(data)
         calculateMissing()
         $('#id_goal_definition_modal').val(goalId)
         $('#globalGoalDefinitionDetail').modal('show');
-
+        
         loaderShow(false)
       })
         .fail(handleError)
@@ -181,20 +180,20 @@
           goalId: goalId,
           method: 'get-goal-detail'
         },
-        url: '{{request.get_full_path}}'
+        url: '{{request.get_full_path}}',
+        
       }).done((res) => {
         let data = JSON.parse(res)
         data.definition === 'A' && $('#id_annual_amount').attr('readonly', true)
         data.definition === 'A' || $('#id_annual_amount').attr('readonly', false)
         let amount = data.goal_monthly_definition
-        $('#id_annual_amount').val(amount.annual_amount)
+        $('#id_annual_amount').val(parseFloat(amount.total).toLocaleString('en-US'))
         loaderShow(false)
       })
         .fail(handleError)
     })
 
     const handleError = (e) => {
-      console.log(e);
       loaderShow(false)
       alert("Ha ocurrido un error!")
     }
