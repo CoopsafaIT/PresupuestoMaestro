@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 
+from utils.sql import execute_sql_query
 from utils.pagination import pagination
 from .models import (
     GlobalGoalPeriod, GlobalGoalDetail, Goal
@@ -122,7 +123,11 @@ def goals_global_definition(request, id_global_goal_period):
         if request.method == 'POST':
             data = json.loads(request.POST.get('data'))
             goal_id = data.pop('goal_id')
-
+            qs = Goal.objects.filter(pk=goal_id).first()
+            if qs.definition == 'A':
+                # TODO: Return un 400 con mensaje de error por que no se puede 
+                # actualizar una meta de definicion automatica
+                pass 
             result = _validate(data)
 
             if result.get('status') == 'ok':
@@ -131,35 +136,33 @@ def goals_global_definition(request, id_global_goal_period):
                 ).update(**data)
                 return HttpResponse(json.dumps({}, cls=DjangoJSONEncoder))
             else:
-                return HttpResponse(json.dumps(
-                    {'message': result.get('message')},
-                    cls=DjangoJSONEncoder), status=400
+                return HttpResponse(
+                    json.dumps({'message': result.get('message')}, cls=DjangoJSONEncoder),
+                    status=400
                 )
-            # Validar que suma de meses sea igual a monto anual
 
         elif request.method == 'GET':
             goal_id = request.GET.get('goalId')
             if request.GET.get('method') == 'get-goal-detail':
                 qs = Goal.objects.filter(pk=goal_id).first()
                 if qs.definition == "A":
+                    query = f'EXEC {qs.query}'
+                    query = query.replace(
+                        '__periodId__', f'{qs_global_goal_period.period_id.pk}'
+                    )
+                    result = execute_sql_query(query)
+                    if result.get('status') != 'ok':
+                        return HttpResponse(
+                            json.dumps({}, cls=DjangoJSONEncoder), status=500
+                        )
+                    data = result.get('data')
+                    data = data[0]
                     goal_monthly_definition = {
-                        'annual_amount': 10000,
-                        'ene': 10000 / 12,
-                        'feb': 10000 / 12,
-                        'mar': 10000 / 12,
-                        'abr': 10000 / 12,
-                        'may': 10000 / 12,
-                        'jun': 10000 / 12,
-                        'jul': 10000 / 12,
-                        'ago': 10000 / 12,
-                        'sep': 10000 / 12,
-                        'oct': 10000 / 12,
-                        'nov': 10000 / 12,
-                        'dic': 10000 / 12,
+                        key.lower(): value for key, value in data.items()
                     }
                 else:
                     goal_monthly_definition = {
-                        'annual_amount': 0,
+                        'total': 0,
                         'ene': 0, 'feb': 0, 'mar': 0, 'abr': 0,
                         'may': 0, 'jun': 0, 'jul': 0, 'ago': 0,
                         'sep': 0, 'oct': 0, 'nov': 0, 'dic': 0,
@@ -200,6 +203,14 @@ def goals_global_definition(request, id_global_goal_period):
             _new.created_by = request.user
             _new.updated_by = request.user
             _new.save()
+
+            definition = _new.id_goal.definition
+            if definition == 'A':
+                # TODO: Consumir SP y asignar monto mensuales como el total
+                # TODO: Si SP devuelve error, agregado un mensaje message.warning
+                # indicando el problema.
+                # TODO: _new.id_goal.query
+                pass
             messages.success(request, 'Meta agregada con éxito')
 
     qs_goals = Goal.objects.all().order_by('description')

@@ -187,7 +187,7 @@
         data.definition === 'A' && $('#id_annual_amount').attr('readonly', true)
         data.definition === 'A' || $('#id_annual_amount').attr('readonly', false)
         let amount = data.goal_monthly_definition
-        $('#id_annual_amount').val(amounts.annual_amount)
+        $('#id_annual_amount').val(amount.annual_amount)
         loaderShow(false)
       })
         .fail(handleError)
