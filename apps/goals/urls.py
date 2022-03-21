@@ -10,7 +10,7 @@ from apps.goals.views import (
 
 
 urlpatterns = [
-    path('goal/dashboard', goals_dashboard, name="goals_dashboard"),
+    path('dashboard/', goals_dashboard, name="goals_dashboard"),
     path('global/period/', global_goals_period, name="global_goals_period"),
     path('period/edit/<int:id>/', goals_period_edit, name="goals_period_edit"),
     path(

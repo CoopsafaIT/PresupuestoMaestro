@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 # from django.db.models.constraints import UniqueConstraint
 
-from apps.main.models import Periodo
+from apps.main.models import Periodo, Centroscosto
 from apps.master_budget.models import AuditDataMixin, AmountMonthlyMixin
 from utils.constants import TYPE_GOALS, DEFINITION_EXECUTION_GOALS
 
@@ -138,10 +138,32 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
         unique_together = ('id_global_goal_period', 'id_goal')
 
 
+@receiver(post_save, sender=GlobalGoalDetail)
+def post_save_global_goal(sender, instance, created, **kwargs):
+    if created:
+        cecos = Centroscosto.objects.exclude(agencia__in=['1', '0001'])
+        for item in cecos:
+            SubsidiaryGoalDetail.objects.create(
+                id_cost_center=item, id_global_goal_detail=instance,
+                id_global_goal_period=instance.id_global_goal_period,
+                id_goal=instance.id_goal, annual_amount_subsidiary=0,
+                ponderation=instance.ponderation
+            )
+
+
 class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     id_global_goal_period = models.ForeignKey(
         GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="IdMetasGlobalesPeriodo"
+    )
+    id_global_goal_detail = models.ForeignKey(
+        GlobalGoalDetail, models.DO_NOTHING, null=True, db_column="IdMetaGlobal"
+    )
+    id_goal = models.ForeignKey(
+        Goal, models.DO_NOTHING, null=True, db_column="IdMetas"
+    )
+    id_cost_center = models.ForeignKey(
+        Centroscosto, models.DO_NOTHING, null=True, db_column="IdFilial"
     )
     annual_amount_subsidiary = models.DecimalField(
         db_column="MontoAnualFilial", null=True, blank=True,
@@ -176,3 +198,4 @@ class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
     class Meta:
         default_permissions = []
         db_table = "MetasFilialDetalle"
+        unique_together = ('id_global_goal_period', 'id_goal', 'id_cost_center')

@@ -125,11 +125,12 @@ def goals_global_definition(request, id_global_goal_period):
             goal_id = data.pop('goal_id')
             qs = Goal.objects.filter(pk=goal_id).first()
             if qs.definition == 'A':
-                # TODO: Return un 400 con mensaje de error por que no se puede 
-                # actualizar una meta de definicion automatica
-                pass 
-            result = _validate(data)
+                ctx = {
+                    'message': 'No se puede actualizar una meta con definicion automatica'
+                }
+                return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder), status=400)
 
+            result = _validate(data)
             if result.get('status') == 'ok':
                 GlobalGoalDetail.objects.filter(
                     id_goal=goal_id, id_global_goal_period=qs_global_goal_period.pk
@@ -152,8 +153,11 @@ def goals_global_definition(request, id_global_goal_period):
                     )
                     result = execute_sql_query(query)
                     if result.get('status') != 'ok':
+                        ctx = {
+                            'message': 'No se pudo obtener el monto de la meta'
+                        }
                         return HttpResponse(
-                            json.dumps({}, cls=DjangoJSONEncoder), status=500
+                            json.dumps(ctx, cls=DjangoJSONEncoder), status=500
                         )
                     data = result.get('data')
                     data = data[0]
@@ -193,7 +197,10 @@ def goals_global_definition(request, id_global_goal_period):
                 return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
 
     elif request.method == 'POST':
-        form = GlobalGoalDetailForm(request.POST)
+        post = request.POST.copy()
+        post['annual_amount'] = post.get('annual_amount').replace(',', '')
+
+        form = GlobalGoalDetailForm(post)
         if not form.is_valid():
             messages.warning(
                 request, f'formulario no valido: {form.errors.as_text()}'
@@ -206,17 +213,40 @@ def goals_global_definition(request, id_global_goal_period):
 
             definition = _new.id_goal.definition
             if definition == 'A':
-                # TODO: Consumir SP y asignar monto mensuales como el total
-                # TODO: Si SP devuelve error, agregado un mensaje message.warning
-                # indicando el problema.
-                # TODO: _new.id_goal.query
-                pass
+                query = f'EXEC {_new.id_goal.query}'
+                query = query.replace(
+                    '__periodId__', f'{qs_global_goal_period.period_id.pk}'
+                )
+                result = execute_sql_query(query)
+                if result.get('status') != 'ok':
+                    messages.warning(
+                        request, 'No se pudo obtener montos mensuales de Metas'
+                    )
+                else:
+                    data = result.get('data')
+                    data = data[0]
+                    _new.amount_january = data.get('Ene')
+                    _new.amount_february = data.get('Feb')
+                    _new.amount_march = data.get('Mar')
+                    _new.amount_april = data.get('Abr')
+                    _new.amount_may = data.get('May')
+                    _new.amount_june = data.get('Jun')
+                    _new.amount_july = data.get('Jul')
+                    _new.amount_august = data.get('Ago')
+                    _new.amount_september = data.get('Sep')
+                    _new.amount_october = data.get('Oct')
+                    _new.amount_november = data.get('Nov')
+                    _new.amount_december = data.get('Dic')
+                    _new.annual_amount = data.get('Total')
+                    _new.save()
+
             messages.success(request, 'Meta agregada con éxito')
 
-    qs_goals = Goal.objects.all().order_by('description')
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(
         id_global_goal_period=qs_global_goal_period.pk
     )
+    exclude = qs_global_goal_detail.values_list('id_goal', flat=True)
+    qs_goals = Goal.objects.exclude(pk__in=exclude).order_by('description')
     qs_sum = qs_global_goal_detail.extra({
         'sum_amount': 'SUM(MontoAnual)',
         'sum_ponderation': 'SUM(Ponderacion)'
