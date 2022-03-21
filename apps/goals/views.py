@@ -125,31 +125,12 @@ def goals_global_definition(request, id_global_goal_period):
             goal_id = data.pop('goal_id')
             qs = Goal.objects.filter(pk=goal_id).first()
             if qs.definition == 'A':
-                return messages.warning(
-                    request,
-                    'No se puede actualizar una meta con definicion automatica',
-                    status=400
-                )
-            else:
-                # data = result.get('data')
-                # data = data[0]
-                # _new.amount_january = data.get('Ene')
-                # _new.amount_february = data.get('Feb')
-                # _new.amount_march = data.get('Mar')
-                # _new.amount_april = data.get('Apr')
-                # _new.amount_may = data.get('May')
-                # _new.amount_june = data.get('jun')
-                # _new.amount_july = data.get('Jul')
-                # _new.amount_august = data.get('Agu')
-                # _new.amount_september = data.get('Sep')
-                # _new.amount_october = data.get('Oct')
-                # _new.amount_november = data.get('Nov')
-                # _new.amount_december = data.get('Dec')
-                # _new.annual_amount = data.get('annual_amount')
-                pass
+                ctx = {
+                    'message': 'No se puede actualizar una meta con definicion automatica'
+                }
+                return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder), status=400)
 
             result = _validate(data)
-
             if result.get('status') == 'ok':
                 GlobalGoalDetail.objects.filter(
                     id_goal=goal_id, id_global_goal_period=qs_global_goal_period.pk
