@@ -216,10 +216,8 @@ def goals_global_definition(request, id_global_goal_period):
                 return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
 
     elif request.method == 'POST':
-        print(request.POST)
         post = request.POST.copy()
         post['annual_amount'] = post.get('annual_amount').replace(',', '')
-        print(post)
 
         form = GlobalGoalDetailForm(post)
         if not form.is_valid():
@@ -240,29 +238,34 @@ def goals_global_definition(request, id_global_goal_period):
                 )
                 result = execute_sql_query(query)
                 if result.get('status') != 'ok':
-                    messages.warning(request, '')
+                    messages.warning(
+                        request, 'No se pudo obtener montos mensuales de Metas'
+                    )
                 else:
                     data = result.get('data')
                     data = data[0]
                     _new.amount_january = data.get('Ene')
                     _new.amount_february = data.get('Feb')
                     _new.amount_march = data.get('Mar')
-                    _new.amount_april = data.get('Apr')
+                    _new.amount_april = data.get('Abr')
                     _new.amount_may = data.get('May')
-                    _new.amount_june = data.get('jun')
+                    _new.amount_june = data.get('Jun')
                     _new.amount_july = data.get('Jul')
-                    _new.amount_august = data.get('Agu')
+                    _new.amount_august = data.get('Ago')
                     _new.amount_september = data.get('Sep')
                     _new.amount_october = data.get('Oct')
                     _new.amount_november = data.get('Nov')
-                    _new.amount_december = data.get('Dec')
+                    _new.amount_december = data.get('Dic')
                     _new.annual_amount = data.get('Total')
+                    _new.save()
+
             messages.success(request, 'Meta agregada con éxito')
 
-    qs_goals = Goal.objects.all().order_by('description')
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(
         id_global_goal_period=qs_global_goal_period.pk
     )
+    exclude = qs_global_goal_detail.values_list('id_goal', flat=True)
+    qs_goals = Goal.objects.exclude(pk__in=exclude).order_by('description')
     qs_sum = qs_global_goal_detail.extra({
         'sum_amount': 'SUM(MontoAnual)',
         'sum_ponderation': 'SUM(Ponderacion)'
