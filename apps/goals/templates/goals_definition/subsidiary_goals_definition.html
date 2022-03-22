@@ -1,0 +1,342 @@
+{% extends 'goals/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %} Metas de Filiales por Periodo {% endblock title %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active text-white" aria-current="page">/ Definición de metas por Filiales. Periodo
+  {{qs_global_detail.id_global_goal_period.period_id}} </li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'goals_definition/subsidiary_goals_all_detail_modal.html' %}
+{% include 'goals_definition/subsidiary_goals_assign_modal.html' %}
+{% include 'goals_definition/subsidiary_excel_modal.html' %}
+<div class="container-fluid pt-4">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-12">
+          <h5 class="card-title fw-light fs-5">
+            Definición de Metas por Filiales: <span class="fw-bold">{{qs_global_detail.id_goal.description}}</span>
+            <span class="text-success"> | </span>
+            Monto Anual: <span class="fw-bold show-monthly-detail"
+              style="cursor: pointer;">{{qs_global_detail.annual_amount|intcomma}}</span>
+          </h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body container-table-monthly-detail" id="div-container-table-monthly-detail">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-stripped table-bordered table-sm"
+              style="font-size: 0.7rem !important;">
+              <thead>
+                <tr>
+                  <th>Ene</th>
+                  <th>Feb</th>
+                  <th>Mar</th>
+                  <th>Abr</th>
+                  <th>May</th>
+                  <th>Jun</th>
+                  <th>Jul</th>
+                  <th>Ago</th>
+                  <th>Sep</th>
+                  <th>Oct</th>
+                  <th>Nov</th>
+                  <th>Dic</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{qs_global_detail.amount_january|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_february|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_march|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_april|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_may|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_june|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_july|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_august|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_september|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_october|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_november|intcomma}}</td>
+                  <td>{{qs_global_detail.amount_december|intcomma}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <hr />
+    </div>
+
+    <div class="card-body">
+      <div class="row p-2 bg-secondary mb-3" style="--bs-bg-opacity: .3;">
+        <div class="col-md-2 offset-md-2 d-flex justify-content-end border-end border-dark">
+          <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i> Excel</button>
+        </div>
+        <div class="col-md-8">
+          {% include 'goals_definition/subsidiary_goals_search_form.html' %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mb-4" style="max-height: 400px!important;overflow-y: scroll;">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered table-sm" style="font-size: 0.9rem !important;">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Filial</th>
+                  <th>Total Anual</th>
+                  <th>Ene</th>
+                  <th>Feb</th>
+                  <th>Mar</th>
+                  <th>Abr</th>
+                  <th>May</th>
+                  <th>Jun</th>
+                  <th>Jul</th>
+                  <th>Ago</th>
+                  <th>Sep</th>
+                  <th>Oct</th>
+                  <th>Nov</th>
+                  <th>Dic</th>
+                  <th>Ponderación</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in qs_subsidiary_list %}
+                <tr
+                  class="{% if item.id_cost_center.code_zone == 0 %} table-danger {% elif item.id_cost_center.code_zone|divisibleby:2 %} table-success {% else %} table-secondary {% endif %}">
+                  <td class="cu-pointer show-subsidiary-goals-detail"
+                    data-url="{% url 'subsidiary_goals_detail' item.id_cost_center.pk item.id_global_goal_period.pk %}"
+                    data-name="{{item.id_cost_center}}">{{forloop.counter}}</td>
+
+                  <td class="cu-pointer show-subsidiary-asigned" data-name="{{item.id_cost_center}}"
+                    data-pk="{{item.pk}}" data-january="{{item.amount_january|intcomma}}"
+                    data-february="{{item.amount_february|intcomma}}" data-march="{{item.amount_march|intcomma}}"
+                    data-april="{{item.amount_april|intcomma}}" data-may="{{item.amount_may|intcomma}}"
+                    data-june="{{item.amount_june|intcomma}}" data-july="{{item.amount_july|intcomma}}"
+                    data-august="{{item.amount_august|intcomma}}" data-september="{{item.amount_september|intcomma}}"
+                    data-october="{{item.amount_october|intcomma}}" data-november="{{item.amount_november|intcomma}}"
+                    data-december="{{item.amount_december|intcomma}}" data-total="{{item.annual_amount_subsidiary}}"
+                    data-ponderation="{{item.ponderation}}">
+                    {{item.id_cost_center.zone}} <span class="text-warning"> | </span> {{item.id_cost_center}}
+                  </td>
+
+                  <td>{{item.annual_amount_subsidiary|intcomma}}</td>
+                  <td>{{item.amount_january|intcomma}}</td>
+                  <td>{{item.amount_february|intcomma}}</td>
+                  <td>{{item.amount_march|intcomma}}</td>
+                  <td>{{item.amount_april|intcomma}}</td>
+                  <td>{{item.amount_may|intcomma}}</td>
+                  <td>{{item.amount_june|intcomma}}</td>
+                  <td>{{item.amount_july|intcomma}}</td>
+                  <td>{{item.amount_august|intcomma}}</td>
+                  <td>{{item.amount_september|intcomma}}</td>
+                  <td>{{item.amount_october|intcomma}}</td>
+                  <td>{{item.amount_november|intcomma}}</td>
+                  <td>{{item.amount_december|intcomma}}</td>
+                  <td>{{item.ponderation|default:'0'}}</td>
+                </tr>
+                {% endfor %}
+
+              </tbody>
+              <tfoot>
+                <tr class="table-danger">
+                  <th></th>
+                  <th>Totales</th>
+                  <th>{{qs_sum.sum_total|intcomma}}</th>
+                  <th>{{qs_sum.sum_ene|intcomma}}</th>
+                  <th>{{qs_sum.sum_feb|intcomma}}</th>
+                  <th>{{qs_sum.sum_mar|intcomma}}</th>
+                  <th>{{qs_sum.sum_abr|intcomma}}</th>
+                  <th>{{qs_sum.sum_may|intcomma}}</th>
+                  <th>{{qs_sum.sum_jul|intcomma}}</th>
+                  <th>{{qs_sum.sum_jun|intcomma}}</th>
+                  <th>{{qs_sum.sum_ago|intcomma}}</th>
+                  <th>{{qs_sum.sum_sep|intcomma}}</th>
+                  <th>{{qs_sum.sum_oct|intcomma}}</th>
+                  <th>{{qs_sum.sum_nov|intcomma}}</th>
+                  <th>{{qs_sum.sum_dic|intcomma}}</th>
+                  <th></th>
+                </tr>
+                <tr>
+                  <th>#</th>
+                  <th>Filial</th>
+                  <th>Total Anual</th>
+                  <th>Ene</th>
+                  <th>Feb</th>
+                  <th>Mar</th>
+                  <th>Abr</th>
+                  <th>May</th>
+                  <th>Jun</th>
+                  <th>Jul</th>
+                  <th>Ago</th>
+                  <th>Sep</th>
+                  <th>Oct</th>
+                  <th>Nov</th>
+                  <th>Dic</th>
+                  <th>Ponderación</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).ready(() => {
+    const getArray = () => {
+      let StringArray = `${ $('#id_code_zone').data('requested') }`
+      let numbers = '',
+        temp = 0
+      for (let i = 0; i < StringArray.length; i++) {
+        temp = parseInt(StringArray[i])
+        numbers += !!temp ? temp : ''
+      }
+      return Array.from(numbers)
+    }
+
+    getArray().forEach(el => {
+      $(`#id_code_zone option[value= '${el}']`).prop('selected', true).trigger("change")
+      $('#formGetExcelFile').append(`<input type="hidden" name="code_zone" value="${el}">`)
+    })
+
+
+    $('.show-monthly-detail').click(() => {
+      $('#div-container-table-monthly-detail').toggleClass("container-table-monthly-detail")
+    })
+
+    $('#btnExcelModal').click(function(){
+      $('#ExcelSubsidiaryModal').modal('show');
+    })
+  })
+</script>
+
+<script>
+  $(document).ready(() => {
+    $('.show-subsidiary-goals-detail').click(function () {
+      console.log('clicked!');
+      let url = $(this).data('url');
+      let name = $(this).data('name');
+
+      loaderShow(true)
+      $.ajax({
+          type: 'GET',
+          data: {},
+          url: url
+        })
+        .done((res) => {
+          let {
+            qs,
+            qs_sum
+          } = JSON.parse(res)
+          loaderShow(false)
+          $('#spanModalSubsidiaryName').html(name);
+          $('#tblSubsidiaryGoalsAllDetail').find('tbody').empty()
+          qs.forEach(el => {
+            $('#tblSubsidiaryGoalsAllDetail').find('tbody').append(`
+              <tr>
+                <td>${el.id_goal__description}</td>
+                <td>${ parseFloat(el.annual_amount_subsidiary).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_january).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_february).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_march).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_april).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_may).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_june).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_july).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_august).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_september).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_october).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_november).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(el.amount_december).toLocaleString('en-US') }</td>
+                <td>${el.ponderation}</td>
+              </tr>
+            `)
+          })
+          $('#SubsidiaryGoalsAllDetailModal').modal('show');
+        })
+        .fail(handleError)
+    })
+
+    const handleError = (e) => {
+      loaderShow(false)
+      alert("Ha ocurrido un error!")
+    }
+  })
+</script>
+<script>
+  $(document).ready(() => {
+    $('.show-subsidiary-asigned').click(function () {
+      $('#spanModalSubsidiaryGoalAssignName').html($(this).data('name'));
+      $('#id_goal_definition_annual_amount').val($(this).data('total'));
+      $('#id_goal_definition_month_amount-1').val($(this).data('january'));
+      $('#id_goal_definition_month_amount-2').val($(this).data('february'));
+      $('#id_goal_definition_month_amount-3').val($(this).data('march'));
+      $('#id_goal_definition_month_amount-4').val($(this).data('april'));
+      $('#id_goal_definition_month_amount-5').val($(this).data('may'));
+      $('#id_goal_definition_month_amount-6').val($(this).data('june'));
+      $('#id_goal_definition_month_amount-7').val($(this).data('july'));
+      $('#id_goal_definition_month_amount-8').val($(this).data('august'));
+      $('#id_goal_definition_month_amount-9').val($(this).data('september'));
+      $('#id_goal_definition_month_amount-10').val($(this).data('october'));
+      $('#id_goal_definition_month_amount-11').val($(this).data('november'));
+      $('#id_goal_definition_month_amount-12').val($(this).data('december'));
+      $('#subsidiaryGoalPk').val($(this).data('pk'))
+      $('#SubsidiaryGoalsAssignModal').modal('show');
+    });
+
+    $('#save_goal_month_definition').click(function () {
+      let data = {
+        'id': $('#subsidiaryGoalPk').val(),
+        'amount_january': $('#id_goal_definition_month_amount-1').val().replaceAll(',', ''),
+        'amount_february': $('#id_goal_definition_month_amount-2').val().replaceAll(',', ''),
+        'amount_march': $('#id_goal_definition_month_amount-3').val().replaceAll(',', ''),
+        'amount_april': $('#id_goal_definition_month_amount-4').val().replaceAll(',', ''),
+        'amount_may': $('#id_goal_definition_month_amount-5').val().replaceAll(',', ''),
+        'amount_june': $('#id_goal_definition_month_amount-6').val().replaceAll(',', ''),
+        'amount_july': $('#id_goal_definition_month_amount-7').val().replaceAll(',', ''),
+        'amount_august': $('#id_goal_definition_month_amount-8').val().replaceAll(',', ''),
+        'amount_september': $('#id_goal_definition_month_amount-9').val().replaceAll(',', ''),
+        'amount_october': $('#id_goal_definition_month_amount-10').val().replaceAll(',', ''),
+        'amount_november': $('#id_goal_definition_month_amount-11').val().replaceAll(',', ''),
+        'amount_december': $('#id_goal_definition_month_amount-12').val().replaceAll(',', ''),
+        'annual_amount_subsidiary': $('#id_goal_definition_annual_amount').val().replaceAll(',', '')
+      }
+
+      loaderShow(true)
+      $.ajax({
+          type: 'POST',
+          data: {
+            data: JSON.stringify(data)
+          },
+          url: '{{request.get_full_path}}'
+        })
+        .done((res) => {
+          loaderShow(false)
+          alert('Guardado con exito!')
+          location.reload()
+        })
+        .fail((err) => {
+          let erroMessage = JSON.parse(err.responseText)
+          err.status === 400 && alert(erroMessage.message)
+          err.status === 500 && alert('Server Internal Error!!')
+          loaderShow(false)
+        })
+    })
+
+    const handleError = (e) => {
+      loaderShow(false)
+      alert("Ha ocurrido un error!")
+    }
+  })
+</script>
+{% endblock javascript %}

@@ -1,0 +1,51 @@
+{% load static %}
+{% load humanize %}
+<div class="modal fade" id="SubsidiaryGoalsAllDetailModal"
+  tabindex="-1" aria-labelledby="SubsidiaryGoalsAllDetailModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-light fs-5">
+          Detalle de Metas Filial: <span id="spanModalSubsidiaryName" class="fw-bold"></span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered" id="tblSubsidiaryGoalsAllDetail" style="font-size: 0.9rem !important;">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Meta</th>
+                      <th class="text-center">Total</th>
+                      <th class="text-center">Ene</th>
+                      <th class="text-center">Feb</th>
+                      <th class="text-center">Mar</th>
+                      <th class="text-center">Abr</th>
+                      <th class="text-center">May</th>
+                      <th class="text-center">Jun</th>
+                      <th class="text-center">Jul</th>
+                      <th class="text-center">Ago</th>
+                      <th class="text-center">Sep</th>
+                      <th class="text-center">Oct</th>
+                      <th class="text-center">Nov</th>
+                      <th class="text-center">Dic</th>
+                      <th class="text-center">Ponderación</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
