@@ -1,9 +1,10 @@
 from datetime import datetime as dt
 from django.http import HttpResponse
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils.exceptions import InvalidFileException
 
 
-def generate_subsidiary_goal_excel_file(data):
+def generate_subsidiary_goal_excel_file(data, qs):
     wb = Workbook()
     ws = wb.active
     ws['A1'] = 'Identificador'
@@ -23,6 +24,7 @@ def generate_subsidiary_goal_excel_file(data):
     ws['O1'] = 'Nov'
     ws['P1'] = 'Dic'
     ws['Q1'] = 'Ponderación'
+
     x = 2
     for item in data:
         ws[f'A{x}'].value = item.pk
@@ -51,3 +53,20 @@ def generate_subsidiary_goal_excel_file(data):
     response['Content-Disposition'] = f'attachment; filename={file_name}.xlsx'
     wb.save(response)
     return response
+
+
+def load_excel_file(file):
+    try:
+        book = load_workbook(file, data_only=True)
+        sheet_list = book.sheetnames
+        first_sheet = book.get_sheet_by_name(sheet_list[0])
+        number_rows = first_sheet.max_row
+        return {
+            'status': 'ok',
+            'sheet': first_sheet,
+            'number_rows': number_rows
+        }
+    except InvalidFileException as e:
+        raise InvalidFileException(
+            f'Error loading excel file: {e.__str__()}'
+        )

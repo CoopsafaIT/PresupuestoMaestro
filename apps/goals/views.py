@@ -9,7 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from utils.sql import execute_sql_query
 from utils.pagination import pagination
-from .reports import generate_subsidiary_goal_excel_file
+from .reports import generate_subsidiary_goal_excel_file, load_excel_file
 
 from .models import (
     GlobalGoalPeriod, GlobalGoalDetail, Goal,
@@ -461,7 +461,7 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
         total = dc(dict_data.pop('annual_amount_subsidiary'))
         values = [dc(month) for month in list(dict_data.values())]
         sum_months = sum(values)
-        if not total == sum_months:
+        if not total == round(sum_months):
             return {
                 'status': 'err',
                 'msg': f'Suma de meses {sum_months} diferente a total: {total}'
@@ -491,7 +491,47 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
     elif request.method == 'GET':
         if request.GET.get('method') == 'excel':
             qs_data = _get_qs_subsidiary_list()
-            return generate_subsidiary_goal_excel_file(qs_data)
+            return generate_subsidiary_goal_excel_file(qs_data, qs_global_detail)
+
+    elif request.method == 'POST':
+        if request.POST.get('method') == 'load-excel':
+            result = load_excel_file(request.FILES['excel-file'])
+            sheet = result.get('sheet')
+            number_rows = result.get('number_rows')
+            counter = 2
+            for item in range(1, number_rows):
+                id = sheet[f'A{counter}'].value
+                ponderation = sheet[f'Q{counter}'].value
+                data = {
+                    'annual_amount_subsidiary':  sheet[f'D{counter}'].value,
+                    'amount_january': sheet[f'E{counter}'].value,
+                    'amount_february': sheet[f'F{counter}'].value,
+                    'amount_march': sheet[f'G{counter}'].value,
+                    'amount_april': sheet[f'H{counter}'].value,
+                    'amount_may': sheet[f'I{counter}'].value,
+                    'amount_june': sheet[f'J{counter}'].value,
+                    'amount_july': sheet[f'K{counter}'].value,
+                    'amount_august': sheet[f'L{counter}'].value,
+                    'amount_september': sheet[f'M{counter}'].value,
+                    'amount_october': sheet[f'N{counter}'].value,
+                    'amount_november': sheet[f'O{counter}'].value,
+                    'amount_december': sheet[f'P{counter}'].value
+                }
+                result_validate = _validate_subsidiary_data(id=id, dict_data=data.copy())
+                result_calculate = _calculate_new_amounts(id, data)
+                if result_validate.get('status') != 'ok':
+                    messages.error(
+                        request, f'Error. Identificador: {id} {result_validate.get("msg")}'
+                    )
+                elif result_calculate.get('status') != 'ok':
+                    messages.error(
+                        request, f'Error. Identificador: {id} {result_validate.get("msg")}'
+                    )
+                else:
+                    SubsidiaryGoalDetail.objects.filter(pk=id).update(
+                        ponderation=ponderation, **data
+                    )
+                counter = counter + 1
 
     query_result = execute_sql_query(query)
     if query_result.get('status') == 'ok':
@@ -529,13 +569,14 @@ def subsidiary_goals_detail(request, id_cost_center, id_global_goal_period):
         'sum_jun': 'SUM(MontoJul)', 'sum_ago': 'SUM(MontoAgo)',
         'sum_sep': 'SUM(MontoSep)', 'sum_oct': 'SUM(MontoOct)',
         'sum_nov': 'SUM(MontoNov)', 'sum_dic': 'SUM(MontoDic)',
+        'sum_ponderation': 'SUM(Ponderacion)'
     }).filter(
         id_cost_center=id_cost_center, id_global_goal_period=id_global_goal_period
     ).values(
         'sum_total', 'sum_ene', 'sum_feb', 'sum_mar',
         'sum_abr', 'sum_may', 'sum_jul',
         'sum_jun', 'sum_ago', 'sum_sep',
-        'sum_oct', 'sum_nov', 'sum_dic'
+        'sum_oct', 'sum_nov', 'sum_dic', 'sum_ponderation'
     ))
 
     ctx = {

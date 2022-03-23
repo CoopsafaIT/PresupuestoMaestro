@@ -83,106 +83,104 @@
       </div>
       <div class="row">
         <div class="col-md-12 mb-4" style="max-height: 400px!important;overflow-y: scroll;">
-          <div class="table-responsive">
-            <table class="table table-hover table-bordered table-sm" style="font-size: 0.9rem !important;">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Filial</th>
-                  <th>Total Anual</th>
-                  <th>Ene</th>
-                  <th>Feb</th>
-                  <th>Mar</th>
-                  <th>Abr</th>
-                  <th>May</th>
-                  <th>Jun</th>
-                  <th>Jul</th>
-                  <th>Ago</th>
-                  <th>Sep</th>
-                  <th>Oct</th>
-                  <th>Nov</th>
-                  <th>Dic</th>
-                  <th>Ponderación</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for item in qs_subsidiary_list %}
-                <tr
-                  class="{% if item.id_cost_center.code_zone == 0 %} table-danger {% elif item.id_cost_center.code_zone|divisibleby:2 %} table-success {% else %} table-secondary {% endif %}">
-                  <td class="cu-pointer show-subsidiary-goals-detail"
-                    data-url="{% url 'subsidiary_goals_detail' item.id_cost_center.pk item.id_global_goal_period.pk %}"
-                    data-name="{{item.id_cost_center}}">{{forloop.counter}}</td>
+          <table class="table table-hover table-bordered table-sm" style="font-size: 0.9rem !important;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th style="min-width: 350px !important;">Filial</th>
+                <th>Total Anual</th>
+                <th>Ene</th>
+                <th>Feb</th>
+                <th>Mar</th>
+                <th>Abr</th>
+                <th>May</th>
+                <th>Jun</th>
+                <th>Jul</th>
+                <th>Ago</th>
+                <th>Sep</th>
+                <th>Oct</th>
+                <th>Nov</th>
+                <th>Dic</th>
+                <th>Ponderación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in qs_subsidiary_list %}
+              <tr
+                class="{% if item.id_cost_center.code_zone == 0 %} table-danger {% elif item.id_cost_center.code_zone|divisibleby:2 %} table-success {% else %} table-secondary {% endif %}">
+                <td class="cu-pointer show-subsidiary-goals-detail"
+                  data-url="{% url 'subsidiary_goals_detail' item.id_cost_center.pk item.id_global_goal_period.pk %}"
+                  data-name="{{item.id_cost_center}}">{{forloop.counter}}</td>
 
-                  <td class="cu-pointer show-subsidiary-asigned" data-name="{{item.id_cost_center}}"
-                    data-pk="{{item.pk}}" data-january="{{item.amount_january|intcomma}}"
-                    data-february="{{item.amount_february|intcomma}}" data-march="{{item.amount_march|intcomma}}"
-                    data-april="{{item.amount_april|intcomma}}" data-may="{{item.amount_may|intcomma}}"
-                    data-june="{{item.amount_june|intcomma}}" data-july="{{item.amount_july|intcomma}}"
-                    data-august="{{item.amount_august|intcomma}}" data-september="{{item.amount_september|intcomma}}"
-                    data-october="{{item.amount_october|intcomma}}" data-november="{{item.amount_november|intcomma}}"
-                    data-december="{{item.amount_december|intcomma}}" data-total="{{item.annual_amount_subsidiary}}"
-                    data-ponderation="{{item.ponderation}}">
-                    {{item.id_cost_center.zone}} <span class="text-warning"> | </span> {{item.id_cost_center}}
-                  </td>
+                <td class="cu-pointer show-subsidiary-asigned" data-name="{{item.id_cost_center}}"
+                  data-pk="{{item.pk}}" data-january="{{item.amount_january|intcomma}}"
+                  data-february="{{item.amount_february|intcomma}}" data-march="{{item.amount_march|intcomma}}"
+                  data-april="{{item.amount_april|intcomma}}" data-may="{{item.amount_may|intcomma}}"
+                  data-june="{{item.amount_june|intcomma}}" data-july="{{item.amount_july|intcomma}}"
+                  data-august="{{item.amount_august|intcomma}}" data-september="{{item.amount_september|intcomma}}"
+                  data-october="{{item.amount_october|intcomma}}" data-november="{{item.amount_november|intcomma}}"
+                  data-december="{{item.amount_december|intcomma}}" data-total="{{item.annual_amount_subsidiary}}"
+                  data-ponderation="{{item.ponderation}}">
+                  {{item.id_cost_center.zone}} <span class="text-warning"> | </span> {{item.id_cost_center}}
+                </td>
 
-                  <td>{{item.annual_amount_subsidiary|intcomma}}</td>
-                  <td>{{item.amount_january|intcomma}}</td>
-                  <td>{{item.amount_february|intcomma}}</td>
-                  <td>{{item.amount_march|intcomma}}</td>
-                  <td>{{item.amount_april|intcomma}}</td>
-                  <td>{{item.amount_may|intcomma}}</td>
-                  <td>{{item.amount_june|intcomma}}</td>
-                  <td>{{item.amount_july|intcomma}}</td>
-                  <td>{{item.amount_august|intcomma}}</td>
-                  <td>{{item.amount_september|intcomma}}</td>
-                  <td>{{item.amount_october|intcomma}}</td>
-                  <td>{{item.amount_november|intcomma}}</td>
-                  <td>{{item.amount_december|intcomma}}</td>
-                  <td>{{item.ponderation|default:'0'}}</td>
-                </tr>
-                {% endfor %}
+                <td>{{item.annual_amount_subsidiary|intcomma}}</td>
+                <td>{{item.amount_january|intcomma}}</td>
+                <td>{{item.amount_february|intcomma}}</td>
+                <td>{{item.amount_march|intcomma}}</td>
+                <td>{{item.amount_april|intcomma}}</td>
+                <td>{{item.amount_may|intcomma}}</td>
+                <td>{{item.amount_june|intcomma}}</td>
+                <td>{{item.amount_july|intcomma}}</td>
+                <td>{{item.amount_august|intcomma}}</td>
+                <td>{{item.amount_september|intcomma}}</td>
+                <td>{{item.amount_october|intcomma}}</td>
+                <td>{{item.amount_november|intcomma}}</td>
+                <td>{{item.amount_december|intcomma}}</td>
+                <td>{{item.ponderation|default:'0'}}</td>
+              </tr>
+              {% endfor %}
 
-              </tbody>
-              <tfoot>
-                <tr class="table-danger">
-                  <th></th>
-                  <th>Totales</th>
-                  <th>{{qs_sum.sum_total|intcomma}}</th>
-                  <th>{{qs_sum.sum_ene|intcomma}}</th>
-                  <th>{{qs_sum.sum_feb|intcomma}}</th>
-                  <th>{{qs_sum.sum_mar|intcomma}}</th>
-                  <th>{{qs_sum.sum_abr|intcomma}}</th>
-                  <th>{{qs_sum.sum_may|intcomma}}</th>
-                  <th>{{qs_sum.sum_jul|intcomma}}</th>
-                  <th>{{qs_sum.sum_jun|intcomma}}</th>
-                  <th>{{qs_sum.sum_ago|intcomma}}</th>
-                  <th>{{qs_sum.sum_sep|intcomma}}</th>
-                  <th>{{qs_sum.sum_oct|intcomma}}</th>
-                  <th>{{qs_sum.sum_nov|intcomma}}</th>
-                  <th>{{qs_sum.sum_dic|intcomma}}</th>
-                  <th></th>
-                </tr>
-                <tr>
-                  <th>#</th>
-                  <th>Filial</th>
-                  <th>Total Anual</th>
-                  <th>Ene</th>
-                  <th>Feb</th>
-                  <th>Mar</th>
-                  <th>Abr</th>
-                  <th>May</th>
-                  <th>Jun</th>
-                  <th>Jul</th>
-                  <th>Ago</th>
-                  <th>Sep</th>
-                  <th>Oct</th>
-                  <th>Nov</th>
-                  <th>Dic</th>
-                  <th>Ponderación</th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+            </tbody>
+            <tfoot>
+              <tr class="table-danger">
+                <th></th>
+                <th>Totales</th>
+                <th>{{qs_sum.sum_total|intcomma}}</th>
+                <th>{{qs_sum.sum_ene|intcomma}}</th>
+                <th>{{qs_sum.sum_feb|intcomma}}</th>
+                <th>{{qs_sum.sum_mar|intcomma}}</th>
+                <th>{{qs_sum.sum_abr|intcomma}}</th>
+                <th>{{qs_sum.sum_may|intcomma}}</th>
+                <th>{{qs_sum.sum_jul|intcomma}}</th>
+                <th>{{qs_sum.sum_jun|intcomma}}</th>
+                <th>{{qs_sum.sum_ago|intcomma}}</th>
+                <th>{{qs_sum.sum_sep|intcomma}}</th>
+                <th>{{qs_sum.sum_oct|intcomma}}</th>
+                <th>{{qs_sum.sum_nov|intcomma}}</th>
+                <th>{{qs_sum.sum_dic|intcomma}}</th>
+                <th></th>
+              </tr>
+              <tr>
+                <th>#</th>
+                <th>Filial</th>
+                <th>Total Anual</th>
+                <th>Ene</th>
+                <th>Feb</th>
+                <th>Mar</th>
+                <th>Abr</th>
+                <th>May</th>
+                <th>Jun</th>
+                <th>Jul</th>
+                <th>Ago</th>
+                <th>Sep</th>
+                <th>Oct</th>
+                <th>Nov</th>
+                <th>Dic</th>
+                <th>Ponderación</th>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
     </div>
@@ -262,6 +260,25 @@
               </tr>
             `)
           })
+          $('#tblSubsidiaryGoalsAllDetail').find('tfoot').append(`
+              <tr class="table-success">
+                <td>Totales</td>
+                <td>${ parseFloat(qs_sum.sum_total).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_ene).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_feb).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_mar).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_abr).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_may).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_jun).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_jul).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_ago).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_sep).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_oct).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_nov).toLocaleString('en-US') }</td>
+                <td>${ parseFloat(qs_sum.sum_dic).toLocaleString('en-US') }</td>
+                <td>${qs_sum.sum_ponderation}</td>
+              </tr>
+            `)
           $('#SubsidiaryGoalsAllDetailModal').modal('show');
         })
         .fail(handleError)

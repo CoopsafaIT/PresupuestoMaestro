@@ -7,11 +7,15 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form method="post">
+        <form method="post" accept-charset="utf-8" enctype="multipart/form-data">
           {% csrf_token %}
+          <input type="hidden" name="method" value="load-excel">
           <div class="input-group">
-            <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04"
-              aria-label="Upload">
+            <input
+              type="file" class="form-control" name="excel-file" 
+              id="inputGroupFile04" aria-describedby="inputGroupFileAddon04"
+              aria-label="Upload" required accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            />
             <button class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04">Cargar</button>
           </div>
         </form>
