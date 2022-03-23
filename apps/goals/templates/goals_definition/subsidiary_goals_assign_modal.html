@@ -1,12 +1,12 @@
 {% load static %}
 {% load humanize %}
-<div class="modal fade" id="globalGoalDefinitionDetail" tabindex="-1" aria-labelledby="globalGoalDefinitionDetailLabel"
+<div class="modal fade" id="SubsidiaryGoalsAssignModal" tabindex="-1" aria-labelledby="SubsidiaryGoalsAssignModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title fw-light fs-5">
-          Detalle Definición de Meta: <span id="spanModalGoalName" class="fw-bold"></span>
+          Detalle Filial: <span id="spanModalSubsidiaryGoalAssignName" class="fw-bold"></span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -15,24 +15,11 @@
           <div class="col-md-2">
             <div class="mb-3">
               <label for="id_goal_definition_annual_amount">Monto Anual</label>
-              <input type="text" value="0" class="form-control validation-input-text"
-                name="goal_definition_annual_amount" id="id_goal_definition_annual_amount" required />
+              <input type="text" class="form-control validation-input-text"
+                name="goal_definition_annual_amount" id="id_goal_definition_annual_amount"/>
             </div>
+            <input type="hidden" name="" id="subsidiaryGoalPk" >
           </div>
-          <div class="col-md-2">
-            <div class="mb-3">
-              <label for="id_monthly_distribution">Total distribuido</label>
-              <input type="text" value="0" class="form-control" id="id_monthly_distribution" readonly />
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="mb-3">
-              <label for="id_missing">Restante</label>
-              <input type="text" value="0" class="form-control" id="id_missing" readonly />
-            </div>
-          </div>
-          <input type="hidden" id="id_goal_definition_modal">
-
           <div class="col-md-12">
             <div class="table-responsive">
               <form name="goal_month">
@@ -56,64 +43,64 @@
                   <tbody>
                     <tr>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text fs-6" name="ene"
-                          id="id_goal_definition_month_amount-1" required />
+                          id="id_goal_definition_month_amount-1"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="feb"
-                          id="id_goal_definition_month_amount-2" required />
+                          id="id_goal_definition_month_amount-2"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="mar"
-                          id="id_goal_definition_month_amount-3" required />
+                          id="id_goal_definition_month_amount-3"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="abr"
-                          id="id_goal_definition_month_amount-4" required />
+                          id="id_goal_definition_month_amount-4"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="may"
-                          id="id_goal_definition_month_amount-5" required />
+                          id="id_goal_definition_month_amount-5"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="jun"
-                          id="id_goal_definition_month_amount-6" required />
+                          id="id_goal_definition_month_amount-6"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="jul"
-                          id="id_goal_definition_month_amount-7" required />
+                          id="id_goal_definition_month_amount-7"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="ago"
-                          id="id_goal_definition_month_amount-8" required />
+                          id="id_goal_definition_month_amount-8"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="sep"
-                          id="id_goal_definition_month_amount-9" required />
+                          id="id_goal_definition_month_amount-9"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="oct"
-                          id="id_goal_definition_month_amount-10" required />
+                          id="id_goal_definition_month_amount-10"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="nov"
-                          id="id_goal_definition_month_amount-11" required />
+                          id="id_goal_definition_month_amount-11"/>
                       </td>
                       <td>
-                        <input type="text" value="0"
+                        <input type="text"
                           class="form-control goal_definition_month_amount validation-input-text " name="dic"
-                          id="id_goal_definition_month_amount-12" required />
+                          id="id_goal_definition_month_amount-12"/>
                       </td>
                     </tr>
                   </tbody>
@@ -125,7 +112,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
-        <button type="submit" class="btn btn-outline-safa" id="save_goal_month_definition">Aceptar</button>
+        <button type="button" class="btn btn-outline-safa" id="save_goal_month_definition">Aceptar</button>
       </div>
     </div>
   </div>

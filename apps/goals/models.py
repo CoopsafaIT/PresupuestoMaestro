@@ -141,7 +141,9 @@ class GlobalGoalDetail(AmountMonthlyMixin, AuditDataMixin):
 @receiver(post_save, sender=GlobalGoalDetail)
 def post_save_global_goal(sender, instance, created, **kwargs):
     if created:
-        cecos = Centroscosto.objects.exclude(agencia__in=['1', '0001'])
+        cecos = Centroscosto.objects.filter(habilitado=True).exclude(
+            agencia__in=['1', '0001', '9000']
+        )
         for item in cecos:
             SubsidiaryGoalDetail.objects.create(
                 id_cost_center=item, id_global_goal_detail=instance,

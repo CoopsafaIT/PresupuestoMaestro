@@ -1,5 +1,5 @@
 import json
-
+from decimal import Decimal as dc
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -9,17 +9,83 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from utils.sql import execute_sql_query
 from utils.pagination import pagination
+from .reports import generate_subsidiary_goal_excel_file, load_excel_file
+
 from .models import (
-    GlobalGoalPeriod, GlobalGoalDetail, Goal
+    GlobalGoalPeriod, GlobalGoalDetail, Goal,
+    SubsidiaryGoalDetail
 )
 from .forms import (
     GoalsForm, GoalsGlobalForm, GlobalGoalDetailForm
 )
+from .request_get import QueryGetParms
 
 
 @login_required()
 def goals_dashboard(request):
     return render(request, 'goals/dashboard.html')
+
+
+@login_required()
+def goals(request):
+    form = GoalsGlobalForm()
+    if request.method == 'POST':
+        form = GoalsGlobalForm(request.POST)
+        if not form.is_valid():
+            messages.warning(
+                request, f'Formulario no válido: {form.errors.as_text()}'
+            )
+        else:
+            _new = form.save()
+            _new.created_by = request.user
+            _new.updated_by = request.user
+            _new.save()
+            messages.success(request, 'Meta creada con éxito!')
+
+    page = request.GET.get('page', 1)
+    q = request.GET.get('q', '')
+    qs = Goal.objects.filter(
+        Q(description__icontains=q) |
+        Q(type__icontains=q) |
+        Q(definition__icontains=q) |
+        Q(execution__icontains=q)
+    ).order_by('description')
+    result = pagination(qs, page)
+
+    ctx = {
+        'result': result,
+        'form': form
+    }
+    return render(request, 'goals_definition/goals.html', ctx)
+
+
+@login_required()
+def goal_edit(request, id):
+    qs = get_object_or_404(Goal, pk=id)
+    form = GoalsGlobalForm(instance=qs)
+
+    if request.method == 'POST':
+        if request.POST.get('method') == 'edit':
+            form = GoalsGlobalForm(request.POST, instance=qs)
+            if not form.is_valid():
+                messages.warning(
+                    request,
+                    f'Formulario no válido: {form.errors.as_text()}'
+                )
+            else:
+                if request.POST.get('is_active') == 'True':
+                    Goal.objects.filter(
+                        id=qs.id
+                    ).update(is_active=False)
+                _new = form.save()
+                _new.updated_by = request.user
+                _new.save()
+                messages.success(request, 'Meta editada con éxito!')
+                return redirect('goals')
+    ctx = {
+        'form': form
+    }
+    return render(request, 'goals_definition/goals_edit.html', ctx)
 
 
 @login_required()
@@ -264,62 +330,257 @@ def goals_global_definition(request, id_global_goal_period):
 
 
 @login_required()
-def goals(request):
-    form = GoalsGlobalForm()
-    if request.method == 'POST':
-        form = GoalsGlobalForm(request.POST)
-        if not form.is_valid():
-            messages.warning(
-                request, f'Formulario no válido: {form.errors.as_text()}'
-            )
-        else:
-            _new = form.save()
-            _new.created_by = request.user
-            _new.updated_by = request.user
-            _new.save()
-            messages.success(request, 'Meta creada con éxito!')
+def subsidiary_goals_definition(request, id_global_goal_definition):
+    qs_global_detail = get_object_or_404(GlobalGoalDetail, pk=id_global_goal_definition)
+    zones_requested = request.GET.getlist('code_zone')
+    query_parms = QueryGetParms(request.GET)
+    qs_zone = []
+    query = (
+        "SELECT DISTINCT CodZona as code_zone, Zona AS zone FROM "
+        "[CentrosCosto] WHERE CodZona is not null"
+    )
 
-    page = request.GET.get('page', 1)
-    q = request.GET.get('q', '')
-    qs = Goal.objects.filter(
-        Q(description__icontains=q) |
-        Q(type__icontains=q) |
-        Q(definition__icontains=q) |
-        Q(execution__icontains=q)
-    ).order_by('description')
-    result = pagination(qs, page)
+    def _get_qs_subsidiary_list():
+        return SubsidiaryGoalDetail.objects.filter(
+            id_global_goal_detail=id_global_goal_definition
+        ).filter(**query_parms.get_query_filters()).order_by(
+            'id_cost_center__code_zone', 'id_cost_center__desccentrocosto'
+        )
 
+    def _get_sum_amount_goal_definition(filters={}, exclude={}):
+        return SubsidiaryGoalDetail.objects.extra({
+            'sum_total': 'SUM(MontoAnualFilial)',
+            'sum_ene': 'SUM(MontoEne)', 'sum_feb': 'SUM(MontoFeb)',
+            'sum_mar': 'SUM(MontoMar)', 'sum_abr': 'SUM(MontoAbr)',
+            'sum_may': 'SUM(MontoMay)', 'sum_jul': 'SUM(MontoJun)',
+            'sum_jun': 'SUM(MontoJul)', 'sum_ago': 'SUM(MontoAgo)',
+            'sum_sep': 'SUM(MontoSep)', 'sum_oct': 'SUM(MontoOct)',
+            'sum_nov': 'SUM(MontoNov)', 'sum_dic': 'SUM(MontoDic)',
+        }).filter(
+            id_global_goal_detail=id_global_goal_definition
+        ).filter(**filters).exclude(**exclude).values(
+            'sum_total', 'sum_ene', 'sum_feb', 'sum_mar',
+            'sum_abr', 'sum_may', 'sum_jul',
+            'sum_jun', 'sum_ago', 'sum_sep',
+            'sum_oct', 'sum_nov', 'sum_dic'
+        )
+
+    def _calculate_new_amounts(id, data):
+        qs_sum = _get_sum_amount_goal_definition(
+            filters=query_parms.get_query_filters(), exclude={'id': id}
+        )
+        qs_sum = qs_sum[0]
+        new_amounts = {
+            'total': (qs_sum.get('sum_total') + dc(data.get('annual_amount_subsidiary'))),
+            'amount_january': (qs_sum.get('sum_ene') + dc(data.get('amount_january'))),
+            'amount_february': (qs_sum.get('sum_feb') + dc(data.get('amount_february'))),
+            'amount_march': (qs_sum.get('sum_mar') + dc(data.get('amount_march'))),
+            'amount_april': (qs_sum.get('sum_abr') + dc(data.get('amount_april'))),
+            'amount_may': (qs_sum.get('sum_may') + dc(data.get('amount_may'))),
+            'amount_june': (qs_sum.get('sum_jun') + dc(data.get('amount_june'))),
+            'amount_july': (qs_sum.get('sum_jul') + dc(data.get('amount_july'))),
+            'amount_august': (qs_sum.get('sum_ago') + dc(data.get('amount_august'))),
+            'amount_september': (qs_sum.get('sum_sep') + dc(data.get('amount_september'))),
+            'amount_october': (qs_sum.get('sum_oct') + dc(data.get('amount_october'))),
+            'amount_november': (qs_sum.get('sum_nov') + dc(data.get('amount_november'))),
+            'amount_december': (qs_sum.get('sum_dic') + dc(data.get('amount_december')))
+        }
+
+        if qs_global_detail.annual_amount < new_amounts.get('total'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto anual {data.get("annual_amount_subsidiary")} excede el Monto Total Global' # NOQA
+            }
+        if qs_global_detail.amount_january < new_amounts.get('amount_january'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en enero {data.get("amount_january")} excede el Monto Global en Enero' # NOQA
+            }
+        if qs_global_detail.amount_february < new_amounts.get('amount_february'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en febrero {data.get("amount_february")} se excede el Monto Global de febrero' # NOQA
+            }
+        if qs_global_detail.amount_march < new_amounts.get('amount_march'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en marzo {data.get("amount_march")} se excede el Monto Global de marzo' # NOQA
+            }
+        if qs_global_detail.amount_april < new_amounts.get('amount_april'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en abril {data.get("amount_april")} se excede el Monto Global de abril' # NOQA
+            }
+        if qs_global_detail.amount_may < new_amounts.get('amount_may'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en mayo {data.get("amount_may")} se excede el Monto Global de mayo' # NOQA
+            }
+        if qs_global_detail.amount_june < new_amounts.get('amount_june'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en junio {data.get("amount_june")} se excede el Monto Global de junio' # NOQA
+            }
+        if qs_global_detail.amount_july < new_amounts.get('amount_july'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en julio {data.get("amount_july")} se excede el Monto Global de julio' # NOQA
+            }
+        if qs_global_detail.amount_august < new_amounts.get('amount_august'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en agosto {data.get("amount_august")} se excede el Monto Global de agosto' # NOQA
+            }
+        if qs_global_detail.amount_september < new_amounts.get('amount_september'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en septiembre {data.get("amount_september")} se excede el Monto Global de septiembre' # NOQA
+            }
+        if qs_global_detail.amount_october < new_amounts.get('amount_october'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en octubre {data.get("amount_october")} se excede el Monto Global de octubre' # NOQA
+            }
+        if qs_global_detail.amount_november < new_amounts.get('amount_november'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en noviembre {data.get("amount_november")} se excede el Monto Global de noviembre' # NOQA
+            }
+        if qs_global_detail.amount_december < new_amounts.get('amount_december'):
+            return {
+                'status': 'err',
+                'msg': f'Con el nuevo monto en diciembre {data.get("amount_december")} se excede el Monto Global de diciembre' # NOQA
+            }
+
+        return {'status': 'ok', 'msg': ''}
+
+    def _validate_subsidiary_data(id, dict_data):
+        qs_subsidiary = SubsidiaryGoalDetail.objects.filter(pk=id).first()
+        if not qs_subsidiary:
+            return {'status': 'err', 'msg': 'Meta de Filial no encontrada'}
+        total = dc(dict_data.pop('annual_amount_subsidiary'))
+        values = [dc(month) for month in list(dict_data.values())]
+        sum_months = sum(values)
+        if not total == round(sum_months):
+            return {
+                'status': 'err',
+                'msg': f'Suma de meses {sum_months} diferente a total: {total}'
+            }
+        return {'status': 'ok', 'msg': ''}
+
+    if request.is_ajax():
+        if request.method == 'POST':
+            data = json.loads(request.POST.get('data'))
+            id = data.pop('id')
+            result = _validate_subsidiary_data(id=id, dict_data=data.copy())
+            if result.get('status') != 'ok':
+                return HttpResponse(
+                    json.dumps({'message': result.get('msg')}, cls=DjangoJSONEncoder),
+                    status=400
+                )
+            result = _calculate_new_amounts(id, data)
+            if result.get('status') != 'ok':
+                return HttpResponse(
+                    json.dumps({'message': result.get('msg')}, cls=DjangoJSONEncoder),
+                    status=400
+                )
+
+            SubsidiaryGoalDetail.objects.filter(pk=id).update(**data)
+            return HttpResponse(json.dumps({}, cls=DjangoJSONEncoder))
+
+    elif request.method == 'GET':
+        if request.GET.get('method') == 'excel':
+            qs_data = _get_qs_subsidiary_list()
+            return generate_subsidiary_goal_excel_file(qs_data, qs_global_detail)
+
+    elif request.method == 'POST':
+        if request.POST.get('method') == 'load-excel':
+            result = load_excel_file(request.FILES['excel-file'])
+            sheet = result.get('sheet')
+            number_rows = result.get('number_rows')
+            counter = 2
+            for item in range(1, number_rows):
+                id = sheet[f'A{counter}'].value
+                ponderation = sheet[f'Q{counter}'].value
+                data = {
+                    'annual_amount_subsidiary':  sheet[f'D{counter}'].value,
+                    'amount_january': sheet[f'E{counter}'].value,
+                    'amount_february': sheet[f'F{counter}'].value,
+                    'amount_march': sheet[f'G{counter}'].value,
+                    'amount_april': sheet[f'H{counter}'].value,
+                    'amount_may': sheet[f'I{counter}'].value,
+                    'amount_june': sheet[f'J{counter}'].value,
+                    'amount_july': sheet[f'K{counter}'].value,
+                    'amount_august': sheet[f'L{counter}'].value,
+                    'amount_september': sheet[f'M{counter}'].value,
+                    'amount_october': sheet[f'N{counter}'].value,
+                    'amount_november': sheet[f'O{counter}'].value,
+                    'amount_december': sheet[f'P{counter}'].value
+                }
+                result_validate = _validate_subsidiary_data(id=id, dict_data=data.copy())
+                result_calculate = _calculate_new_amounts(id, data)
+                if result_validate.get('status') != 'ok':
+                    messages.error(
+                        request, f'Error. Identificador: {id} {result_validate.get("msg")}'
+                    )
+                elif result_calculate.get('status') != 'ok':
+                    messages.error(
+                        request, f'Error. Identificador: {id} {result_validate.get("msg")}'
+                    )
+                else:
+                    SubsidiaryGoalDetail.objects.filter(pk=id).update(
+                        ponderation=ponderation, **data
+                    )
+                counter = counter + 1
+
+    query_result = execute_sql_query(query)
+    if query_result.get('status') == 'ok':
+        qs_zone = query_result.get('data')
+
+    qs_subsidiary_list = _get_qs_subsidiary_list()
+    qs_sum = _get_sum_amount_goal_definition(filters=query_parms.get_query_filters())
     ctx = {
-        'result': result,
-        'form': form
+        'qs_global_detail': qs_global_detail,
+        'qs_subsidiary_list': qs_subsidiary_list,
+        'qs_zone': qs_zone,
+        'qs_sum': qs_sum[0],
+        'zones_requested': zones_requested
     }
-    return render(request, 'goals_definition/goals.html', ctx)
+    return render(request, 'goals_definition/subsidiary_goals_definition.html', ctx)
 
 
 @login_required()
-def goal_edit(request, id):
-    qs = get_object_or_404(Goal, pk=id)
-    form = GoalsGlobalForm(instance=qs)
+def subsidiary_goals_detail(request, id_cost_center, id_global_goal_period):
+    qs = list(SubsidiaryGoalDetail.objects.filter(
+        id_cost_center=id_cost_center, id_global_goal_period=id_global_goal_period
+    ).values(
+        'id_goal__description', 'annual_amount_subsidiary', 'ponderation',
+        'amount_january', 'amount_february', 'amount_march',
+        'amount_april', 'amount_may', 'amount_june',
+        'amount_july', 'amount_august', 'amount_september',
+        'amount_october', 'amount_november', 'amount_december'
+    ).order_by('id_goal__description'))
 
-    if request.method == 'POST':
-        if request.POST.get('method') == 'edit':
-            form = GoalsGlobalForm(request.POST, instance=qs)
-            if not form.is_valid():
-                messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
-                )
-            else:
-                if request.POST.get('is_active') == 'True':
-                    Goal.objects.filter(
-                        id=qs.id
-                    ).update(is_active=False)
-                _new = form.save()
-                _new.updated_by = request.user
-                _new.save()
-                messages.success(request, 'Meta editada con éxito!')
-                return redirect('goals')
+    qs_sum = list(SubsidiaryGoalDetail.objects.extra({
+        'sum_total': 'SUM(MontoAnualFilial)',
+        'sum_ene': 'SUM(MontoEne)', 'sum_feb': 'SUM(MontoFeb)',
+        'sum_mar': 'SUM(MontoMar)', 'sum_abr': 'SUM(MontoAbr)',
+        'sum_may': 'SUM(MontoMay)', 'sum_jul': 'SUM(MontoJun)',
+        'sum_jun': 'SUM(MontoJul)', 'sum_ago': 'SUM(MontoAgo)',
+        'sum_sep': 'SUM(MontoSep)', 'sum_oct': 'SUM(MontoOct)',
+        'sum_nov': 'SUM(MontoNov)', 'sum_dic': 'SUM(MontoDic)',
+        'sum_ponderation': 'SUM(Ponderacion)'
+    }).filter(
+        id_cost_center=id_cost_center, id_global_goal_period=id_global_goal_period
+    ).values(
+        'sum_total', 'sum_ene', 'sum_feb', 'sum_mar',
+        'sum_abr', 'sum_may', 'sum_jul',
+        'sum_jun', 'sum_ago', 'sum_sep',
+        'sum_oct', 'sum_nov', 'sum_dic', 'sum_ponderation'
+    ))
+
     ctx = {
-        'form': form
+        'qs_sum': qs_sum[0], 'qs': qs
     }
-    return render(request, 'goals_definition/goals_edit.html', ctx)
+
+    return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))

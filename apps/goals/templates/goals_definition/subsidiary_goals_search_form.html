@@ -1,0 +1,19 @@
+{% load static %}
+<form method="GET">
+<div class="row">
+  <div class="col-md-10">
+    <div class="form-group">
+      <select name="code_zone" id="id_code_zone" class="form-select select2-style" data-requested="{{zones_requested}}" 
+        style="width: 100%;" multiple aria-placeholder="Seleccione zonas">
+        <option value="">-- Seleccione Zona--</option>
+        {% for zone in qs_zone %}
+          <option value="{{zone.code_zone}}">{{zone.zone}}</option>        
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-outline-primary">Buscar...</button>
+  </div>
+</div>
+</form>
