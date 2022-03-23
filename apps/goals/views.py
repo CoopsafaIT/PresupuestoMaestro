@@ -158,24 +158,8 @@ def goals_global_definition(request, id_global_goal_period):
 
     def _validate(data):
         annual_amount = float(data.get('annual_amount'))
-        amount_january = float(data.get('amount_january'))
-        amount_february = float(data.get('amount_february'))
-        amount_march = float(data.get('amount_march'))
-        amount_april = float(data.get('amount_april'))
-        amount_may = float(data.get('amount_may'))
-        amount_june = float(data.get('amount_june'))
-        amount_july = float(data.get('amount_july'))
-        amount_august = float(data.get('amount_august'))
-        amount_september = float(data.get('amount_september'))
-        amount_october = float(data.get('amount_october'))
-        amount_november = float(data.get('amount_november'))
         amount_december = float(data.get('amount_december'))
-        sum = (
-            amount_january + amount_february + amount_march + amount_april + amount_may +
-            amount_june + amount_july + amount_august + amount_september + amount_october +
-            amount_november + amount_december
-        )
-        if annual_amount == sum:
+        if annual_amount == amount_december:
             return {
                 'status': 'ok', 'message': ''
             }
@@ -190,11 +174,6 @@ def goals_global_definition(request, id_global_goal_period):
             data = json.loads(request.POST.get('data'))
             goal_id = data.pop('goal_id')
             qs = Goal.objects.filter(pk=goal_id).first()
-            if qs.definition == 'A':
-                ctx = {
-                    'message': 'No se puede actualizar una meta con definicion automatica'
-                }
-                return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder), status=400)
 
             result = _validate(data)
             if result.get('status') == 'ok':
