@@ -239,6 +239,7 @@
           loaderShow(false)
           $('#spanModalSubsidiaryName').html(name);
           $('#tblSubsidiaryGoalsAllDetail').find('tbody').empty()
+          $('#tblSubsidiaryGoalsAllDetail').find('tfoot').empty()
           qs.forEach(el => {
             $('#tblSubsidiaryGoalsAllDetail').find('tbody').append(`
               <tr>
