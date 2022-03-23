@@ -4,7 +4,10 @@
   transition: all .3s linear 0s;
 }
 
-
 .cu-pointer{
   cursor: pointer !important;
+}
+
+.goal_definition_month_amount{
+  font-size: 0.8rem !important;
 }

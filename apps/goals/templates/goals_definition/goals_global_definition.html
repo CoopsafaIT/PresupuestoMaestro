@@ -120,18 +120,18 @@
       language: "es",
     });
 
-    function calculateMissing(){
-      let sum = 0;
-      let annualAmount = parseFloat($('#id_goal_definition_annual_amount').val().replaceAll(',', ''))
-      $('.goal_definition_month_amount').each(function(){
-        let value = $(this).val().replaceAll(',', '')
-        sum += parseFloat(value)
-      })
-      $('#id_monthly_distribution').val(sum.toLocaleString('en-US'))
-      $('#id_missing').val((annualAmount - sum).toLocaleString('en-US'))
-      $('#id_annual_amount').val((annualAmount).toLocaleString('en-US'))
-    }
-    $('.goal_definition_month_amount').change(()=> calculateMissing())
+    // function calculateMissing(){
+    //   let sum = 0;
+    //   let annualAmount = parseFloat($('#id_goal_definition_annual_amount').val().replaceAll(',', ''))
+    //   $('.goal_definition_month_amount').each(function(){
+    //     let value = $(this).val().replaceAll(',', '')
+    //     sum += parseFloat(value)
+    //   })
+    //   $('#id_monthly_distribution').val(sum.toLocaleString('en-US'))
+    //   $('#id_missing').val((annualAmount - sum).toLocaleString('en-US'))
+    //   $('#id_annual_amount').val((annualAmount).toLocaleString('en-US'))
+    // }
+    // $('.goal_definition_month_amount').change(()=> calculateMissing())
 
     $('.show-global-goal-detail').click(function () {
       let goalId = $(this).data('goal-id');
@@ -144,7 +144,8 @@
           method: 'get-global-goal-detail'
         },
         url: '{{request.get_full_path}}'
-      }).done((res) => {
+      })
+      .done((res) => {
         let data = JSON.parse(res)
         $('#spanModalGoalName').html(data.qs_goal.description)
         $('#id_goal_definition_annual_amount').val(parseFloat(data.qs_global_goal.annual_amount).toLocaleString('en-US'))
@@ -160,16 +161,11 @@
         $('#id_goal_definition_month_amount-10').val(parseFloat(data.qs_global_goal.amount_october).toLocaleString('en-US'))
         $('#id_goal_definition_month_amount-11').val(parseFloat(data.qs_global_goal.amount_november).toLocaleString('en-US'))
         $('#id_goal_definition_month_amount-12').val(parseFloat(data.qs_global_goal.amount_december).toLocaleString('en-US'))
-        data.qs_goal.definition === 'A'
-          ? $('.goal_definition_month_amount, #id_goal_definition_annual_amount').attr('readonly', true)
-          : $('.goal_definition_month_amount, #id_goal_definition_annual_amount').removeAttr('readonly')
-        calculateMissing()
         $('#id_goal_definition_modal').val(goalId)
         $('#globalGoalDefinitionDetail').modal('show');
-        
         loaderShow(false)
       })
-        .fail(handleError)
+      .fail(handleError)
     })
 
     $("#id_goal").on("change", function () {
@@ -201,49 +197,42 @@
 
     $("#save_goal_month_definition").click(function () {
       let goalId = $('#id_goal_definition_modal').val()
-      let annual_amount = parseFloat($('#id_goal_definition_annual_amount').val().replaceAll(',', ''))
-      let monthly_distribution = parseFloat($('#id_monthly_distribution').val().replaceAll(',', ''))
+      let data = {
+        'goal_id': goalId,
+        'amount_january': $('#id_goal_definition_month_amount-1').val().replaceAll(',', ''),
+        'amount_february': $('#id_goal_definition_month_amount-2').val().replaceAll(',', ''),
+        'amount_march': $('#id_goal_definition_month_amount-3').val().replaceAll(',', ''),
+        'amount_april': $('#id_goal_definition_month_amount-4').val().replaceAll(',', ''),
+        'amount_may': $('#id_goal_definition_month_amount-5').val().replaceAll(',', ''),
+        'amount_june': $('#id_goal_definition_month_amount-6').val().replaceAll(',', ''),
+        'amount_july': $('#id_goal_definition_month_amount-7').val().replaceAll(',', ''),
+        'amount_august': $('#id_goal_definition_month_amount-8').val().replaceAll(',', ''),
+        'amount_september': $('#id_goal_definition_month_amount-9').val().replaceAll(',', ''),
+        'amount_october': $('#id_goal_definition_month_amount-10').val().replaceAll(',', ''),
+        'amount_november': $('#id_goal_definition_month_amount-11').val().replaceAll(',', ''),
+        'amount_december': $('#id_goal_definition_month_amount-12').val().replaceAll(',', ''),
+        'annual_amount': $('#id_goal_definition_annual_amount').val().replaceAll(',', ''),
+      }   
+      let url = '{% url "goals_global_definition" qs_global_goal_period.pk %}'
+      loaderShow(true)
+      $.ajax({
+        type: 'POST',
+        data: {
+          data: JSON.stringify(data)
+        },
+        url: url
+      })
+      .done((res) => {
+        loaderShow(false)
+        alert('Guardado con exito!')
+        location.reload()
+      })
+      .fail((err)=>{
+        let erroMessage = JSON.parse(err.responseText)
+        err.status === 400 && alert(erroMessage.message) 
+        err.status === 500 && alert('Server Internal Error!!')
+      })
 
-        if (monthly_distribution !== annual_amount){
-          alert('Debe distribuir todo el monto anual!')
-          return 
-        }
-        if (monthly_distribution === annual_amount){
-          let data = {
-            'goal_id': goalId,
-            'amount_january': $('#id_goal_definition_month_amount-1').val().replaceAll(',', ''),
-            'amount_february': $('#id_goal_definition_month_amount-2').val().replaceAll(',', ''),
-            'amount_march': $('#id_goal_definition_month_amount-3').val().replaceAll(',', ''),
-            'amount_april': $('#id_goal_definition_month_amount-4').val().replaceAll(',', ''),
-            'amount_may': $('#id_goal_definition_month_amount-5').val().replaceAll(',', ''),
-            'amount_june': $('#id_goal_definition_month_amount-6').val().replaceAll(',', ''),
-            'amount_july': $('#id_goal_definition_month_amount-7').val().replaceAll(',', ''),
-            'amount_august': $('#id_goal_definition_month_amount-8').val().replaceAll(',', ''),
-            'amount_september': $('#id_goal_definition_month_amount-9').val().replaceAll(',', ''),
-            'amount_october': $('#id_goal_definition_month_amount-10').val().replaceAll(',', ''),
-            'amount_november': $('#id_goal_definition_month_amount-11').val().replaceAll(',', ''),
-            'amount_december': $('#id_goal_definition_month_amount-12').val().replaceAll(',', ''),
-            'annual_amount':annual_amount,
-          }   
-          let url = '{% url "goals_global_definition" qs_global_goal_period.pk %}'
-          loaderShow(true)
-          $.ajax({
-            type: 'POST',
-            data: {
-              data: JSON.stringify(data)
-            },
-            url: url
-          }).done((res) => {
-            loaderShow(false)
-            alert('Guardado con exito!')
-            location.reload()
-          })
-          .fail((err)=>{
-            let erroMessage = JSON.parse(err.responseText)
-            err.status === 400 && alert(erroMessage.message) 
-            err.status === 500 && alert('Server Internal Error!!')
-          })
-        }
     })
   })
 </script>
