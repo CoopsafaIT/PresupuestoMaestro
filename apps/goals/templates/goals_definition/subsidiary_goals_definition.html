@@ -13,6 +13,7 @@
 {% include 'goals_definition/subsidiary_goals_all_detail_modal.html' %}
 {% include 'goals_definition/subsidiary_goals_assign_modal.html' %}
 {% include 'goals_definition/subsidiary_excel_modal.html' %}
+{% include 'goals_definition/subsidiary_execut_excel_modal.html' %}
 <div class="container-fluid pt-4">
   <div class="card card-template">
     <div class="card-header">
@@ -74,8 +75,13 @@
 
     <div class="card-body">
       <div class="row p-2 bg-secondary mb-3" style="--bs-bg-opacity: .3;">
-        <div class="col-md-2 offset-md-2 d-flex justify-content-end border-end border-dark">
-          <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i> Excel</button>
+        <div class="col-md-1 offset-md-1 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-success" id="btnExecutExcelModal"> <i class="bi bi-file-excel"></i>
+            Ejecu</button>
+        </div>
+        <div class="col-md-1 offset-md-1 d-flex justify-content-end border-end border-dark">
+          <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
+            Excel</button>
         </div>
         <div class="col-md-8">
           {% include 'goals_definition/subsidiary_goals_search_form.html' %}
@@ -205,16 +211,20 @@
     getArray().forEach(el => {
       $(`#id_code_zone option[value= '${el}']`).prop('selected', true).trigger("change")
       $('#formGetExcelFile').append(`<input type="hidden" name="code_zone" value="${el}">`)
+      $('#formGetExcelExecutionFile').append(`<input type="hidden" name="code_zone" value="${el}">`)
     })
-
-
     $('.show-monthly-detail').click(() => {
       $('#div-container-table-monthly-detail').toggleClass("container-table-monthly-detail")
     })
 
-    $('#btnExcelModal').click(function(){
+    $('#btnExcelModal').click(function () {
       $('#ExcelSubsidiaryModal').modal('show');
     })
+
+    $('#btnExecutExcelModal').click(function () {
+      $('#ExcelExecutModal').modal('show');
+    })
+
   })
 </script>
 

@@ -5,7 +5,9 @@ from django.dispatch import receiver
 # from django.db.models.constraints import UniqueConstraint
 
 from apps.main.models import Periodo, Centroscosto
-from apps.master_budget.models import AuditDataMixin, AmountMonthlyMixin
+from apps.master_budget.models import (
+    AuditDataMixin, AmountMonthlyMixin, AmountMonthlyExecutionMixin
+)
 from utils.constants import TYPE_GOALS, DEFINITION_EXECUTION_GOALS
 
 
@@ -153,7 +155,7 @@ def post_save_global_goal(sender, instance, created, **kwargs):
             )
 
 
-class SubsidiaryGoalDetail(AmountMonthlyMixin, AuditDataMixin):
+class SubsidiaryGoalDetail(AmountMonthlyMixin, AmountMonthlyExecutionMixin, AuditDataMixin): # NOQA
     id = models.AutoField(primary_key=True, db_column="Id")
     id_global_goal_period = models.ForeignKey(
         GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="IdMetasGlobalesPeriodo"
