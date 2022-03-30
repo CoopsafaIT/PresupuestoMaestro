@@ -92,7 +92,7 @@ def generate_subsidiary_goal_execute_excel_file(data, qs):
         ws[f'O{x}'].value = item.amount_exec_december
         x = x + 1
 
-    file_name = f'formato_metas_filial_{dt.now()}'
+    file_name = f'formato_ejecucion_metas_filial_{dt.now()}'
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )

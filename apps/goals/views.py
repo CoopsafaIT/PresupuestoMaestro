@@ -451,110 +451,6 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
             }
         return {'status': 'ok', 'msg': ''}
 
-# ----------------Validacion ejecución-----------------------------------------------------
-    def _calculate_new_amounts_executed(data):
-        new_amounts_execution = {
-            'amount_exec_january': (data.get('amount_exec_january')),
-            'amount_exec_february': (data.get('amount_exec_february')),
-            'amount_exec_march': (data.get('amount_exec_march')),
-            'amount_exec_april': (data.get('amount_exec_april')),
-            'amount_exec_may': (data.get('amount_exec_may')),
-            'amount_exec_june': (data.get('amount_exec_june')),
-            'amount_exec_july': (data.get('amount_exec_july')),
-            'amount_exec_august': (data.get('amount_exec_august')),
-            'amount_exec_september': (data.get('amount_exec_september')),
-            'amount_exec_october': (data.get('amount_exec_october')),
-            'amount_exec_november': (data.get('amount_exec_november')),
-            'amount_exec_december': (data.get('amount_exec_december'))
-        }
-
-        if type(new_amounts_execution.get('amount_exec_january')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en enero {data.get("amount_exec_january")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-
-        if type(new_amounts_execution.get('amount_exec_february')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en febrero {data.get("amount_exec_february")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_march')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en marzo {data.get("amount_exec_march")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_april')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en abril {data.get("amount_exec_april")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_may')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en mayo {data.get("amount_exec_may")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_june')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en junio {data.get("amount_exec_june")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_july')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en julio {data.get("amount_exec_july")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_august')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en agosto {data.get("amount_exec_august")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_september')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en septiembre {data.get("amount_exec_september")} , no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_october')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en octubre {data.get("amount_exec_october")} , no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_november')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en noviembre {data.get("amount_exec_november")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        if type(new_amounts_execution.get('amount_exec_december')) not in (int, float):
-            return {
-                'status': 'err',
-                'msg': f'El nuevo monto en diciembre {data.get("amount_exec_december")}, no es permitido' # NOQA
-            }
-        else:
-            pass
-        return {'status': 'ok', 'msg': ''}
-
     def _validate_subsidiary_execution(id):
         qs_subsidiary = SubsidiaryGoalDetail.objects.filter(pk=id).first()
         if not qs_subsidiary:
@@ -586,7 +482,7 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
             qs_data = _get_qs_subsidiary_list()
             return generate_subsidiary_goal_excel_file(qs_data, qs_global_detail)
 
-        if request.GET.get('method') == 'excel2':
+        if request.GET.get('method') == 'excel-execution':
             qs_data = _get_qs_subsidiary_list()
             return generate_subsidiary_goal_execute_excel_file(qs_data, qs_global_detail) # NOQA
 
@@ -630,42 +526,44 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
                     )
                 counter = counter + 1
 
-        if request.POST.get('method') == 'load-excel2':
+        if request.POST.get('method') == 'load-excel-execution':
             result = load_excel_file(request.FILES['excel-file'])
             sheet = result.get('sheet')
             number_rows = result.get('number_rows')
             counter = 2
             for item in range(1, number_rows):
                 id = sheet[f'A{counter}'].value
-                data = {
-                    'amount_exec_january': sheet[f'D{counter}'].value,
-                    'amount_exec_february': sheet[f'E{counter}'].value,
-                    'amount_exec_march': sheet[f'F{counter}'].value,
-                    'amount_exec_april': sheet[f'G{counter}'].value,
-                    'amount_exec_may': sheet[f'H{counter}'].value,
-                    'amount_exec_june': sheet[f'I{counter}'].value,
-                    'amount_exec_july': sheet[f'J{counter}'].value,
-                    'amount_exec_august': sheet[f'K{counter}'].value,
-                    'amount_exec_september': sheet[f'L{counter}'].value,
-                    'amount_exec_october': sheet[f'M{counter}'].value,
-                    'amount_exec_november': sheet[f'N{counter}'].value,
-                    'amount_exec_december': sheet[f'O{counter}'].value
-                }
-
-                result_validate_execution = _validate_subsidiary_execution(id=id)
-                result_calculate_execution = _calculate_new_amounts_executed(data)
-                print(result_calculate_execution)
-                if result_validate_execution.get('status') != 'ok':
+                try:
+                    data = {
+                        'amount_exec_january': dc(sheet[f'D{counter}'].value),
+                        'amount_exec_february': dc(sheet[f'E{counter}'].value),
+                        'amount_exec_march': dc(sheet[f'F{counter}'].value),
+                        'amount_exec_april': dc(sheet[f'G{counter}'].value),
+                        'amount_exec_may': dc(sheet[f'H{counter}'].value),
+                        'amount_exec_june': dc(sheet[f'I{counter}'].value),
+                        'amount_exec_july': dc(sheet[f'J{counter}'].value),
+                        'amount_exec_august': dc(sheet[f'K{counter}'].value),
+                        'amount_exec_september': dc(sheet[f'L{counter}'].value),
+                        'amount_exec_october': dc(sheet[f'M{counter}'].value),
+                        'amount_exec_november': dc(sheet[f'N{counter}'].value),
+                        'amount_exec_december': dc(sheet[f'O{counter}'].value)
+                    }
+                except Exception as e:
                     messages.error(
-                        request, f'Error. Identificador: {id} {result_validate_execution.get("msg")}'# NOQA
-                    )
-                elif result_calculate_execution.get('status') != 'ok':
-                    messages.error(
-                        request, f'Error. Identificador: {id} {result_validate_execution.get("msg")}'# NOQA
+                        request,
+                        f'La linea {counter} con identificador {id} no pudo ser ingresado {e}'# NOQA
                     )
                 else:
-                    SubsidiaryGoalDetail.objects.filter(pk=id).update(**data)
-                counter = counter + 1
+                    result_validate_execution = _validate_subsidiary_execution(id=id)
+                    if result_validate_execution.get('status') != 'ok':
+                        messages.error(
+                            request,
+                            f'Error. Identificador: {id} {result_validate_execution.get("msg")}'# NOQA
+                        )
+                    else:
+                        SubsidiaryGoalDetail.objects.filter(pk=id).update(**data)
+                finally:
+                    counter = counter + 1
 
     query_result = execute_sql_query(query)
     if query_result.get('status') == 'ok':

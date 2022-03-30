@@ -157,7 +157,9 @@ def post_save_global_goal(sender, instance, created, **kwargs):
             )
 
 
-class SubsidiaryGoalDetail(AmountMonthlyMixin, AmountMonthlyExecutionMixin, AuditDataMixin): # NOQA
+class SubsidiaryGoalDetail(
+    AmountMonthlyMixin, AmountMonthlyExecutionMixin, AuditDataMixin
+):
     id = models.AutoField(primary_key=True, db_column="Id")
     id_global_goal_period = models.ForeignKey(
         GlobalGoalPeriod, models.DO_NOTHING, null=True, db_column="IdMetasGlobalesPeriodo"
