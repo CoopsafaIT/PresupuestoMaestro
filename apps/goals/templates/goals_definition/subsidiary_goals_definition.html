@@ -36,7 +36,6 @@
               style="font-size: 0.7rem !important;">
               <thead>
                 <tr>
-                  <th>Ene</th>
                   <th>Feb</th>
                   <th>Mar</th>
                   <th>Abr</th>
@@ -75,14 +74,24 @@
 
     <div class="card-body">
       <div class="row p-2 bg-secondary mb-3" style="--bs-bg-opacity: .3;">
-        <div class="col-md-1 offset-md-1 d-flex justify-content-end">
-          <button type="button" class="btn btn-outline-success" id="btnExecutExcelModal"> <i class="bi bi-file-excel"></i>
-            Ejecu</button>
-        </div>
-        <div class="col-md-1 offset-md-1 d-flex justify-content-end border-end border-dark">
-          <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
-            Excel</button>
-        </div>
+        {% if qs_goal == "M" %}
+          <div class="col-md-1 offset-md-auto d-flex justify-content-center">
+            <button type="button" class="btn btn-outline-success" id="btnExecutExcelModal"><i class="bi bi-file-excel">
+              </i>Ejecu</button>
+          </div>
+          <div class="col-md-1 offset-md-2  justify-content-end border-end border-dark">
+            <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
+              Excel</button>
+          </div>
+        {% endif %}
+        {% if qs_goal == "A" %}
+          <div class="col-md-1 offset-md-3 d-flex justify-content-end border-end border-dark">
+            <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
+              Excel</button>
+          </div>
+        {% endif %}
+        
+        
         <div class="col-md-8">
           {% include 'goals_definition/subsidiary_goals_search_form.html' %}
         </div>

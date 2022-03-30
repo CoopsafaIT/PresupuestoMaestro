@@ -45,7 +45,6 @@ def generate_subsidiary_goal_excel_file(data, qs):
         ws[f'P{x}'].value = item.amount_december
         ws[f'Q{x}'].value = item.ponderation
         x = x + 1
-
     file_name = f'formato_metas_filial_{dt.now()}'
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -79,19 +78,18 @@ def generate_subsidiary_goal_execute_excel_file(data, qs):
         ws[f'A{x}'].value = item.pk
         ws[f'B{x}'].value = item.id_goal.description
         ws[f'C{x}'].value = f'{item.id_cost_center.zone} | {item.id_cost_center}'
-        ws[f'D{x}'].value = item.amount_execution_january
-        ws[f'E{x}'].value = item.amount_execution_february
-        ws[f'F{x}'].value = item.amount_execution_march
-        ws[f'G{x}'].value = item.amount_execution_april
-        ws[f'H{x}'].value = item.amount_execution_may
-        ws[f'I{x}'].value = item.amount_execution_june
-        ws[f'J{x}'].value = item.amount_execution_july
-        ws[f'K{x}'].value = item.amount_execution_august
-        ws[f'L{x}'].value = item.amount_execution_september
-        ws[f'M{x}'].value = item.amount_execution_october
-        ws[f'N{x}'].value = item.amount_execution_november
-        ws[f'O{x}'].value = item.amount_execution_december
-
+        ws[f'D{x}'].value = item.amount_exec_january
+        ws[f'E{x}'].value = item.amount_exec_february
+        ws[f'F{x}'].value = item.amount_exec_march
+        ws[f'G{x}'].value = item.amount_exec_april
+        ws[f'H{x}'].value = item.amount_exec_may
+        ws[f'I{x}'].value = item.amount_exec_june
+        ws[f'J{x}'].value = item.amount_exec_july
+        ws[f'K{x}'].value = item.amount_exec_august
+        ws[f'L{x}'].value = item.amount_exec_september
+        ws[f'M{x}'].value = item.amount_exec_october
+        ws[f'N{x}'].value = item.amount_exec_november
+        ws[f'O{x}'].value = item.amount_exec_december
         x = x + 1
 
     file_name = f'formato_metas_filial_{dt.now()}'

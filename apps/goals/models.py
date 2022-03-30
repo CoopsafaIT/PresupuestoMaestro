@@ -6,7 +6,9 @@ from django.dispatch import receiver
 
 from apps.main.models import Periodo, Centroscosto
 from apps.master_budget.models import (
-    AuditDataMixin, AmountMonthlyMixin, AmountMonthlyExecutionMixin
+    AuditDataMixin,
+    AmountMonthlyMixin,
+    AmountMonthlyExecutionMixin
 )
 from utils.constants import TYPE_GOALS, DEFINITION_EXECUTION_GOALS
 

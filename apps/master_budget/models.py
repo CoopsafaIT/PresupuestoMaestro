@@ -757,7 +757,7 @@ class AmountMonthlyMixin(models.Model):
 
 
 class AmountMonthlyExecutionMixin(models.Model):
-    amount_execution_january = models.DecimalField(
+    amount_exec_january = models.DecimalField(
         db_column="MontoEjecucionEne",
         null=True,
         blank=True,
@@ -765,7 +765,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_february = models.DecimalField(
+    amount_exec_february = models.DecimalField(
         db_column="MontoEjecucionFeb",
         null=True,
         blank=True,
@@ -773,7 +773,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_march = models.DecimalField(
+    amount_exec_march = models.DecimalField(
         db_column="MontoEjecucionMar",
         null=True,
         blank=True,
@@ -781,7 +781,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_april = models.DecimalField(
+    amount_exec_april = models.DecimalField(
         db_column="MontoEjecucionAbr",
         null=True,
         blank=True,
@@ -789,7 +789,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_may = models.DecimalField(
+    amount_exec_may = models.DecimalField(
         db_column="MontoEjecucionMay",
         null=True,
         blank=True,
@@ -797,7 +797,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_june = models.DecimalField(
+    amount_exec_june = models.DecimalField(
         db_column="MontoEjecucionJun",
         null=True,
         blank=True,
@@ -805,7 +805,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_july = models.DecimalField(
+    amount_exec_july = models.DecimalField(
         db_column="MontoEjecucionJul",
         null=True,
         blank=True,
@@ -813,7 +813,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_august = models.DecimalField(
+    amount_exec_august = models.DecimalField(
         db_column="MontoEjecucionAgo",
         null=True,
         blank=True,
@@ -821,7 +821,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_september = models.DecimalField(
+    amount_exec_september = models.DecimalField(
         db_column="MontoEjecucionSep",
         null=True,
         blank=True,
@@ -829,7 +829,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_october = models.DecimalField(
+    amount_exec_october = models.DecimalField(
         db_column="MontoEjecucionOct",
         null=True,
         blank=True,
@@ -837,7 +837,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_november = models.DecimalField(
+    amount_exec_november = models.DecimalField(
         db_column="MontoEjecucionNov",
         null=True,
         blank=True,
@@ -845,7 +845,7 @@ class AmountMonthlyExecutionMixin(models.Model):
         decimal_places=2,
         default=0
     )
-    amount_execution_december = models.DecimalField(
+    amount_exec_december = models.DecimalField(
         db_column="MontoEjecucionDic",
         null=True,
         blank=True,
