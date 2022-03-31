@@ -74,22 +74,24 @@
 
     <div class="card-body">
       <div class="row p-2 bg-secondary mb-3" style="--bs-bg-opacity: .3;">
-        {% if qs_goal == "M" %}
-          <div class="col-md-1 offset-md-auto">
-            <button type="button" class="btn btn-outline-success" style="width:150px" id="btnExecutExcelModal"><i class="bi bi-file-excel">
+        <!-- {% if qs_goal == "M" %}
+        <div class="col-md-1 offset-md-2  justify-content-end border-end border-dark">
+          <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
+            Excel</button>
+          </div>
+          {% endif %}
+          {% if qs_goal == "A" %}
+          {% endif %} -->
+
+
+        <div class="col-md-4 d-flex justify-content-end border-end border-dark">
+          <div class="d-grid gap-2 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-success me-2" id="btnExecutExcelModal"><i class="bi bi-file-excel">
               </i>Ejecución</button>
-          </div>
-          <div class="col-md-1 offset-md-2  justify-content-end border-end border-dark">
             <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
-              Excel</button>
+              Definición</button>
           </div>
-        {% endif %}
-        {% if qs_goal == "A" %}
-          <div class="col-md-1 offset-md-3 d-flex justify-content-end border-end border-dark">
-            <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
-              Excel</button>
-          </div>
-        {% endif %}
+        </div>
         
         
         <div class="col-md-8">
