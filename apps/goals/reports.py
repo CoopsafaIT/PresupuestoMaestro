@@ -45,8 +45,54 @@ def generate_subsidiary_goal_excel_file(data, qs):
         ws[f'P{x}'].value = item.amount_december
         ws[f'Q{x}'].value = item.ponderation
         x = x + 1
-
     file_name = f'formato_metas_filial_{dt.now()}'
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename={file_name}.xlsx'
+    wb.save(response)
+    return response
+
+
+def generate_subsidiary_goal_execute_excel_file(data, qs):
+    wb = Workbook()
+    ws = wb.active
+    ws['A1'] = 'Identificador'
+    ws['B1'] = 'Meta'
+    ws['C1'] = 'Filial'
+    ws['D1'] = 'Ene'
+    ws['E1'] = 'Feb'
+    ws['F1'] = 'Mar'
+    ws['G1'] = 'Abr'
+    ws['H1'] = 'May'
+    ws['I1'] = 'Jun'
+    ws['J1'] = 'Jul'
+    ws['K1'] = 'Ago'
+    ws['L1'] = 'Sep'
+    ws['M1'] = 'Oct'
+    ws['N1'] = 'Nov'
+    ws['O1'] = 'Dic'
+
+    x = 2
+    for item in data:
+        ws[f'A{x}'].value = item.pk
+        ws[f'B{x}'].value = item.id_goal.description
+        ws[f'C{x}'].value = f'{item.id_cost_center.zone} | {item.id_cost_center}'
+        ws[f'D{x}'].value = item.amount_exec_january
+        ws[f'E{x}'].value = item.amount_exec_february
+        ws[f'F{x}'].value = item.amount_exec_march
+        ws[f'G{x}'].value = item.amount_exec_april
+        ws[f'H{x}'].value = item.amount_exec_may
+        ws[f'I{x}'].value = item.amount_exec_june
+        ws[f'J{x}'].value = item.amount_exec_july
+        ws[f'K{x}'].value = item.amount_exec_august
+        ws[f'L{x}'].value = item.amount_exec_september
+        ws[f'M{x}'].value = item.amount_exec_october
+        ws[f'N{x}'].value = item.amount_exec_november
+        ws[f'O{x}'].value = item.amount_exec_december
+        x = x + 1
+
+    file_name = f'formato_ejecucion_metas_filial_{dt.now()}'
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )

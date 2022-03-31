@@ -13,6 +13,7 @@
 {% include 'goals_definition/subsidiary_goals_all_detail_modal.html' %}
 {% include 'goals_definition/subsidiary_goals_assign_modal.html' %}
 {% include 'goals_definition/subsidiary_excel_modal.html' %}
+{% include 'goals_definition/subsidiary_execut_excel_modal.html' %}
 <div class="container-fluid pt-4">
   <div class="card card-template">
     <div class="card-header">
@@ -35,7 +36,6 @@
               style="font-size: 0.7rem !important;">
               <thead>
                 <tr>
-                  <th>Ene</th>
                   <th>Feb</th>
                   <th>Mar</th>
                   <th>Abr</th>
@@ -74,8 +74,15 @@
 
     <div class="card-body">
       <div class="row p-2 bg-secondary mb-3" style="--bs-bg-opacity: .3;">
-        <div class="col-md-2 offset-md-2 d-flex justify-content-end border-end border-dark">
-          <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i> Excel</button>
+        <div class="col-md-4 d-flex justify-content-end border-end border-dark">
+          <div class="d-grid gap-2 d-flex justify-content-end">
+            {% if qs_goal == "M" %}
+              <button type="button" class="btn btn-outline-success me-2" id="btnExecutExcelModal"><i class="bi bi-file-excel">
+                </i>Ejecución</button>
+            {% endif %}
+            <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
+              Definición</button>
+          </div>
         </div>
         <div class="col-md-8">
           {% include 'goals_definition/subsidiary_goals_search_form.html' %}
@@ -205,16 +212,20 @@
     getArray().forEach(el => {
       $(`#id_code_zone option[value= '${el}']`).prop('selected', true).trigger("change")
       $('#formGetExcelFile').append(`<input type="hidden" name="code_zone" value="${el}">`)
+      $('#formGetExcelExecutionFile').append(`<input type="hidden" name="code_zone" value="${el}">`)
     })
-
-
     $('.show-monthly-detail').click(() => {
       $('#div-container-table-monthly-detail').toggleClass("container-table-monthly-detail")
     })
 
-    $('#btnExcelModal').click(function(){
+    $('#btnExcelModal').click(function () {
       $('#ExcelSubsidiaryModal').modal('show');
     })
+
+    $('#btnExecutExcelModal').click(function () {
+      $('#ExcelExecutModal').modal('show');
+    })
+
   })
 </script>
 

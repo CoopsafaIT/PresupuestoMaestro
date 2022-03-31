@@ -756,6 +756,108 @@ class AmountMonthlyMixin(models.Model):
         abstract = True
 
 
+class AmountMonthlyExecutionMixin(models.Model):
+    amount_exec_january = models.DecimalField(
+        db_column="MontoEjecucionEne",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_february = models.DecimalField(
+        db_column="MontoEjecucionFeb",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_march = models.DecimalField(
+        db_column="MontoEjecucionMar",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_april = models.DecimalField(
+        db_column="MontoEjecucionAbr",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_may = models.DecimalField(
+        db_column="MontoEjecucionMay",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_june = models.DecimalField(
+        db_column="MontoEjecucionJun",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_july = models.DecimalField(
+        db_column="MontoEjecucionJul",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_august = models.DecimalField(
+        db_column="MontoEjecucionAgo",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_september = models.DecimalField(
+        db_column="MontoEjecucionSep",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_october = models.DecimalField(
+        db_column="MontoEjecucionOct",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_november = models.DecimalField(
+        db_column="MontoEjecucionNov",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+    amount_exec_december = models.DecimalField(
+        db_column="MontoEjecucionDic",
+        null=True,
+        blank=True,
+        max_digits=23,
+        decimal_places=2,
+        default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
 class AmountMonthlyMixinTemporal(models.Model):
     amount_temp_january = models.DecimalField(
         db_column="MontoTemporalEne",

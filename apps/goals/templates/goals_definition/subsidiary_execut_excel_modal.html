@@ -1,0 +1,30 @@
+<div class="modal fade" id="ExcelExecutModal" tabindex="-1" aria-labelledby="ExcelExecutModal"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-light" id="changeStatusScenarioLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="method" value="load-excel-execution">
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="excel-file" id="inputGroupFile04"
+                            aria-describedby="inputGroupFileAddon04" aria-label="Upload" required
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                        <button class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04">Cargar</button>
+                    </div>
+                </form>
+                <form method="get" action="{{request.get_full_path}}" id="formGetExcelExecutionFile">
+                    <input type="hidden" name="method" value="excel-execution">
+                    <button type="submit" class="btn btn-link">Generar formato</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

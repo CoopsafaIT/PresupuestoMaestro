@@ -9,7 +9,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from utils.sql import execute_sql_query
 from utils.pagination import pagination
-from .reports import generate_subsidiary_goal_excel_file, load_excel_file
+from .reports import (
+    generate_subsidiary_goal_excel_file,
+    load_excel_file,
+    generate_subsidiary_goal_execute_excel_file
+)
 
 from .models import (
     GlobalGoalPeriod, GlobalGoalDetail, Goal,
@@ -310,7 +314,7 @@ def goals_global_definition(request, id_global_goal_period):
 
 @login_required()
 def subsidiary_goals_definition(request, id_global_goal_definition):
-    qs_global_detail = get_object_or_404(GlobalGoalDetail, pk=id_global_goal_definition)
+    qs_global_detail = get_object_or_404(GlobalGoalDetail, pk=id_global_goal_definition) # NOQA
     zones_requested = request.GET.getlist('code_zone')
     query_parms = QueryGetParms(request.GET)
     qs_zone = []
@@ -447,6 +451,12 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
             }
         return {'status': 'ok', 'msg': ''}
 
+    def _validate_subsidiary_execution(id):
+        qs_subsidiary = SubsidiaryGoalDetail.objects.filter(pk=id).first()
+        if not qs_subsidiary:
+            return {'status': 'err', 'msg': 'Meta de Filial no encontrada'}
+        return {'status': 'ok', 'msg': ''}
+
     if request.is_ajax():
         if request.method == 'POST':
             data = json.loads(request.POST.get('data'))
@@ -471,6 +481,10 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
         if request.GET.get('method') == 'excel':
             qs_data = _get_qs_subsidiary_list()
             return generate_subsidiary_goal_excel_file(qs_data, qs_global_detail)
+
+        if request.GET.get('method') == 'excel-execution':
+            qs_data = _get_qs_subsidiary_list()
+            return generate_subsidiary_goal_execute_excel_file(qs_data, qs_global_detail) # NOQA
 
     elif request.method == 'POST':
         if request.POST.get('method') == 'load-excel':
@@ -512,17 +526,58 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
                     )
                 counter = counter + 1
 
+        if request.POST.get('method') == 'load-excel-execution':
+            result = load_excel_file(request.FILES['excel-file'])
+            sheet = result.get('sheet')
+            number_rows = result.get('number_rows')
+            counter = 2
+            for item in range(1, number_rows):
+                id = sheet[f'A{counter}'].value
+                try:
+                    data = {
+                        'amount_exec_january': dc(sheet[f'D{counter}'].value),
+                        'amount_exec_february': dc(sheet[f'E{counter}'].value),
+                        'amount_exec_march': dc(sheet[f'F{counter}'].value),
+                        'amount_exec_april': dc(sheet[f'G{counter}'].value),
+                        'amount_exec_may': dc(sheet[f'H{counter}'].value),
+                        'amount_exec_june': dc(sheet[f'I{counter}'].value),
+                        'amount_exec_july': dc(sheet[f'J{counter}'].value),
+                        'amount_exec_august': dc(sheet[f'K{counter}'].value),
+                        'amount_exec_september': dc(sheet[f'L{counter}'].value),
+                        'amount_exec_october': dc(sheet[f'M{counter}'].value),
+                        'amount_exec_november': dc(sheet[f'N{counter}'].value),
+                        'amount_exec_december': dc(sheet[f'O{counter}'].value)
+                    }
+                except Exception as e:
+                    messages.error(
+                        request,
+                        f'La linea {counter} con identificador {id} no pudo ser ingresado {e}'# NOQA
+                    )
+                else:
+                    result_validate_execution = _validate_subsidiary_execution(id=id)
+                    if result_validate_execution.get('status') != 'ok':
+                        messages.error(
+                            request,
+                            f'Error. Identificador: {id} {result_validate_execution.get("msg")}'# NOQA
+                        )
+                    else:
+                        SubsidiaryGoalDetail.objects.filter(pk=id).update(**data)
+                finally:
+                    counter = counter + 1
+
     query_result = execute_sql_query(query)
     if query_result.get('status') == 'ok':
         qs_zone = query_result.get('data')
 
     qs_subsidiary_list = _get_qs_subsidiary_list()
     qs_sum = _get_sum_amount_goal_definition(filters=query_parms.get_query_filters())
+    qs_goal = qs_subsidiary_list.first().id_goal.execution
     ctx = {
         'qs_global_detail': qs_global_detail,
         'qs_subsidiary_list': qs_subsidiary_list,
         'qs_zone': qs_zone,
         'qs_sum': qs_sum[0],
+        'qs_goal': qs_goal,
         'zones_requested': zones_requested
     }
     return render(request, 'goals_definition/subsidiary_goals_definition.html', ctx)
