@@ -74,26 +74,16 @@
 
     <div class="card-body">
       <div class="row p-2 bg-secondary mb-3" style="--bs-bg-opacity: .3;">
-        <!-- {% if qs_goal == "M" %}
-        <div class="col-md-1 offset-md-2  justify-content-end border-end border-dark">
-          <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
-            Excel</button>
-          </div>
-          {% endif %}
-          {% if qs_goal == "A" %}
-          {% endif %} -->
-
-
         <div class="col-md-4 d-flex justify-content-end border-end border-dark">
           <div class="d-grid gap-2 d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-success me-2" id="btnExecutExcelModal"><i class="bi bi-file-excel">
-              </i>Ejecución</button>
+            {% if qs_goal == "M" %}
+              <button type="button" class="btn btn-outline-success me-2" id="btnExecutExcelModal"><i class="bi bi-file-excel">
+                </i>Ejecución</button>
+            {% endif %}
             <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
               Definición</button>
           </div>
         </div>
-        
-        
         <div class="col-md-8">
           {% include 'goals_definition/subsidiary_goals_search_form.html' %}
         </div>
