@@ -16,6 +16,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='goal',
             name='user_assigned',
-            field=models.ForeignKey(blank=True, db_column='UsuarioAsignado', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='asignado', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                blank=True,
+                db_column='UsuarioAsignado',
+                null=True, on_delete=django.db.models.deletion.DO_NOTHING,
+                related_name='asignado',
+                to=settings.AUTH_USER_MODEL),
         ),
     ]
