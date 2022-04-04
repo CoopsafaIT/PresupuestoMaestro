@@ -1,5 +1,6 @@
+# from cProfile import label
 from django import forms
-
+from django.contrib.auth.models import User
 from apps.main.models import Periodo
 from .models import GlobalGoalPeriod, GlobalGoalDetail, Goal
 
@@ -32,11 +33,20 @@ class GoalsGlobalForm(forms.ModelForm):
             attrs={"rows": 3, "style": 'resize:none', 'class': 'form-control'}
         )
     )
+    user_assigned = forms.ModelChoiceField(
+        label="Asignar",
+        queryset=User.objects.filter(is_active=True),
+        empty_label="----Asignar meta----",
+        widget=forms.Select(
+            attrs={'class': 'form-select', 'style': 'width:100%'}
+        )
+    )
 
     class Meta:
         model = Goal
         fields = (
             'description',
+            'user_assigned'
         )
 
 

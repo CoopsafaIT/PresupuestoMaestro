@@ -37,11 +37,12 @@
             <table class="table table-hover table-bordered table-striped table-sm">
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th class="text-center">#</th>
                   <th>Metas</th>
                   <th>Tipo</th>
                   <th>Definición</th>
                   <th>Ejecución</th>
+                  <th>Asignado</th>
                   <th class="text-center">Acción</th>
                 </tr>
               </thead>
@@ -53,6 +54,7 @@
                   <td>{{item.get_type_display}}</td>
                   <td>{{item.get_definition_display}}</td>
                   <td>{{item.get_execution_display}}</td>
+                  <td>{{item.user_assigned}}</td>
                   <td>
                     <div class="d-grid gap-2 d-flex justify-content-center">
                       <a

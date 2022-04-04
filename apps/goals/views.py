@@ -3,6 +3,7 @@ from decimal import Decimal as dc
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
@@ -46,6 +47,7 @@ def goals(request):
             _new.save()
             messages.success(request, 'Meta creada con éxito!')
 
+    qsa = User.assigned
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     qs = Goal.objects.filter(
@@ -58,7 +60,8 @@ def goals(request):
 
     ctx = {
         'result': result,
-        'form': form
+        'form': form,
+        'qsa': qsa
     }
     return render(request, 'goals_definition/goals.html', ctx)
 
