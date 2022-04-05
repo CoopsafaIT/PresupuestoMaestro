@@ -37,6 +37,7 @@ class GoalsGlobalForm(forms.ModelForm):
         label="Asignar",
         queryset=User.objects.filter(is_active=True),
         empty_label="----Asignar meta----",
+        required=False,
         widget=forms.Select(
             attrs={'class': 'form-select', 'style': 'width:100%'}
         )

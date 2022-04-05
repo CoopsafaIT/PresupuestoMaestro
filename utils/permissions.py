@@ -9,6 +9,7 @@ data_content_types = [
     {"app_label": "ppto_maestro", "model": "ppto_maestro"},
     {"app_label": "admin", "model": "admin"},
     {"app_label": "security", "model": "security"},
+    {"app_label": "goals", "model": "goals"},
 ]
 
 admin_permissions = [
@@ -276,6 +277,68 @@ master_budget = [
         "codename": "puede_ver_menu_ppto_maestro",
     },
 ]
+goals_permissions = [
+    {
+        "name": "Puede Ingresar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_metas_globales",
+    },
+    {
+        "name": "Puede Listar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_listar_metas_globales",
+    },
+    {
+        "name": "Puede Editar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_editar_metas_globales",
+    },
+    {
+        "name": "Puede Eliminar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_eliminar_metas_globales",
+    },
+    {
+        "name": "Puede Asignar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_asignar_metas_globales",
+    },
+    {
+        "name": "Puede Definir Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_definir_metas_globales",
+    },
+    {
+        "name": "Puede Ingresar Definiciones Manuales",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_definiciones_manuales",
+    },
+    {
+        "name": "Puede Ingresar Ejecuciones Manuales",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_ejecuciones_manuales",
+    },
+    {
+        "name": "Puede Ingresar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_metas",
+    },
+    {
+        "name": "Puede Listar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_listar_metas",
+    },
+    {
+        "name": "Puede Editar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_editar_metas",
+    },
+    {
+        "name": "Puede Eliminar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_eliminar_metas",
+    }
+]
 
 all_permissions = (
     admin_permissions
@@ -292,4 +355,5 @@ all_permissions = (
     + transfers_permissions
     + checkout_permissions
     + master_budget
+    + goals_permissions
 )
