@@ -350,6 +350,11 @@ goals_permissions = [
         "codename": "puede_listar_definicion_de_periodo_de_meta",
     },
     {
+        "name": "Puede Ingresar Periodo de Meta",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_periodo_de_meta",
+    },
+    {
         "name": "Puede Editar Periodo de Meta",
         "content_type_name": "goals",
         "codename": "puede_editar_periodo_de_meta",

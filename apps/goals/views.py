@@ -2,11 +2,12 @@ import json
 from decimal import Decimal as dc
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.exceptions import PermissionDenied, ValidationError
 
 from utils.sql import execute_sql_query
 from utils.pagination import pagination
@@ -21,7 +22,7 @@ from .models import (
     SubsidiaryGoalDetail
 )
 from .forms import (
-    GoalsForm, GoalsGlobalForm, GlobalGoalDetailForm
+    GoalsPeriodForm, GoalsForm, GlobalGoalDetailForm
 )
 from .request_get import QueryGetParms
 
@@ -32,20 +33,36 @@ def goals_dashboard(request):
 
 
 @login_required()
+@permission_required(
+    'goals.puede_listar_metas', raise_exception=True
+)
 def goals(request):
-    form = GoalsGlobalForm()
+    form = GoalsForm()
     if request.method == 'POST':
-        form = GoalsGlobalForm(request.POST)
-        if not form.is_valid():
+        if not request.user.has_perm('goals.puede_ingresar_metas'):
+            raise PermissionDenied
+        try:
+            form = GoalsForm(request.POST)
+            if not form.is_valid():
+                messages.warning(
+                    request, f'Formulario no válido: {form.errors.as_text()}'
+                )
+            else:
+                _new = form.save()
+                _new.created_by = request.user
+                _new.updated_by = request.user
+                _new.save()
+                messages.success(request, 'Meta creada con éxito!')
+        except ValidationError as e:
             messages.warning(
-                request, f'Formulario no válido: {form.errors.as_text()}'
+                request,
+                f'Error de validación: {e.__str__()}'
             )
-        else:
-            _new = form.save()
-            _new.created_by = request.user
-            _new.updated_by = request.user
-            _new.save()
-            messages.success(request, 'Meta creada con éxito!')
+        except Exception as e:
+            messages.error(
+                request,
+                f'Error al crear usuario. {e.__str__()}'
+            )
 
     qsa = User.assigned
     page = request.GET.get('page', 1)
@@ -69,11 +86,12 @@ def goals(request):
 @login_required()
 def goal_edit(request, id):
     qs = get_object_or_404(Goal, pk=id)
-    form = GoalsGlobalForm(instance=qs)
-
+    form = GoalsForm(instance=qs)
     if request.method == 'POST':
         if request.POST.get('method') == 'edit':
-            form = GoalsGlobalForm(request.POST, instance=qs)
+            if not request.user.has_perm('goals.puede_editar_metas'):
+                raise PermissionDenied
+            form = GoalsForm(request.POST, instance=qs)
             if not form.is_valid():
                 messages.warning(
                     request,
@@ -97,20 +115,32 @@ def goal_edit(request, id):
 
 @login_required()
 def global_goals_period(request):
-    form = GoalsForm()
+    form = GoalsPeriodForm()
     if request.method == 'POST':
-        form = GoalsForm(request.POST)
-        if not form.is_valid():
+        if not request.user.has_perm('goals.puede_ingresar_periodo_de_meta'):
+            raise PermissionDenied
+        try:
+            form = GoalsPeriodForm(request.POST)
+            if not form.is_valid():
+                messages.warning(
+                    request, f'Formulario no válido: {form.errors.as_text()}'
+                )
+            else:
+                _new = form.save()
+                _new.created_by = request.user
+                _new.updated_by = request.user
+                _new.save()
+                messages.success(request, 'Meta creada con éxito!')
+        except ValidationError as e:
             messages.warning(
-                request, f'Formulario no válido: {form.errors.as_text()}'
+                request,
+                f'Error de validación: {e.__str__()}'
             )
-        else:
-            _new = form.save()
-            _new.created_by = request.user
-            _new.updated_by = request.user
-            _new.save()
-            messages.success(request, 'Meta creada con éxito!')
-
+        except Exception as e:
+            messages.error(
+                request,
+                f'Error al crear usuario. {e.__str__()}'
+            )
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     qs = GlobalGoalPeriod.objects.filter(
@@ -129,11 +159,13 @@ def global_goals_period(request):
 @login_required()
 def goals_period_edit(request, id):
     qs = get_object_or_404(GlobalGoalPeriod, pk=id)
-    form = GoalsForm(instance=qs)
+    form = GoalsPeriodForm(instance=qs)
 
     if request.method == 'POST':
         if request.POST.get('method') == 'edit':
-            form = GoalsForm(request.POST, instance=qs)
+            if not request.user.has_perm('goals.puede_editar_periodo_de_meta'):
+                raise PermissionDenied
+            form = GoalsPeriodForm(request.POST, instance=qs)
             if not form.is_valid():
                 messages.warning(
                     request,
@@ -249,6 +281,8 @@ def goals_global_definition(request, id_global_goal_period):
                 return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
 
     elif request.method == 'POST':
+        if not request.user.has_perm('goals.puede_registrar_metas_globales'):
+            raise PermissionDenied
         post = request.POST.copy()
         post['annual_amount'] = post.get('annual_amount').replace(',', '')
 
@@ -462,6 +496,8 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
 
     if request.is_ajax():
         if request.method == 'POST':
+            if not request.user.has_perm('goals.puede_ver_definicion_de_meta_por_filial'):
+                raise PermissionDenied
             data = json.loads(request.POST.get('data'))
             id = data.pop('id')
             result = _validate_subsidiary_data(id=id, dict_data=data.copy())
@@ -482,10 +518,14 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
 
     elif request.method == 'GET':
         if request.GET.get('method') == 'excel':
+            if not request.user.has_perm('goals.puede_ingresar_definiciones_manuales'):
+                raise PermissionDenied
             qs_data = _get_qs_subsidiary_list()
             return generate_subsidiary_goal_excel_file(qs_data, qs_global_detail)
 
         if request.GET.get('method') == 'excel-execution':
+            if not request.user.has_perm('goals.puede_ingresar_ejecuciones_manuales'):
+                raise PermissionDenied
             qs_data = _get_qs_subsidiary_list()
             return generate_subsidiary_goal_execute_excel_file(qs_data, qs_global_detail) # NOQA
 

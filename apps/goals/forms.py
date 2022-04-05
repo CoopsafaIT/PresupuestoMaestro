@@ -10,7 +10,7 @@ class UserModelChoiceField(forms.ModelChoiceField):
         return f'{obj.username} - {obj.first_name}'
 
 
-class GoalsForm(forms.ModelForm):
+class GoalsPeriodForm(forms.ModelForm):
     period_id = forms.ModelChoiceField(
         label="Periodo",
         queryset=Periodo.objects.filter(habilitado=True),
@@ -31,7 +31,7 @@ class GoalsForm(forms.ModelForm):
         fields = ('period_id', 'description')
 
 
-class GoalsGlobalForm(forms.ModelForm):
+class GoalsForm(forms.ModelForm):
     description = forms.CharField(
         label="Descripción",
         widget=forms.Textarea(
