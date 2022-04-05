@@ -277,6 +277,7 @@ master_budget = [
         "codename": "puede_ver_menu_ppto_maestro",
     },
 ]
+
 goals_permissions = [
     {
         "name": "Puede Ingresar Metas Globales",
@@ -337,6 +338,46 @@ goals_permissions = [
         "name": "Puede Eliminar Metas",
         "content_type_name": "goals",
         "codename": "puede_eliminar_metas",
+    },
+    {
+        "name": "Puede Ver Menu de Metas",
+        "content_type_name": "goals",
+        "codename": "puede_ver_menu_de_metas",
+    },
+    {
+        "name": "Puede Listar Definicion de Periodo de Meta",
+        "content_type_name": "goals",
+        "codename": "puede_listar_definicion_de_periodo_de_meta",
+    },
+    {
+        "name": "Puede Editar Periodo de Meta",
+        "content_type_name": "goals",
+        "codename": "puede_editar_periodo_de_meta",
+    },
+    {
+        "name": "Puede Ver Definicion de Meta",
+        "content_type_name": "goals",
+        "codename": "puede_ver_definicion_de_meta",
+    },
+    {
+        "name": "Puede Ver Definicion de Meta Asignada",
+        "content_type_name": "goals",
+        "codename": "puede_ver_definicion_de_meta_asignada",
+    },
+    {
+        "name": "Puede Registrar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_registrar_metas_globales",
+    },
+    {
+        "name": "Puede Ver Detalle Mensual de Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_ver_detalle_mensual_de_metas_globales",
+    },
+    {
+        "name": "Puede Ver Definicion de Meta por Filial",
+        "content_type_name": "goals",
+        "codename": "puede_ver_definicion_de_meta_por_filial",
     }
 ]
 

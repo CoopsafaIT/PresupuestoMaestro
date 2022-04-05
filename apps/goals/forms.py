@@ -5,6 +5,11 @@ from apps.main.models import Periodo
 from .models import GlobalGoalPeriod, GlobalGoalDetail, Goal
 
 
+class UserModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f'{obj.username} - {obj.first_name}'
+
+
 class GoalsForm(forms.ModelForm):
     period_id = forms.ModelChoiceField(
         label="Periodo",
@@ -33,7 +38,7 @@ class GoalsGlobalForm(forms.ModelForm):
             attrs={"rows": 3, "style": 'resize:none', 'class': 'form-control'}
         )
     )
-    user_assigned = forms.ModelChoiceField(
+    user_assigned = UserModelChoiceField(
         label="Asignar",
         queryset=User.objects.filter(is_active=True),
         empty_label="----Asignar meta----",

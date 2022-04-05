@@ -77,11 +77,15 @@
         <div class="col-md-4 d-flex justify-content-end border-end border-dark">
           <div class="d-grid gap-2 d-flex justify-content-end">
             {% if qs_goal == "M" %}
-              <button type="button" class="btn btn-outline-success me-2" id="btnExecutExcelModal"><i class="bi bi-file-excel">
+              {% if perms.goals.puede_ingresar_ejecuciones_manuales %}
+                <button type="button" class="btn btn-outline-success me-2" id="btnExecutExcelModal"><i class="bi bi-file-excel">
                 </i>Ejecución</button>
+              {% endif %}
             {% endif %}
-            <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
-              Definición</button>
+            {% if perms.goals.puede_ingresar_definiciones_manuales %}
+              <button type="button" class="btn btn-outline-success" id="btnExcelModal"> <i class="bi bi-file-excel"></i>
+                Definición</button>
+            {% endif %}
           </div>
         </div>
         <div class="col-md-8">
@@ -115,7 +119,7 @@
               {% for item in qs_subsidiary_list %}
               <tr
                 class="{% if item.id_cost_center.code_zone == 0 %} table-danger {% elif item.id_cost_center.code_zone|divisibleby:2 %} table-success {% else %} table-secondary {% endif %}">
-                <td class="cu-pointer show-subsidiary-goals-detail"
+                <td class="{% if perms.goals.puede_ver_detalle_mensual_de_metas_globales %}cu-pointer show-subsidiary-goals-detail{% endif %}"
                   data-url="{% url 'subsidiary_goals_detail' item.id_cost_center.pk item.id_global_goal_period.pk %}"
                   data-name="{{item.id_cost_center}}">{{forloop.counter}}</td>
 
@@ -232,7 +236,6 @@
 <script>
   $(document).ready(() => {
     $('.show-subsidiary-goals-detail').click(function () {
-      console.log('clicked!');
       let url = $(this).data('url');
       let name = $(this).data('name');
 
