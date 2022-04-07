@@ -74,28 +74,27 @@
               <tbody>
                 {% for item in qs_global_goal_detail %}
                 <tr>
-                  {% if perms.goals.puede_ver_definicion_de_meta_asignada %}
-                    <td class="text-center">{{forloop.counter}}</td>
-                    <td>{{item.id_goal}}</td>
-                    <td>{{item.annual_amount|intcomma}}</td>
-                    <td>{{item.ponderation}}</td>
-                    <td>
-                      <div class="d-grid gap-2 d-flex justify-content-center">
-                        {% if perms.goals.puede_ver_detalle_mensual_de_metas_globales %}
+                  <td class="text-center">{{forloop.counter}}</td>
+                  <td>{{item.id_goal}}</td>
+                  <td>{{item.annual_amount|intcomma}}</td>
+                  <td>{{item.ponderation}}</td>
+                  <td>
+                    <div class="d-grid gap-2 d-flex justify-content-center">
+                      {% if perms.goals.puede_ver_detalle_mensual_de_metas_globales %}
                         <button class="btn btn-outline-primary show-global-goal-detail" data-id="{{item.pk}}"
                         data-goal-id="{{item.id_goal.pk}}" data-bs-toggle="tooltip" data-bs-placement="top"
                         title="Detalle Mensual"><i class="bi bi-calendar-week"></i>
-                      </button>
-                    {% endif %}
-                    {% if perms.goals.puede_ver_definicion_de_meta_por_filial %}
-                    <a class="btn btn-outline-info" href="{% url 'subsidiary_goals_definition' item.pk %}"
+                        </button>
+                      {% endif %}
+                      {% if perms.goals.puede_ver_definicion_de_meta_por_filial %}
+                      <a class="btn btn-outline-info" href="{% url 'subsidiary_goals_definition' item.pk %}"
                         data-bs-toggle="tooltip" data-bs-placement="top" title="Definir meta por Filial"
                         ><i class="bi bi-list-stars"></i>
                       </a>
                       {% endif %}
                     </div>
                   </td>
-                  {% endif %}
+
                 </tr>
                 {% empty %}
                 <tr>
