@@ -2,8 +2,7 @@ import json
 from decimal import Decimal as dc
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
@@ -28,11 +27,18 @@ from .request_get import QueryGetParms
 
 
 @login_required()
+@permission_required(
+    'goals.puede_ver_menu_de_metas', raise_exception=True
+)
+# TODO: puede_ver_menu...
 def goals_dashboard(request):
     return render(request, 'goals/dashboard.html')
 
 
 @login_required()
+@permission_required(
+    'goals.puede_listar_metas', raise_exception=True
+)
 def goals(request):
     form = GoalsForm()
     if request.method == 'POST':
@@ -60,9 +66,6 @@ def goals(request):
                 request,
                 f'Error al ingresar meta. {e.__str__()}'
             )
-    if not request.user.has_perm('goals.puede_listar_metas'):
-        raise PermissionDenied
-    qsa = User.assigned
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     qs = Goal.objects.filter(
@@ -76,7 +79,6 @@ def goals(request):
     ctx = {
         'result': result,
         'form': form,
-        'qsa': qsa
     }
     return render(request, 'goals_definition/goals.html', ctx)
 
@@ -86,9 +88,9 @@ def goal_edit(request, id):
     qs = get_object_or_404(Goal, pk=id)
     form = GoalsForm(instance=qs)
     if request.method == 'POST':
+        if not request.user.has_perm('goals.puede_editar_metas'):
+            raise PermissionDenied
         if request.POST.get('method') == 'edit':
-            if not request.user.has_perm('goals.puede_editar_metas'):
-                raise PermissionDenied
             form = GoalsForm(request.POST, instance=qs)
             if not form.is_valid():
                 messages.warning(
@@ -112,35 +114,11 @@ def goal_edit(request, id):
 
 
 @login_required()
+@permission_required(
+    'goals.puede_listar_definicion_de_periodo_de_meta', raise_exception=True
+)
 def global_goals_period(request):
     form = GoalsPeriodForm()
-    if request.method == 'POST':
-        if not request.user.has_perm('goals.puede_ingresar_periodo_de_meta'):
-            raise PermissionDenied
-        try:
-            form = GoalsPeriodForm(request.POST)
-            if not form.is_valid():
-                messages.warning(
-                    request, f'Formulario no válido: {form.errors.as_text()}'
-                )
-            else:
-                _new = form.save()
-                _new.created_by = request.user
-                _new.updated_by = request.user
-                _new.save()
-                messages.success(request, 'Meta creada con éxito!')
-        except ValidationError as e:
-            messages.warning(
-                request,
-                f'Error de validación: {e.__str__()}'
-            )
-        except Exception as e:
-            messages.error(
-                request,
-                f'Error al crear periodo. {e.__str__()}'
-            )
-    if not request.user.has_perm('goals.puede_listar_definicion_de_periodo_de_meta'):
-        raise PermissionDenied
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     qs = GlobalGoalPeriod.objects.filter(
@@ -162,9 +140,9 @@ def goals_period_edit(request, id):
     form = GoalsPeriodForm(instance=qs)
 
     if request.method == 'POST':
+        if not request.user.has_perm('goals.puede_editar_periodo_de_meta'):
+            raise PermissionDenied
         if request.POST.get('method') == 'edit':
-            if not request.user.has_perm('goals.puede_editar_periodo_de_meta'):
-                raise PermissionDenied
             form = GoalsPeriodForm(request.POST, instance=qs)
             if not form.is_valid():
                 messages.warning(
@@ -189,6 +167,11 @@ def goals_period_edit(request, id):
 
 @login_required()
 def goals_global_definition(request, id_global_goal_period):
+    if (
+        not request.user.has_perm('goals.puede_ver_definicion_de_meta_asignada') and
+        not request.user.has_perm('goals.puede_ver_definicion_de_meta')
+    ):
+        raise PermissionDenied
     qs_global_goal_period = get_object_or_404(GlobalGoalPeriod, pk=id_global_goal_period)
     qs_goals = Goal.objects.all().order_by('description')
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(
@@ -330,9 +313,14 @@ def goals_global_definition(request, id_global_goal_period):
 
             messages.success(request, 'Meta agregada con éxito')
 
+    filters = qs_global_goal_detail
+    if request.user.has_perm('goals.puede_ver_definicion_de_meta_asignada'):
+        filters = {'id_goal__user_assigned__id': request.user.id}
+
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(
         id_global_goal_period=qs_global_goal_period.pk
-    )
+    ).filter(**filters)
+
     exclude = qs_global_goal_detail.values_list('id_goal', flat=True)
     qs_goals = Goal.objects.exclude(pk__in=exclude).order_by('description')
     qs_sum = qs_global_goal_detail.extra({
@@ -352,6 +340,9 @@ def goals_global_definition(request, id_global_goal_period):
 
 
 @login_required()
+@permission_required(
+    'goals.puede_ver_definicion_de_meta_por_filial', raise_exception=True
+)
 def subsidiary_goals_definition(request, id_global_goal_definition):
     qs_global_detail = get_object_or_404(GlobalGoalDetail, pk=id_global_goal_definition) # NOQA
     zones_requested = request.GET.getlist('code_zone')
@@ -533,6 +524,8 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
 
     elif request.method == 'POST':
         if request.POST.get('method') == 'load-excel':
+            if not request.user.has_perm('goals.puede_ingresar_definiciones_manuales'):
+                raise PermissionDenied
             result = load_excel_file(request.FILES['excel-file'])
             sheet = result.get('sheet')
             number_rows = result.get('number_rows')
@@ -572,6 +565,8 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
                 counter = counter + 1
 
         if request.POST.get('method') == 'load-excel-execution':
+            if not request.user.has_perm('goals.puede_ingresar_ejecuciones_manuales'):
+                raise PermissionDenied
             result = load_excel_file(request.FILES['excel-file'])
             sheet = result.get('sheet')
             number_rows = result.get('number_rows')
@@ -629,6 +624,9 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
 
 
 @login_required()
+@permission_required(
+    'goals.puede_ver_detalle_filial', raise_exception=True
+)
 def subsidiary_goals_detail(request, id_cost_center, id_global_goal_period):
     qs = list(SubsidiaryGoalDetail.objects.filter(
         id_cost_center=id_cost_center, id_global_goal_period=id_global_goal_period

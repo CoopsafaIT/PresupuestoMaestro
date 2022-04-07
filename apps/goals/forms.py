@@ -39,9 +39,9 @@ class GoalsForm(forms.ModelForm):
         )
     )
     user_assigned = UserModelChoiceField(
-        label="Asignar",
+        label="Asignar Usuario",
         queryset=User.objects.filter(is_active=True),
-        empty_label="----Asignar meta----",
+        empty_label="----Asignar Usuario----",
         required=False,
         widget=forms.Select(
             attrs={'class': 'form-select', 'style': 'width:100%'}
