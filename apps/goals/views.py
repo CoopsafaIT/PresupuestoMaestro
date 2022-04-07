@@ -313,7 +313,7 @@ def goals_global_definition(request, id_global_goal_period):
 
             messages.success(request, 'Meta agregada con éxito')
 
-    filters = qs_global_goal_detail
+    filters = {}
     if request.user.has_perm('goals.puede_ver_definicion_de_meta_asignada'):
         filters = {'id_goal__user_assigned__id': request.user.id}
 

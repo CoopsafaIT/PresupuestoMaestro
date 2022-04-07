@@ -285,9 +285,9 @@ goals_permissions = [
         "codename": "puede_ver_menu_de_metas",
     },
     {
-        "name": "Puede Listar Periodos de Metas",
+        "name": "Puede Listar Definicion de Periodo de Meta",
         "content_type_name": "goals",
-        "codename": "puede_listar_periodos_de_metas",
+        "codename": "puede_listar_definicion_de_periodo_de_meta",
     },
     {
         "name": "Puede Ingresar Periodo de Meta",
