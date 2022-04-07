@@ -2,7 +2,7 @@ import json
 from decimal import Decimal as dc
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
@@ -33,9 +33,6 @@ def goals_dashboard(request):
 
 
 @login_required()
-@permission_required(
-    'goals.puede_listar_metas', raise_exception=True
-)
 def goals(request):
     form = GoalsForm()
     if request.method == 'POST':
@@ -61,9 +58,10 @@ def goals(request):
         except Exception as e:
             messages.error(
                 request,
-                f'Error al crear usuario. {e.__str__()}'
+                f'Error al ingresar meta. {e.__str__()}'
             )
-
+    if not request.user.has_perm('goals.puede_listar_metas'):
+        raise PermissionDenied
     qsa = User.assigned
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
@@ -139,8 +137,10 @@ def global_goals_period(request):
         except Exception as e:
             messages.error(
                 request,
-                f'Error al crear usuario. {e.__str__()}'
+                f'Error al crear periodo. {e.__str__()}'
             )
+    if not request.user.has_perm('goals.puede_listar_definicion_de_periodo_de_meta'):
+        raise PermissionDenied
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     qs = GlobalGoalPeriod.objects.filter(
@@ -210,6 +210,8 @@ def goals_global_definition(request, id_global_goal_period):
 
     if request.is_ajax():
         if request.method == 'POST':
+            if not request.user.has_perm('goals.puede_ver_detalle_mensual_de_metas_globales'): # NOQA
+                raise PermissionDenied
             data = json.loads(request.POST.get('data'))
             goal_id = data.pop('goal_id')
             qs = Goal.objects.filter(pk=goal_id).first()

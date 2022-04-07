@@ -280,66 +280,6 @@ master_budget = [
 
 goals_permissions = [
     {
-        "name": "Puede Ingresar Metas Globales",
-        "content_type_name": "goals",
-        "codename": "puede_ingresar_metas_globales",
-    },
-    {
-        "name": "Puede Listar Metas Globales",
-        "content_type_name": "goals",
-        "codename": "puede_listar_metas_globales",
-    },
-    {
-        "name": "Puede Editar Metas Globales",
-        "content_type_name": "goals",
-        "codename": "puede_editar_metas_globales",
-    },
-    {
-        "name": "Puede Eliminar Metas Globales",
-        "content_type_name": "goals",
-        "codename": "puede_eliminar_metas_globales",
-    },
-    {
-        "name": "Puede Asignar Metas Globales",
-        "content_type_name": "goals",
-        "codename": "puede_asignar_metas_globales",
-    },
-    {
-        "name": "Puede Definir Metas Globales",
-        "content_type_name": "goals",
-        "codename": "puede_definir_metas_globales",
-    },
-    {
-        "name": "Puede Ingresar Definiciones Manuales",
-        "content_type_name": "goals",
-        "codename": "puede_ingresar_definiciones_manuales",
-    },
-    {
-        "name": "Puede Ingresar Ejecuciones Manuales",
-        "content_type_name": "goals",
-        "codename": "puede_ingresar_ejecuciones_manuales",
-    },
-    {
-        "name": "Puede Ingresar Metas",
-        "content_type_name": "goals",
-        "codename": "puede_ingresar_metas",
-    },
-    {
-        "name": "Puede Listar Metas",
-        "content_type_name": "goals",
-        "codename": "puede_listar_metas",
-    },
-    {
-        "name": "Puede Editar Metas",
-        "content_type_name": "goals",
-        "codename": "puede_editar_metas",
-    },
-    {
-        "name": "Puede Eliminar Metas",
-        "content_type_name": "goals",
-        "codename": "puede_eliminar_metas",
-    },
-    {
         "name": "Puede Ver Menu de Metas",
         "content_type_name": "goals",
         "codename": "puede_ver_menu_de_metas",
@@ -364,11 +304,13 @@ goals_permissions = [
         "content_type_name": "goals",
         "codename": "puede_ver_definicion_de_meta",
     },
+
     {
         "name": "Puede Ver Definicion de Meta Asignada",
         "content_type_name": "goals",
         "codename": "puede_ver_definicion_de_meta_asignada",
     },
+
     {
         "name": "Puede Registrar Metas Globales",
         "content_type_name": "goals",
@@ -383,6 +325,47 @@ goals_permissions = [
         "name": "Puede Ver Definicion de Meta por Filial",
         "content_type_name": "goals",
         "codename": "puede_ver_definicion_de_meta_por_filial",
+    },
+    {
+        "name": "Puede Ver Detalle Filial",
+        "content_type_name": "goals",
+        "codename": "puede_ver_detalle_filial",
+    },
+    {
+        "name": "Puede Asignar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_asignar_metas_globales",
+    },
+
+    {
+        "name": "Puede Ingresar Definiciones Manuales",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_definiciones_manuales",
+    },
+    {
+        "name": "Puede Ingresar Ejecuciones Manuales",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_ejecuciones_manuales",
+    },
+    {
+        "name": "Puede Listar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_listar_metas",
+    },
+    {
+        "name": "Puede Ingresar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_metas",
+    },
+    {
+        "name": "Puede Editar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_editar_metas",
+    },
+    {
+        "name": "Puede Eliminar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_eliminar_metas",
     }
 ]
 

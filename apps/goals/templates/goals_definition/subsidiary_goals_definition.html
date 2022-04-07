@@ -121,9 +121,10 @@
                 class="{% if item.id_cost_center.code_zone == 0 %} table-danger {% elif item.id_cost_center.code_zone|divisibleby:2 %} table-success {% else %} table-secondary {% endif %}">
                 <td class="{% if perms.goals.puede_ver_detalle_mensual_de_metas_globales %}cu-pointer show-subsidiary-goals-detail{% endif %}"
                   data-url="{% url 'subsidiary_goals_detail' item.id_cost_center.pk item.id_global_goal_period.pk %}"
-                  data-name="{{item.id_cost_center}}">{{forloop.counter}}</td>
+                  data-name="{{item.id_cost_center}}">{{forloop.counter}}
+                </td>
 
-                <td class="cu-pointer show-subsidiary-asigned" data-name="{{item.id_cost_center}}"
+                <td class="{% if perms.goals.puede_ver_detalle_filial %}cu-pointer show-subsidiary-asigned{% endif %}" data-name="{{item.id_cost_center}}"
                   data-pk="{{item.pk}}" data-january="{{item.amount_january|intcomma}}"
                   data-february="{{item.amount_february|intcomma}}" data-march="{{item.amount_march|intcomma}}"
                   data-april="{{item.amount_april|intcomma}}" data-may="{{item.amount_may|intcomma}}"
