@@ -27,18 +27,13 @@ from .request_get import QueryGetParms
 
 
 @login_required()
-@permission_required(
-    'goals.puede_ver_menu_de_metas', raise_exception=True
-)
-# TODO: puede_ver_menu...
+@permission_required('goals.puede_ver_menu_de_metas', raise_exception=True)
 def goals_dashboard(request):
     return render(request, 'goals/dashboard.html')
 
 
 @login_required()
-@permission_required(
-    'goals.puede_listar_metas', raise_exception=True
-)
+@permission_required('goals.puede_listar_metas', raise_exception=True)
 def goals(request):
     form = GoalsForm()
     if request.method == 'POST':
@@ -69,10 +64,8 @@ def goals(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
     qs = Goal.objects.filter(
-        Q(description__icontains=q) |
-        Q(type__icontains=q) |
-        Q(definition__icontains=q) |
-        Q(execution__icontains=q)
+        Q(description__icontains=q) | Q(type__icontains=q) |
+        Q(definition__icontains=q) | Q(execution__icontains=q)
     ).order_by('description')
     result = pagination(qs, page)
 
@@ -84,12 +77,11 @@ def goals(request):
 
 
 @login_required()
+@permission_required('goals.puede_editar_metas', raise_exception=True)
 def goal_edit(request, id):
     qs = get_object_or_404(Goal, pk=id)
     form = GoalsForm(instance=qs)
     if request.method == 'POST':
-        if not request.user.has_perm('goals.puede_editar_metas'):
-            raise PermissionDenied
         if request.POST.get('method') == 'edit':
             form = GoalsForm(request.POST, instance=qs)
             if not form.is_valid():
@@ -135,13 +127,12 @@ def global_goals_period(request):
 
 
 @login_required()
+@permission_required('goals.puede_editar_periodo_de_meta', raise_exception=True)
 def goals_period_edit(request, id):
     qs = get_object_or_404(GlobalGoalPeriod, pk=id)
     form = GoalsPeriodForm(instance=qs)
 
     if request.method == 'POST':
-        if not request.user.has_perm('goals.puede_editar_periodo_de_meta'):
-            raise PermissionDenied
         if request.POST.get('method') == 'edit':
             form = GoalsPeriodForm(request.POST, instance=qs)
             if not form.is_valid():
@@ -214,6 +205,8 @@ def goals_global_definition(request, id_global_goal_period):
         elif request.method == 'GET':
             goal_id = request.GET.get('goalId')
             if request.GET.get('method') == 'get-goal-detail':
+                if not request.user.has_perm('goals.puede_registrar_metas_globales'):
+                    raise PermissionDenied
                 qs = Goal.objects.filter(pk=goal_id).first()
                 if qs.definition == "A":
                     query = f'EXEC {qs.query}'
@@ -246,6 +239,8 @@ def goals_global_definition(request, id_global_goal_period):
                 }
                 return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
             elif request.GET.get('method') == 'get-global-goal-detail':
+                if not request.user.has_perm('goals.puede_ver_detalle_mensual_de_metas_globales'): # NOQA
+                    raise PermissionDenied
                 qs_goal = Goal.objects.values(
                     'id', 'description', 'definition'
                 ).get(pk=goal_id)
@@ -340,9 +335,7 @@ def goals_global_definition(request, id_global_goal_period):
 
 
 @login_required()
-@permission_required(
-    'goals.puede_ver_definicion_de_meta_por_filial', raise_exception=True
-)
+@permission_required('goals.puede_ver_definicion_de_meta_por_filial', raise_exception=True)
 def subsidiary_goals_definition(request, id_global_goal_definition):
     qs_global_detail = get_object_or_404(GlobalGoalDetail, pk=id_global_goal_definition) # NOQA
     zones_requested = request.GET.getlist('code_zone')
@@ -489,8 +482,6 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
 
     if request.is_ajax():
         if request.method == 'POST':
-            if not request.user.has_perm('goals.puede_ver_definicion_de_meta_por_filial'):
-                raise PermissionDenied
             data = json.loads(request.POST.get('data'))
             id = data.pop('id')
             result = _validate_subsidiary_data(id=id, dict_data=data.copy())
@@ -624,9 +615,7 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
 
 
 @login_required()
-@permission_required(
-    'goals.puede_ver_detalle_filial', raise_exception=True
-)
+@permission_required('goals.puede_ver_detalle_filial', raise_exception=True)
 def subsidiary_goals_detail(request, id_cost_center, id_global_goal_period):
     qs = list(SubsidiaryGoalDetail.objects.filter(
         id_cost_center=id_cost_center, id_global_goal_period=id_global_goal_period

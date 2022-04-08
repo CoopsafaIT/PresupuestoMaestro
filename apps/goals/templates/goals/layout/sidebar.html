@@ -15,24 +15,27 @@
         <li><a class="link_name" href="{% url 'dashboard' %}">Volver Ingreso PPTO.</a></li>
       </ul>
     </li>
-
-    <li>
-      <a href="{% url 'global_goals_period' %}" class="institutional-golden-color">
-        <i class="bi bi-diagram-3-fill"></i>
-        <span class="link_name">Definición de Metas</span>
-      </a>
-      <ul class="sub-menu blank">
-        <li><a class="link_name" href="{% url 'global_goals_period' %}">Definición de Metas</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="{% url 'goals' %}" class="institutional-golden-color">
-        <i class="bi bi-journal-plus"></i>
-        <span class="link_name">Metas</span>
-      </a>
-      <ul class="sub-menu blank">
-        <li><a class="link_name" href="{% url 'goals' %}">Metas</a></li>
-      </ul>
-    </li>
+    {% if perms.goals.puede_listar_definicion_de_periodo_de_meta %}
+      <li>
+        <a href="{% url 'global_goals_period' %}" class="institutional-golden-color">
+          <i class="bi bi-diagram-3-fill"></i>
+          <span class="link_name">Definición de Metas</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="{% url 'global_goals_period' %}">Definición de Metas</a></li>
+        </ul>
+      </li>
+    {% endif %}
+    {% if perms.goals.puede_listar_metas %}
+      <li>
+        <a href="{% url 'goals' %}" class="institutional-golden-color">
+          <i class="bi bi-journal-plus"></i>
+          <span class="link_name">Metas</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="{% url 'goals' %}">Metas</a></li>
+        </ul>
+      </li>
+    {% endif %}
   </ul>
 </div>
