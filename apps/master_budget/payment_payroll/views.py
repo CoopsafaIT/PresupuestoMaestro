@@ -402,8 +402,6 @@ def scenario_payment_payroll(request, id):
                         _temporary_percentage_ceco_calculation(qs_row, qs)
                         qs_row.refresh_from_db()
                         _temporary_percentage_ceco_calculation(qs_row, qs_row)
-
-
             messages.success(request, 'Actualización realizada con éxito!')
 
         elif request.POST.get('method') == 'edit-percentage':

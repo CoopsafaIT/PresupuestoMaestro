@@ -18,68 +18,76 @@
           <h5 class="card-title fw-light fs-4">Metas</h5>
         </div>
         <div class="col-md-2">
-          <button
-            type="button"
-            class="btn btn-outline-safa"
-            data-bs-toggle="modal"
-            data-bs-target="#addGoalsCreatModal"
-          >Crear Meta</button>
+          {% if perms.goals.puede_ingresar_metas %}
+            <button
+              type="button"
+              class="btn btn-outline-safa"
+              data-bs-toggle="modal"
+              data-bs-target="#addGoalsCreatModal"
+            >Crear Meta</button>
+          {% endif %}
         </div>
         <div class="col-md-6">
           {% include 'master_budget/shared/search_form_simple.html' %}
         </div>
       </div>
     </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="table-responsive">
-            <table class="table table-hover table-bordered table-striped table-sm">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Metas</th>
-                  <th>Tipo</th>
-                  <th>Definición</th>
-                  <th>Ejecución</th>
-                  <th class="text-center">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for item in result %}
-                <tr>
-                  <td class="text-center">{{forloop.counter}}</td>
-                  <td>{{item.description}}</td>
-                  <td>{{item.get_type_display}}</td>
-                  <td>{{item.get_definition_display}}</td>
-                  <td>{{item.get_execution_display}}</td>
-                  <td>
-                    <div class="d-grid gap-2 d-flex justify-content-center">
-                      <a
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        href="{% url 'goal_edit' item.pk %}"
-                        class="btn btn-sm btn-outline-danger me-2 px-3"
-                        title="Editar Meta"
-                      > <i class="bi bi-pencil-square"></i>
-                      </a>
-                    </div>
+    {% if perms.goals.puede_listar_metas %}
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered table-striped table-sm">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th>Metas</th>
+                    <th>Tipo</th>
+                    <th>Definición</th>
+                    <th>Ejecución</th>
+                    <th>Asignado</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in result %}
+                  <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{item.description}}</td>
+                    <td>{{item.get_type_display}}</td>
+                    <td>{{item.get_definition_display}}</td>
+                    <td>{{item.get_execution_display}}</td>
+                    <td>{{item.user_assigned.get_full_name}}</td>
+                    <td>
+                      <div class="d-grid gap-2 d-flex justify-content-center">
+                        {% if perms.goals.puede_editar_metas %}
+                          <a
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            href="{% url 'goal_edit' item.pk %}"
+                            class="btn btn-sm btn-outline-danger me-2 px-3"
+                            title="Editar Meta"
+                          > <i class="bi bi-pencil-square"></i>
+                          </a>
+                        {% endif %}
+                      </div>
 
-                  </td>
-                
-                </tr>
-                {% empty %}
-                <tr>
-                  <td colspan="6" class="text-center fs-5">No Data</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-            {% include 'master_budget/shared/pagination_multiple.html' with qs=result %}
+                    </td>
+                  
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="6" class="text-center fs-5">No Data</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% include 'master_budget/shared/pagination_multiple.html' with qs=result %}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    {% endif %}  
   </div>
 </div>
 {% endblock content %}

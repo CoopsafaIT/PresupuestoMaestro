@@ -88,6 +88,14 @@ class Goal(AuditDataMixin):
         null=True,
         blank=True,
     )
+    user_assigned = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="UsuarioAsignado",
+        null=True,
+        blank=True,
+        related_name='assigned'
+    )
 
     class Meta:
         default_permissions = []

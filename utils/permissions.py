@@ -9,6 +9,7 @@ data_content_types = [
     {"app_label": "ppto_maestro", "model": "ppto_maestro"},
     {"app_label": "admin", "model": "admin"},
     {"app_label": "security", "model": "security"},
+    {"app_label": "goals", "model": "goals"},
 ]
 
 admin_permissions = [
@@ -277,6 +278,97 @@ master_budget = [
     },
 ]
 
+goals_permissions = [
+    {
+        "name": "Puede Ver Menu de Metas",
+        "content_type_name": "goals",
+        "codename": "puede_ver_menu_de_metas",
+    },
+    {
+        "name": "Puede Listar Periodos de Metas",
+        "content_type_name": "goals",
+        "codename": "puede_listar_definicion_de_periodo_de_meta",
+    },
+    {
+        "name": "Puede Ingresar Periodo de Meta",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_periodo_de_meta",
+    },
+    {
+        "name": "Puede Editar Periodo de Meta",
+        "content_type_name": "goals",
+        "codename": "puede_editar_periodo_de_meta",
+    },
+    {
+        "name": "Puede Ver Definicion de Meta",
+        "content_type_name": "goals",
+        "codename": "puede_ver_definicion_de_meta",
+    },
+
+    {
+        "name": "Puede Ver Definicion de Meta Asignada",
+        "content_type_name": "goals",
+        "codename": "puede_ver_definicion_de_meta_asignada",
+    },
+
+    {
+        "name": "Puede Registrar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_registrar_metas_globales",
+    },
+    {
+        "name": "Puede Ver Detalle Mensual de Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_ver_detalle_mensual_de_metas_globales",
+    },
+    {
+        "name": "Puede Ver Definicion de Meta por Filial",
+        "content_type_name": "goals",
+        "codename": "puede_ver_definicion_de_meta_por_filial",
+    },
+    {
+        "name": "Puede Ver Detalle Filial",
+        "content_type_name": "goals",
+        "codename": "puede_ver_detalle_filial",
+    },
+    {
+        "name": "Puede Asignar Metas Globales",
+        "content_type_name": "goals",
+        "codename": "puede_asignar_metas_globales",
+    },
+
+    {
+        "name": "Puede Ingresar Definiciones Manuales",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_definiciones_manuales",
+    },
+    {
+        "name": "Puede Ingresar Ejecuciones Manuales",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_ejecuciones_manuales",
+    },
+    {
+        "name": "Puede Listar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_listar_metas",
+    },
+    {
+        "name": "Puede Ingresar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_ingresar_metas",
+    },
+    {
+        "name": "Puede Editar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_editar_metas",
+    },
+    {
+        "name": "Puede Eliminar Metas",
+        "content_type_name": "goals",
+        "codename": "puede_eliminar_metas",
+    }
+]
+
 all_permissions = (
     admin_permissions
     + security_permissions
@@ -292,4 +384,5 @@ all_permissions = (
     + transfers_permissions
     + checkout_permissions
     + master_budget
+    + goals_permissions
 )

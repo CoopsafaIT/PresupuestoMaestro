@@ -1,10 +1,16 @@
+# from cProfile import label
 from django import forms
-
+from django.contrib.auth.models import User
 from apps.main.models import Periodo
 from .models import GlobalGoalPeriod, GlobalGoalDetail, Goal
 
 
-class GoalsForm(forms.ModelForm):
+class UserModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f'{obj.username} - {obj.first_name}'
+
+
+class GoalsPeriodForm(forms.ModelForm):
     period_id = forms.ModelChoiceField(
         label="Periodo",
         queryset=Periodo.objects.filter(habilitado=True),
@@ -25,11 +31,20 @@ class GoalsForm(forms.ModelForm):
         fields = ('period_id', 'description')
 
 
-class GoalsGlobalForm(forms.ModelForm):
+class GoalsForm(forms.ModelForm):
     description = forms.CharField(
         label="Descripción",
         widget=forms.Textarea(
             attrs={"rows": 3, "style": 'resize:none', 'class': 'form-control'}
+        )
+    )
+    user_assigned = UserModelChoiceField(
+        label="Asignar Usuario",
+        queryset=User.objects.filter(is_active=True),
+        empty_label="----Asignar Usuario----",
+        required=False,
+        widget=forms.Select(
+            attrs={'class': 'form-select', 'style': 'width:100%'}
         )
     )
 
@@ -37,6 +52,7 @@ class GoalsGlobalForm(forms.ModelForm):
         model = Goal
         fields = (
             'description',
+            'user_assigned'
         )
 
 
