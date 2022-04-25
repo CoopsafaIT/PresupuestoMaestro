@@ -45,7 +45,6 @@ class Command(BaseCommand):
                     print(msg)
                 else:
                     if not Permission.objects.filter(
-                        name=permission.get('name'),
                         content_type=content.pk,
                         codename=permission.get('codename')
                     ).exists():
@@ -65,6 +64,7 @@ class Command(BaseCommand):
             print(f'Number of permissions created: {counter}')
 
         reset = kwargs.get("reset") or 'N'
+        print(reset)
         if reset == 'S':
             try:
                 ContentType.objects.filter().delete()

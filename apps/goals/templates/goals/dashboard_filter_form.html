@@ -1,0 +1,28 @@
+{% load static %}
+<form method="GET">
+<div class="row">
+  <div class="col-md-5">
+    <div class="form-group mt-2">
+      <select name="period" id="id_period" class="form-select select2-style" style="width: 100%;">
+        <option value="">-- Periodo --</option>
+        {% for i in periods %}
+        <option {% if request.GET.period == i.pk %} selected {% endif %} 
+        value="{{i.pk}}">{{i}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group mt-2">
+      <select name="ceco" id="id_ceco" class="form-select select2-style" style="width: 100%;">
+        <option value="">-- Centro de Costos --</option>
+        {% for i in cecos %}
+        <option {% if request.GET.period == i.pk %} selected {% endif %} 
+        value="{{i.agencia}}">{{i}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="col-md-1"><button type="button" id="id_btnSearch" class="btn btn-outline-primary" ><i class="bi bi-search"></i></button></div>
+</div>
+</form>

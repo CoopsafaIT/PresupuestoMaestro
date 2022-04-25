@@ -15,7 +15,7 @@ from .reports import (
     load_excel_file,
     generate_subsidiary_goal_execute_excel_file
 )
-
+from apps.main.models import ResponsablesPorCentrosCostos, Centroscosto, Periodo
 from .models import (
     GlobalGoalPeriod, GlobalGoalDetail, Goal,
     SubsidiaryGoalDetail
@@ -29,7 +29,37 @@ from .request_get import QueryGetParms
 @login_required()
 @permission_required('goals.puede_ver_menu_de_metas', raise_exception=True)
 def goals_dashboard(request):
-    return render(request, 'goals/dashboard.html')
+    if (
+        request.user.has_perm('goals.puede_ver_metas_todos_centros_costos') is False and
+        request.user.has_perm('goals.puede_ver_metas_centros_costos_asignadas') is False
+    ):
+        raise PermissionDenied
+    if request.is_ajax():
+        period = request.GET.get('period')
+        ceco = request.GET.get('ceco')
+        QUERY_SP = f"EXEC spMetasEjecucionPorAgenciaListar @CodPeriodo={period}, @CodAgencia='{ceco}'" # NOQA
+        result = execute_sql_query(QUERY_SP)
+        if result.get('status') != 'ok':
+            return HttpResponse(
+                json.dumps({'message': result.get('message')}, cls=DjangoJSONEncoder),
+                status=500
+            )
+        else:
+            return HttpResponse(json.dumps({'data': result.get('data')}, cls=DjangoJSONEncoder)) # NOQA
+    periods = Periodo.objects.filter(habilitado=True)
+    if request.user.has_perm('goals.puede_ver_metas_todos_centros_costos'):
+        cecos = Centroscosto.objects.filter(habilitado=True).exclude(code_zone='0')
+    else:
+        qs_res_cecos = ResponsablesPorCentrosCostos.objects.filter(
+            CodUser=request.user.id, Estado=True
+        ).values_list('CodCentroCosto__pk', flat=True)
+        cecos = Centroscosto.objects.filter(pk__in=qs_res_cecos, habilitado=True).exclude(code_zone='0') # NOQA
+
+    ctx = {
+        'cecos': cecos,
+        'periods': periods
+    }
+    return render(request, 'goals/dashboard.html', ctx)
 
 
 @login_required()

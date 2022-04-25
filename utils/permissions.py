@@ -366,6 +366,16 @@ goals_permissions = [
         "name": "Puede Eliminar Metas",
         "content_type_name": "goals",
         "codename": "puede_eliminar_metas",
+    },
+    {
+        "name": "Puede Ver Metas de Centros de Costos Asignados",
+        "content_type_name": "goals",
+        "codename": "puede_ver_metas_centros_costos_asignadas",
+    },
+    {
+        "name": "Puede Ver Metas de Todos los Centros de Costos",
+        "content_type_name": "goals",
+        "codename": "puede_ver_metas_todos_centros_costos",
     }
 ]
 
