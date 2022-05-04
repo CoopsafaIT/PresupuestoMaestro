@@ -13,7 +13,8 @@ from utils.pagination import pagination
 from .reports import (
     generate_subsidiary_goal_excel_file,
     load_excel_file,
-    generate_subsidiary_goal_execute_excel_file
+    generate_subsidiary_goal_execute_excel_file,
+    generate_report_by_subsidiary
 )
 from apps.main.models import ResponsablesPorCentrosCostos, Centroscosto, Periodo
 from .models import (
@@ -24,28 +25,62 @@ from .forms import (
     GoalsPeriodForm, GoalsForm, GlobalGoalDetailForm
 )
 from .request_get import QueryGetParms
+from utils.constants import MONTH_CHOICES, MONTHS_LIST
 
 
 @login_required()
 @permission_required('goals.puede_ver_menu_de_metas', raise_exception=True)
 def goals_dashboard(request):
+
+    def _get_report_data():
+        period = request.GET.get('period')
+        month = request.GET.get('month', 12)
+        ceco = _set_ceco(request.GET.getlist('ceco[]'))
+        QUERY_SP = f"EXEC spMetasEjecucionPorAgenciaListar @CodPeriodo={period}, @Mes={month}, @CodAgencia='{ceco}'" # NOQA
+        return execute_sql_query(QUERY_SP)
+
+    def _set_ceco(request_ceco):
+        if len(request_ceco) > 1:
+            return ','.join(request_ceco)
+        return request_ceco[0]
+
+    def _define_thead_labels():
+        month = int(request.GET.get('month'))
+        months = []
+        for index, month_letters in enumerate(MONTHS_LIST, start=1):
+            if(index <= month):
+                months.append(month_letters)
+        return months
+
     if (
         request.user.has_perm('goals.puede_ver_metas_todos_centros_costos') is False and
         request.user.has_perm('goals.puede_ver_metas_centros_costos_asignadas') is False
     ):
         raise PermissionDenied
     if request.is_ajax():
-        period = request.GET.get('period')
-        ceco = request.GET.get('ceco')
-        QUERY_SP = f"EXEC spMetasEjecucionPorAgenciaListar @CodPeriodo={period}, @CodAgencia='{ceco}'" # NOQA
-        result = execute_sql_query(QUERY_SP)
+        result = _get_report_data()
         if result.get('status') != 'ok':
             return HttpResponse(
-                json.dumps({'message': result.get('message')}, cls=DjangoJSONEncoder),
+                json.dumps({'message': result.get('data')}, cls=DjangoJSONEncoder),
                 status=500
             )
         else:
-            return HttpResponse(json.dumps({'data': result.get('data')}, cls=DjangoJSONEncoder)) # NOQA
+            data = result.get('data')
+            months_labels = _define_thead_labels()
+            return HttpResponse(
+                json.dumps({'data': data, 'months_labels': months_labels}, cls=DjangoJSONEncoder) # NOQA
+            )
+
+    elif request.method == 'GET':
+        if request.GET.get('period') and request.GET.getlist('ceco[]'):
+            result = _get_report_data()
+            if result.get('status') != 'ok':
+                messages.error(request, 'No se pudo completar acción')
+            else:
+                data = result.get('data')
+                months_labels = _define_thead_labels()
+                return generate_report_by_subsidiary(data, months_labels)
+
     periods = Periodo.objects.filter(habilitado=True)
     if request.user.has_perm('goals.puede_ver_metas_todos_centros_costos'):
         cecos = Centroscosto.objects.filter(habilitado=True).exclude(code_zone='0')
@@ -57,7 +92,8 @@ def goals_dashboard(request):
 
     ctx = {
         'cecos': cecos,
-        'periods': periods
+        'periods': periods,
+        'months': MONTH_CHOICES
     }
     return render(request, 'goals/dashboard.html', ctx)
 
@@ -339,7 +375,7 @@ def goals_global_definition(request, id_global_goal_period):
             messages.success(request, 'Meta agregada con éxito')
 
     filters = {}
-    if request.user.has_perm('goals.puede_ver_definicion_de_meta_asignada'):
+    if not request.user.has_perm('goals.puede_ver_definicion_de_meta'):
         filters = {'id_goal__user_assigned__id': request.user.id}
 
     qs_global_goal_detail = GlobalGoalDetail.objects.filter(

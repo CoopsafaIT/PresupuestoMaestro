@@ -1,28 +1,42 @@
 {% load static %}
 <form method="GET">
-<div class="row">
-  <div class="col-md-5">
-    <div class="form-group mt-2">
-      <select name="period" id="id_period" class="form-select select2-style" style="width: 100%;">
-        <option value="">-- Periodo --</option>
-        {% for i in periods %}
-        <option {% if request.GET.period == i.pk %} selected {% endif %} 
-        value="{{i.pk}}">{{i}}</option>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group">
+        <select name="period" id="id_period" class="form-select select2-style" style="width: 100%;" required>
+          <option value="">-- Periodo --</option>
+          {% for i in periods %}
+          <option {% if request.GET.period == i.pk %} selected {% endif %} 
+          value="{{i.pk}}">{{i}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <select name="month" id="id_month" class="form-select select2-style" style="width: 100%;">
+        <option value="">-- Mes --</option>
+        {% for i, val in months %}
+        {% if i != '' %}
+        <option  value="{{i}}">{{val}}</option>        
+        {% endif %}
         {% endfor %}
       </select>
     </div>
-  </div>
-  <div class="col-md-6">
-    <div class="form-group mt-2">
-      <select name="ceco" id="id_ceco" class="form-select select2-style" style="width: 100%;">
-        <option value="">-- Centro de Costos --</option>
-        {% for i in cecos %}
-        <option {% if request.GET.period == i.pk %} selected {% endif %} 
-        value="{{i.agencia}}">{{i}}</option>
-        {% endfor %}
-      </select>
+    <div class="col-md-5">
+      <div class="form-group">
+        <select name="ceco[]" id="id_ceco" class="form-select select2-style" multiple style="width: 100%;" required>
+          {% for i in cecos %}
+          <option {% if request.GET.period == i.pk %} selected {% endif %} 
+          value="{{i.agencia}}">{{i}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="d-grid gap-2 d-flex justify-content-end">
+        <button type="button" id="id_btnSearch" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+        <button type="submit" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel"></i></button>
+      </div>
     </div>
   </div>
-  <div class="col-md-1"><button type="button" id="id_btnSearch" class="btn btn-outline-primary" ><i class="bi bi-search"></i></button></div>
-</div>
 </form>

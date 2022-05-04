@@ -18,7 +18,6 @@
   }
 </style>
 <div class="container-fluid pt-4">
-
   <div class="card card-template">
     <div class="card-header">
       <div class="row">
@@ -34,52 +33,10 @@
       <div class="row">
         <div class="col-md-12">
           <div class="table-responsive">
-            <div class="tableFixHead">
+            <div class="tableFixHead" style="display: none;">
               <table class="table table-sm table-hover table-striped table-bordered" id="tblGoals"
                 style="font-size: 0.9rem !important;">
                 <thead>
-                  <tr>
-                    <th rowspan="2" style="vertical-align: middle;">Num</th>
-                    <th rowspan="2" style="vertical-align: middle;">Descripción</th>
-                    <th colspan="2" class="text-center">Enero</th>
-                    <th colspan="2" class="text-center">Febrero</th>
-                    <th colspan="2" class="text-center">Marzo</th>
-                    <th colspan="2" class="text-center">Abril</th>
-                    <th colspan="2" class="text-center">Mayo</th>
-                    <th colspan="2" class="text-center">Junio</th>
-                    <th colspan="2" class="text-center">Julio</th>
-                    <th colspan="2" class="text-center">Agosto</th>
-                    <th colspan="2" class="text-center">Septiembre</th>
-                    <th colspan="2" class="text-center">Octubre</th>
-                    <th colspan="2" class="text-center">Noviembre</th>
-                    <th colspan="2" class="text-center">Diciembre</th>
-                  </tr>
-                  <tr>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                    <th>Meta</th>
-                    <th>Ejecución</th>
-                  </tr>
                 </thead>
                 <tbody></tbody>
               </table>
@@ -99,32 +56,27 @@
 {% block javascript %}
 <script src="{% static 'plugins/chart.min.js' %}"></script>
 <script>
+  $('.tableFixHead').hide()
+
   $(document).ready(() => {
-    $('.tableFixHead').hide()
-
-    let $th = $('.tableFixHead').find('thead th')
-    $('.tableFixHead').on('scroll', function () {
-      $th.css('transform', 'translateY(' + this.scrollTop + 'px)');
-    });
-
     $('#id_btnSearch').on("click", () => {
       let period = $('#id_period').val()
       let ceco = $('#id_ceco').val()
+      let month = $('#id_month').val()
 
-      if (!!period && !!ceco) {
+      if (!!period && !!ceco && !!month) {
         loaderShow(true)
         $.ajax({
             method: 'GET',
-            url: '{{request.get_full_path}}',
+            url: '{% url "goals_dashboard" %}',
             data: {
               period,
-              ceco
+              ceco,
+              month
             }
           })
           .done(getGoalData)
-          .fail(({
-            err
-          }) => {
+          .fail(({err}) => {
             loaderShow(false)
             console.log(err);
           })
@@ -132,46 +84,102 @@
     })
 
     const getGoalData = (res) => {
-      loaderShow(false)
-      $('.tableFixHead').show()
-      let data = JSON.parse(res)
+      let data = JSON.parse(res);
+      let months = data.months_labels
       data = orderArray(data.data)
+      $('.tableFixHead').hide()
+      $('#tblGoals').find('thead').empty();
+      $('#tblGoals').find('thead').append(`
+      <tr>
+        <th>Filial</th>
+        <th>Descripción</th>
+        <th>MetaAnual</th>
+        <th>MetaAlMes</th>
+      </tr>
+      `)
+      months.forEach(el =>{$('#tblGoals').find('thead > tr').append(`<th>${el}</th>`)})
+      let $th = $('.tableFixHead').find('thead th')
+      $('.tableFixHead').on('scroll', function () {
+        $th.css('transform', 'translateY(' + this.scrollTop + 'px)');
+      });
+
       $('#tblGoals').find('tbody').empty();
       data.forEach(el => {
         $('#tblGoals').find('tbody').append(`
             <tr>
-              <td>${el.Orden}</td>
-              <td class="show-chart" role="button" data-element='${JSON.stringify(el)}'>${el.Nivel2}</td>
-              <td>${setValueFormat(el.EneroMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.EneroEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.FebreroMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.FebreroEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.MarzoMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.MarzoEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.AbrilMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.AbrilEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.MayoMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.MayoEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.JunioMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.JunioEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.JulioMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.JulioEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.AgostoMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.AgostoEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.SeptiembreMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.SeptiembreEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.OctubreMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.OctubreEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.NoviembreMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.NoviembreEjecucion, el.Formato)}</td>
-              <td>${setValueFormat(el.DiciembreMeta, el.Formato)}</td>
-              <td>${setValueFormat(el.DiciembreEjecucion, el.Formato)}</td>
+              <td>${el.DescAgencia}</td>
+              <td class="show-chart" role="button" data-element='${JSON.stringify(el)}' data-labels='${JSON.stringify(months)}' >${el.Nivel2}</td>
+              <td>${setValueFormat(el.MetaAnual, el.Formato)}</td>
+              <td>${setValueFormat(el.MetaAlMes, el.Formato)}</td>
+              ${
+                months.includes('Enero')
+                ?`<td>${setValueFormat(el.EneroEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Febrero')
+                ?`<td>${setValueFormat(el.FebreroEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Marzo')
+                ?`<td>${setValueFormat(el.MarzoEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Abril')
+                ?`<td>${setValueFormat(el.AbrilEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Mayo')
+                ?`<td>${setValueFormat(el.MayoEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Junio')
+                ?`<td>${setValueFormat(el.JunioEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Julio')
+                ?`<td>${setValueFormat(el.JulioEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Agosto')
+                ?`<td>${setValueFormat(el.AgostoEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Septiembre')
+                ?`<td>${setValueFormat(el.SeptiembreEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Octubre')
+                ?`<td>${setValueFormat(el.OctubreEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Noviembre')
+                ?`<td>${setValueFormat(el.NoviembreEjecucion, el.Formato)}</td>`
+                :''
+              }
+              ${
+                months.includes('Diciembre')
+                ?`<td>${setValueFormat(el.DiciembreEjecucion, el.Formato)}</td>`
+                :''
+              }
             </tr>
           `);
       });
+      loaderShow(false)
+      $('.tableFixHead').show()
     }
 
     const setValueFormat = (value, typeFormat) => {
+      !!value ? value = value : value = 0
       if (typeFormat === 'Moneda') {
         value = parseFloat(value).toFixed(2)
         return new Intl.NumberFormat().format(value)
@@ -184,7 +192,7 @@
 
     const orderArray = (data) => {
       data.sort(function (a, b) {
-        return a.Orden - b.Orden
+        return a.DescAgencia.localeCompare(b.DescAgencia) || a.Orden - b.Orden
       })
       return data
     }
@@ -193,13 +201,12 @@
       $('#divCanvasBarChart').empty()
       $('#divCanvasBarChart').append('<canvas id="myChart" width="400" height="150"></canvas>')
       
-      let element = $(this).data ('element')
+      let element = $(this).data('element')
+      let month_labels = $(this).data('labels')
       const title = `Meta ${element.Nivel2} Periodo: ${element.Año}`
       const ctx = document.getElementById('myChart').getContext('2d');
-      const labels = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
-                      "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
       const data = {
-        labels: labels,
+        labels: month_labels,
         datasets: [
           {
             label: 'Meta',
@@ -220,6 +227,7 @@
             ],
             borderColor: 'rgb(1, 114, 36, 0.5)',
             backgroundColor: 'rgb(1, 114, 36)',
+            
           },
           {
             label: 'Ejecución',
@@ -244,8 +252,7 @@
       }
 
       let config = {
-        // type: 'line',
-        type: 'bar',
+        type: 'line',
         data: data,
         options: {
           responsive: true,
@@ -262,6 +269,9 @@
       }
 
       const myChart = new Chart(ctx, config);
+      $([document.documentElement, document.body]).animate({
+        scrollTop: $("#myChart").offset().top
+    }, 500)
     })
   })
 </script>

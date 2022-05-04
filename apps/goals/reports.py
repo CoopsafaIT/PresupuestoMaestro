@@ -1,7 +1,9 @@
+from string import ascii_uppercase
 from datetime import datetime as dt
 from django.http import HttpResponse
 from openpyxl import Workbook, load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
+from openpyxl.styles.alignment import Alignment
 
 
 def generate_subsidiary_goal_excel_file(data, qs):
@@ -116,3 +118,83 @@ def load_excel_file(file):
         raise InvalidFileException(
             f'Error loading excel file: {e.__str__()}'
         )
+
+
+def generate_report_by_subsidiary(data, months_labels):
+
+    def _set_fomart_value(value, format):
+        value = value or 0
+        if format == 'Porcentaje':
+            new_value = value * 100
+            return '{:.2f}%'.format(new_value)
+        value = float('{:.2f}'.format(value))
+        return '{:,}'.format(value)
+    alphabet = list(ascii_uppercase)
+    alphabet.remove('A')
+    alphabet.remove('B')
+    alphabet.remove('C')
+    alphabet.remove('D')
+
+    wb = Workbook()
+    ws = wb.active
+    ws['A1'] = 'Filial'
+    ws['B1'] = 'Descripción'
+    ws['C1'] = 'Meta Anual'
+    ws['D1'] = 'Meta Al Mes'
+    for index, value in enumerate(months_labels, start=0):
+        ws[f'{alphabet[index]}1'] = value
+
+    ws['A1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['B1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['C1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['D1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['E1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['F1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['G1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['H1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['I1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['J1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['K1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['L1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['M1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['N1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['O1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['P1'].alignment = Alignment(horizontal="center", vertical="center")
+
+    for counter, item in enumerate(data, start=2):
+        ws[f'A{counter}'].value = item.get('DescAgencia')
+        ws[f'B{counter}'].value = item.get('Nivel2')
+        ws[f'C{counter}'].value = _set_fomart_value(item.get('MetaAnual'), item.get('Formato')) # NOQA
+        ws[f'D{counter}'].value = _set_fomart_value(item.get('MetaAlMes'), item.get('Formato')) # NOQA
+        if 'Enero' in months_labels:
+            ws[f'E{counter}'].value = _set_fomart_value(item.get('EneroEjecucion'), item.get('Formato')) # NOQA
+        if 'Febrero' in months_labels:
+            ws[f'F{counter}'].value = _set_fomart_value(item.get('FebreroEjecucion'), item.get('Formato')) # NOQA
+        if 'Marzo' in months_labels:
+            ws[f'G{counter}'].value = _set_fomart_value(item.get('MarzoEjecucion'), item.get('Formato')) # NOQA
+        if 'Abril' in months_labels:
+            ws[f'H{counter}'].value = _set_fomart_value(item.get('AbrilEjecucion'), item.get('Formato')) # NOQA
+        if 'Mayo' in months_labels:
+            ws[f'I{counter}'].value = _set_fomart_value(item.get('MayoEjecucion'), item.get('Formato')) # NOQA
+        if 'Junio' in months_labels:
+            ws[f'J{counter}'].value = _set_fomart_value(item.get('JunioEjecucion'), item.get('Formato')) # NOQA
+        if 'Julio' in months_labels:
+            ws[f'K{counter}'].value = _set_fomart_value(item.get('JulioEjecucion'), item.get('Formato')) # NOQA
+        if 'Agosto' in months_labels:
+            ws[f'L{counter}'].value = _set_fomart_value(item.get('AgostoEjecucion'), item.get('Formato')) # NOQA
+        if 'Septiembre' in months_labels:
+            ws[f'M{counter}'].value = _set_fomart_value(item.get('SeptiembreEjecucion'), item.get('Formato')) # NOQA
+        if 'Octubre' in months_labels:
+            ws[f'N{counter}'].value = _set_fomart_value(item.get('OctubreEjecucion'), item.get('Formato')) # NOQA
+        if 'Noviembre' in months_labels:
+            ws[f'O{counter}'].value = _set_fomart_value(item.get('NoviembreEjecucion'), item.get('Formato')) # NOQA
+        if 'Diciembre' in months_labels:
+            ws[f'P{counter}'].value = _set_fomart_value(item.get('DiciembreEjecucion'), item.get('Formato')) # NOQA
+
+    file_name = f'reporte_{dt.now()}'
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename={file_name}.xlsx'
+    wb.save(response)
+    return response

@@ -217,7 +217,6 @@
         url: url
       })
       .done((res) => {
-        loaderShow(false)
         alert('Guardado con exito!')
         location.reload()
       })
@@ -225,6 +224,9 @@
         let erroMessage = JSON.parse(err.responseText)
         err.status === 400 && alert(erroMessage.message) 
         err.status === 500 && alert('Server Internal Error!!')
+      })
+      .always(()=>{
+        loaderShow(false)
       })
 
     })
