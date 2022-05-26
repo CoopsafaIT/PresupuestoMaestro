@@ -36,7 +36,8 @@ def goals_dashboard(request):
         period = request.GET.get('period')
         month = request.GET.get('month', 12)
         ceco = _set_ceco(request.GET.getlist('ceco[]'))
-        QUERY_SP = f"EXEC spMetasEjecucionPorAgenciaListar @CodPeriodo={period}, @Mes={month}, @CodAgencia='{ceco}'" # NOQA
+
+        QUERY_SP = f"EXEC [dbo].[spMetasEjecucionPorAgenciaListar] @CodPeriodo={period}, @Mes={month}, @CodAgencia='{ceco}'" # NOQA
         return execute_sql_query(QUERY_SP)
 
     def _set_ceco(request_ceco):
@@ -83,12 +84,14 @@ def goals_dashboard(request):
 
     periods = Periodo.objects.filter(habilitado=True)
     if request.user.has_perm('goals.puede_ver_metas_todos_centros_costos'):
-        cecos = Centroscosto.objects.filter(habilitado=True).exclude(code_zone='0')
+        cecos = Centroscosto.objects.filter(habilitado=True).exclude(code_zone='0').exclude(code_zone__isnull=True) # NOQA
     else:
         qs_res_cecos = ResponsablesPorCentrosCostos.objects.filter(
             CodUser=request.user.id, Estado=True
         ).values_list('CodCentroCosto__pk', flat=True)
-        cecos = Centroscosto.objects.filter(pk__in=qs_res_cecos, habilitado=True).exclude(code_zone='0') # NOQA
+        cecos = Centroscosto.objects.filter(
+            pk__in=qs_res_cecos, habilitado=True
+        ).exclude(code_zone='0').exclude(code_zone__isnull=True)
 
     ctx = {
         'cecos': cecos,

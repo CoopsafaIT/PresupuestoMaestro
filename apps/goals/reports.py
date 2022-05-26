@@ -141,8 +141,14 @@ def generate_report_by_subsidiary(data, months_labels):
     ws['B1'] = 'Descripción'
     ws['C1'] = 'Meta Anual'
     ws['D1'] = 'Meta Al Mes'
+
     for index, value in enumerate(months_labels, start=0):
         ws[f'{alphabet[index]}1'] = value
+        if index == len(months_labels) - 1:
+            ponderation_letter = alphabet[index + 1]
+            percentage_letter = alphabet[index + 2]
+            ws[f'{alphabet[index + 1]}1'] = "Ponderación"
+            ws[f'{alphabet[index + 2]}1'] = "Porcentaje"
 
     ws['A1'].alignment = Alignment(horizontal="center", vertical="center")
     ws['B1'].alignment = Alignment(horizontal="center", vertical="center")
@@ -160,6 +166,8 @@ def generate_report_by_subsidiary(data, months_labels):
     ws['N1'].alignment = Alignment(horizontal="center", vertical="center")
     ws['O1'].alignment = Alignment(horizontal="center", vertical="center")
     ws['P1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['Q1'].alignment = Alignment(horizontal="center", vertical="center")
+    ws['S1'].alignment = Alignment(horizontal="center", vertical="center")
 
     for counter, item in enumerate(data, start=2):
         ws[f'A{counter}'].value = item.get('DescAgencia')
@@ -190,6 +198,8 @@ def generate_report_by_subsidiary(data, months_labels):
             ws[f'O{counter}'].value = _set_fomart_value(item.get('NoviembreEjecucion'), item.get('Formato')) # NOQA
         if 'Diciembre' in months_labels:
             ws[f'P{counter}'].value = _set_fomart_value(item.get('DiciembreEjecucion'), item.get('Formato')) # NOQA
+        ws[f'{ponderation_letter}{counter}'].value = item.get('Ponderacion')
+        ws[f'{percentage_letter}{counter}'].value = f'{(item.get("Porcentaje") * 100):.2f}%' # NOQA
 
     file_name = f'reporte_{dt.now()}'
     response = HttpResponse(

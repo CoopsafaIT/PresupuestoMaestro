@@ -3,13 +3,12 @@ import django
 import environ
 from django.contrib.messages import constants as messages
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 env = environ.Env(
     VALIDATE_AD=(bool, False),
     DEBUG=(bool, True)
 )
-environ.Env.read_env()
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = env("SECRET_KEY")
 VALIDATE_AD = env("VALIDATE_AD")

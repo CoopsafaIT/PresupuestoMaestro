@@ -660,7 +660,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_february = models.DecimalField(
@@ -668,7 +668,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_march = models.DecimalField(
@@ -676,7 +676,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_april = models.DecimalField(
@@ -684,7 +684,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_may = models.DecimalField(
@@ -692,7 +692,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_june = models.DecimalField(
@@ -700,7 +700,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_july = models.DecimalField(
@@ -708,7 +708,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_august = models.DecimalField(
@@ -716,7 +716,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_september = models.DecimalField(
@@ -724,7 +724,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_october = models.DecimalField(
@@ -732,7 +732,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_november = models.DecimalField(
@@ -740,7 +740,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
     amount_december = models.DecimalField(
@@ -748,7 +748,7 @@ class AmountMonthlyMixin(models.Model):
         null=True,
         blank=True,
         max_digits=23,
-        decimal_places=2,
+        decimal_places=4,
         default=0
     )
 
