@@ -122,13 +122,14 @@ def load_excel_file(file):
 
 def generate_report_by_subsidiary(data, months_labels):
 
-    def _set_fomart_value(value, format):
-        value = value or 0
+    def _set_fomart_value(format):
         if format == 'Porcentaje':
-            new_value = value * 100
-            return '{:.2f}%'.format(new_value)
-        value = float('{:.2f}'.format(value))
-        return '{:,}'.format(value)
+            return '0.00%'
+        elif format == 'Moneda':
+            return '#,##0.00'
+        else:
+            return '#,##0'
+
     alphabet = list(ascii_uppercase)
     alphabet.remove('A')
     alphabet.remove('B')
@@ -170,36 +171,56 @@ def generate_report_by_subsidiary(data, months_labels):
     ws['S1'].alignment = Alignment(horizontal="center", vertical="center")
 
     for counter, item in enumerate(data, start=2):
+        i_format = _set_fomart_value(item.get('Formato'))
         ws[f'A{counter}'].value = item.get('DescAgencia')
         ws[f'B{counter}'].value = item.get('Nivel2')
-        ws[f'C{counter}'].value = _set_fomart_value(item.get('MetaAnual'), item.get('Formato')) # NOQA
-        ws[f'D{counter}'].value = _set_fomart_value(item.get('MetaAlMes'), item.get('Formato')) # NOQA
+
+        ws[f'C{counter}'].value = float(item.get('MetaAnual'))
+        ws[f'C{counter}'].number_format = i_format
+        ws[f'D{counter}'].value = float(item.get('MetaAlMes'))
+        ws[f'D{counter}'].number_format = i_format
+
         if 'Enero' in months_labels:
-            ws[f'E{counter}'].value = _set_fomart_value(item.get('EneroEjecucion'), item.get('Formato')) # NOQA
+            ws[f'E{counter}'].value = float(item.get('EneroEjecucion'))
+            ws[f'E{counter}'].number_format = i_format
         if 'Febrero' in months_labels:
-            ws[f'F{counter}'].value = _set_fomart_value(item.get('FebreroEjecucion'), item.get('Formato')) # NOQA
+            ws[f'F{counter}'].value = float(item.get('FebreroEjecucion'))
+            ws[f'F{counter}'].number_format = i_format
         if 'Marzo' in months_labels:
-            ws[f'G{counter}'].value = _set_fomart_value(item.get('MarzoEjecucion'), item.get('Formato')) # NOQA
+            ws[f'G{counter}'].value = float(item.get('MarzoEjecucion'))
+            ws[f'G{counter}'].number_format = i_format
         if 'Abril' in months_labels:
-            ws[f'H{counter}'].value = _set_fomart_value(item.get('AbrilEjecucion'), item.get('Formato')) # NOQA
+            ws[f'H{counter}'].value = float(item.get('AbrilEjecucion'))
+            ws[f'H{counter}'].number_format = i_format
         if 'Mayo' in months_labels:
-            ws[f'I{counter}'].value = _set_fomart_value(item.get('MayoEjecucion'), item.get('Formato')) # NOQA
+            ws[f'I{counter}'].value = float(item.get('MayoEjecucion'))
+            ws[f'I{counter}'].number_format = i_format
         if 'Junio' in months_labels:
-            ws[f'J{counter}'].value = _set_fomart_value(item.get('JunioEjecucion'), item.get('Formato')) # NOQA
+            ws[f'J{counter}'].value = float(item.get('JunioEjecucion'))
+            ws[f'J{counter}'].number_format = i_format
         if 'Julio' in months_labels:
-            ws[f'K{counter}'].value = _set_fomart_value(item.get('JulioEjecucion'), item.get('Formato')) # NOQA
+            ws[f'K{counter}'].value = float(item.get('JulioEjecucion'))
+            ws[f'K{counter}'].number_format = i_format
         if 'Agosto' in months_labels:
-            ws[f'L{counter}'].value = _set_fomart_value(item.get('AgostoEjecucion'), item.get('Formato')) # NOQA
+            ws[f'L{counter}'].value = float(item.get('AgostoEjecucion'))
+            ws[f'L{counter}'].number_format = i_format
         if 'Septiembre' in months_labels:
-            ws[f'M{counter}'].value = _set_fomart_value(item.get('SeptiembreEjecucion'), item.get('Formato')) # NOQA
+            ws[f'M{counter}'].value = float(item.get('SeptiembreEjecucion'))
+            ws[f'M{counter}'].number_format = i_format
         if 'Octubre' in months_labels:
-            ws[f'N{counter}'].value = _set_fomart_value(item.get('OctubreEjecucion'), item.get('Formato')) # NOQA
+            ws[f'N{counter}'].value = float(item.get('OctubreEjecucion'))
+            ws[f'N{counter}'].number_format = i_format
         if 'Noviembre' in months_labels:
-            ws[f'O{counter}'].value = _set_fomart_value(item.get('NoviembreEjecucion'), item.get('Formato')) # NOQA
+            ws[f'O{counter}'].value = float(item.get('NoviembreEjecucion'))
+            ws[f'O{counter}'].number_format = i_format
         if 'Diciembre' in months_labels:
-            ws[f'P{counter}'].value = _set_fomart_value(item.get('DiciembreEjecucion'), item.get('Formato')) # NOQA
-        ws[f'{ponderation_letter}{counter}'].value = item.get('Ponderacion')
-        ws[f'{percentage_letter}{counter}'].value = f'{(item.get("Porcentaje") * 100):.2f}%' # NOQA
+            ws[f'P{counter}'].value = float(item.get('DiciembreEjecucion'))
+            ws[f'P{counter}'].number_format = i_format
+        ws[f'{ponderation_letter}{counter}'].value = float(item.get('Ponderacion'))
+        ws[f'{ponderation_letter}{counter}'].number_format = _set_fomart_value('Cantidad')
+
+        ws[f'{percentage_letter}{counter}'].value = float(item.get("Porcentaje"))
+        ws[f'{percentage_letter}{counter}'].number_format = _set_fomart_value('Porcentaje')
 
     file_name = f'reporte_{dt.now()}'
     response = HttpResponse(

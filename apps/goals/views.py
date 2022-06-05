@@ -31,7 +31,6 @@ from utils.constants import MONTH_CHOICES, MONTHS_LIST
 @login_required()
 @permission_required('goals.puede_ver_menu_de_metas', raise_exception=True)
 def goals_dashboard(request):
-
     def _get_report_data():
         period = request.GET.get('period')
         month = request.GET.get('month', 12)
