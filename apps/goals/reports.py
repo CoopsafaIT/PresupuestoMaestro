@@ -146,12 +146,12 @@ def generate_report_by_subsidiary(data, months_labels):
     for index, value in enumerate(months_labels, start=0):
         ws[f'{alphabet[index]}1'] = value
         if index == len(months_labels) - 1:
-            ponderation_letter = alphabet[index + 1]
-            percentage_letter = alphabet[index + 2]
-            accumulated_execution_letter = alphabet[index + 3]
-            ws[f'{alphabet[index + 1]}1'] = "Ponderación"
-            ws[f'{alphabet[index + 2]}1'] = "Porcentaje"
-            ws[f'{alphabet[index + 3]}1'] = "Ejecución Acumulada"
+            accumulated_execution_letter = alphabet[index + 1]
+            ponderation_letter = alphabet[index + 2]
+            percentage_letter = alphabet[index + 3]
+            ws[f'{alphabet[index + 1]}1'] = "Ejecución Acumulada"
+            ws[f'{alphabet[index + 2]}1'] = "Ponderación"
+            ws[f'{alphabet[index + 3]}1'] = "Porcentaje"
 
     ws['A1'].alignment = Alignment(horizontal="center", vertical="center")
     ws['B1'].alignment = Alignment(horizontal="center", vertical="center")
@@ -218,14 +218,14 @@ def generate_report_by_subsidiary(data, months_labels):
         if 'Diciembre' in months_labels:
             ws[f'P{counter}'].value = float(item.get('DiciembreEjecucion'))
             ws[f'P{counter}'].number_format = i_format
+        ws[f'{accumulated_execution_letter}{counter}'].value = float(item.get("EjecucionAcumulada")) # NOQA
+        ws[f'{accumulated_execution_letter}{counter}'].number_format = i_format
+
         ws[f'{ponderation_letter}{counter}'].value = float(item.get('Ponderacion'))
         ws[f'{ponderation_letter}{counter}'].number_format = _set_fomart_value('Cantidad')
 
         ws[f'{percentage_letter}{counter}'].value = float(item.get("Porcentaje"))
         ws[f'{percentage_letter}{counter}'].number_format = _set_fomart_value('Porcentaje')
-
-        ws[f'{accumulated_execution_letter}{counter}'].value = float(item.get("EjecucionAcumulada")) # NOQA
-        ws[f'{accumulated_execution_letter}{counter}'].number_format = i_format
 
     file_name = f'reporte_{dt.now()}'
     response = HttpResponse(
