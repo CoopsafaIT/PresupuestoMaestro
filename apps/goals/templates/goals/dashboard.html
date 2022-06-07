@@ -99,7 +99,7 @@
       </tr>
       `)
       months.forEach(el =>{$('#tblGoals').find('thead > tr').append(`<th>${el}</th>`)})
-      $('#tblGoals').find('thead > tr').append(`<th>Ponderación</th> <th>Porcentaje</th>`)
+      $('#tblGoals').find('thead > tr').append(`<th>Ponderación</th> <th>Porcentaje</th> <th>Ejecución Acumulada</th>`)
       let $th = $('.tableFixHead').find('thead th')
       $('.tableFixHead').on('scroll', function () {
         $th.css('transform', 'translateY(' + this.scrollTop + 'px)');
@@ -175,6 +175,7 @@
               }
               <td>${el.Ponderacion}</td>
               <td><span class="float-end">${parseFloat(parseFloat(el.Porcentaje) * 100).toFixed(2)} %</span></td>
+              <td>${setValueFormat(el.EjecucionAcumulada, el.Formato)}</td>
             </tr>
           `);
       });
