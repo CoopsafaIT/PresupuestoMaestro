@@ -38,7 +38,7 @@ def login(request):
         conn.set_option(ldap.OPT_REFERRALS, 0)
         try:
             conn.simple_bind_s(f'{LDAP_LOGIN}\\{username}', password)
-        except ldap.INVALID_CREDENTIALS as e:
+        except ldap.INVALID_CREDENTIALS:
             return {'status': False, 'message': "Invalid credentials"}
         except ldap.SERVER_DOWN:
             return {'status': False, 'message': "Server down"}
@@ -73,8 +73,7 @@ def login(request):
                 ad_result = _validate_active_directory(username, password)
                 if ad_result.get('status') is not True:
                     messages.warning(
-                        request,
-                        f"Active Directory message: { ad_result.get('message') }"
+                        request, f"Active Directory message: { ad_result.get('message') }"
                     )
                     return render(request, "login.html", {})
                 user_query.set_password(password)
@@ -103,9 +102,7 @@ def logout(request):
 
 
 @login_required()
-@permission_required(
-    'security.puede_listar_usuarios', raise_exception=True
-)
+@permission_required('security.puede_listar_usuarios', raise_exception=True)
 def users(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
@@ -128,20 +125,12 @@ def users(request):
             for group_id in request.POST.getlist('groups[]'):
                 group = Group.objects.get(id=group_id)
                 group.user_set.add(user)
-            messages.success(
-                request,
-                f'Usuario: {user.username} creado con éxito'
-            )
+            messages.success(request, f'Usuario: {user.username} creado con éxito')
         except ValidationError as e:
-            messages.warning(
-                request,
-                f'Error de validación: {e.__str__()}'
-            )
+            messages.warning(request, f'Error de validación: {e.__str__()}')
         except Exception as e:
-            messages.error(
-                request,
-                f'Error al crear usuario. {e.__str__()}'
-            )
+            messages.error(request, f'Error al crear usuario. {e.__str__()}')
+
     users = User.objects.filter(
         Q(username__icontains=q) | Q(email__icontains=q) |
         Q(first_name__icontains=q) | Q(last_name__icontains=q)
@@ -174,10 +163,7 @@ def user(request, id):
             user.is_active = not user.is_active
             user.save()
             status = 'Activado' if user.is_active else 'Inactivado'
-            messages.success(
-                request,
-                f'Usuario: {user.username} {status} con éxito'
-            )
+            messages.success(request, f'Usuario: {user.username} {status} con éxito')
             return redirect('users')
 
         if request.POST.get('method') == 'update':
@@ -209,21 +195,12 @@ def user(request, id):
                 for group_id in request.POST.getlist('groups[]'):
                     group = Group.objects.get(id=group_id)
                     group.user_set.add(user)
-                messages.success(
-                    request,
-                    f'Usuario: {user.username} editado con éxito'
-                )
+                messages.success(request, f'Usuario: {user.username} editado con éxito')
                 return redirect('users')
             except ValidationError as e:
-                messages.warning(
-                    request,
-                    f'Error de validación: {e.__str__()}'
-                )
+                messages.warning(request, f'Error de validación: {e.__str__()}')
             except Exception as e:
-                messages.error(
-                    request,
-                    f'Error no determinado: {e.__str__()}'
-                )
+                messages.error(request, f'Error no determinado: {e.__str__()}')
 
     groups = Group.objects.all()
     ctx = {
@@ -236,24 +213,17 @@ def user(request, id):
 
 
 @login_required()
-@permission_required(
-    'security.puede_editar_usuarios', raise_exception=True
-)
+@permission_required('security.puede_editar_usuarios', raise_exception=True)
 def user_reset_pwd(request, id):
     user = get_object_or_404(User, pk=id)
     form = AdminResetPassword(user)
     if request.method == 'POST':
         form = AdminResetPassword(user, request.POST)
         if not form.is_valid():
-            messages.warning(
-                request,
-                f'Formulario no válido: {form.errors.as_text()}'
-            )
+            messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
         else:
             form.save()
-            messages.success(
-                request, 'Contraseña establecida con éxito!'
-            )
+            messages.success(request, 'Contraseña establecida con éxito!')
             return redirect(users)
 
     ctx = {
@@ -264,9 +234,7 @@ def user_reset_pwd(request, id):
 
 
 @login_required()
-@permission_required(
-    'security.puede_listar_grupos', raise_exception=True
-)
+@permission_required('security.puede_listar_grupos', raise_exception=True)
 def roles(request):
     page = request.GET.get('page', 1)
     q = request.GET.get('q', '')
@@ -297,18 +265,13 @@ def roles(request):
 
 
 @login_required()
-@permission_required(
-    'security.puede_editar_grupos', raise_exception=True
-)
+@permission_required('security.puede_editar_grupos', raise_exception=True)
 def role(request, id):
     role = get_object_or_404(Group, pk=id)
     if request.method == 'POST':
         if request.POST.get('method') == 'delete':
             role.delete()
-            messages.success(
-                request,
-                'Rol eliminado con éxito!'
-            )
+            messages.success(request, 'Rol eliminado con éxito!')
             return redirect('roles')
 
         if request.POST.get('method') == 'update':
@@ -318,10 +281,7 @@ def role(request, id):
             for permission_id in request.POST.getlist('permissions[]'):
                 permission = Permission.objects.get(id=permission_id)
                 role.permissions.add(permission)
-            messages.success(
-                request,
-                'Rol editado con éxito!'
-            )
+            messages.success(request, 'Rol editado con éxito!')
             return redirect('roles')
 
     permissions = Permission.objects.exclude(
@@ -343,15 +303,11 @@ def users_cost_centers(request):
         form = ResponsablesPorCentrosCostosForm(request.POST)
         if not form.is_valid():
             messages.warning(
-                request,
-                f'Formulario no válido, por favor revisar. {form.errors.as_text()}'
+                request, f'Formulario no válido, por favor revisar. {form.errors.as_text()}' # NOQA
             )
         else:
             form.save()
-            messages.success(
-                request,
-                'Asignación realizada con éxito'
-            )
+            messages.success(request, 'Asignación realizada con éxito')
     qs = ResponsablesPorCentrosCostos.objects.filter(
         Q(CodCentroCosto__desccentrocosto__icontains=q) |
         Q(CodUser__username__icontains=q) |
@@ -374,15 +330,11 @@ def user_cost_centers(request, id):
         form = ResponsablesPorCentrosCostosForm(request.POST, instance=qs)
         if not form.is_valid():
             messages.warning(
-                request,
-                f'Formulario no válido, por favor revisar. {form.errors.as_text()}'
+                request, f'Formulario no válido, por favor revisar. {form.errors.as_text()}' # NOQA
             )
         else:
             form.save()
-            messages.success(
-                request,
-                'Asignación realizada con éxito'
-            )
+            messages.success(request, 'Asignación realizada con éxito')
             return redirect('users_cost_centers')
 
     ctx = {

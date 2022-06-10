@@ -55,7 +55,7 @@
                           > <i class="bi bi-pencil-square"></i>
                           </a>
                         {% endif %}
-                        {% if perms.goals.puede_ver_definicion_de_meta %}
+                        {% if perms.goals.puede_ver_definicion_de_meta or perms.goals.puede_ver_definicion_de_meta_asignada %}
                           <a
                             data-bs-toggle="tooltip"
                             data-bs-placement="top"

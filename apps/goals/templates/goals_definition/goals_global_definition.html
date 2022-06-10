@@ -86,7 +86,7 @@
                         title="Detalle Mensual"><i class="bi bi-calendar-week"></i>
                         </button>
                       {% endif %}
-                      {% if perms.goals.puede_ver_definicion_de_meta_por_filial %}
+                      {% if perms.goals.puede_ver_definicion_de_meta or perms.goals.puede_ver_definicion_de_meta_asignada %}
                       <a class="btn btn-outline-info" href="{% url 'subsidiary_goals_definition' item.pk %}"
                         data-bs-toggle="tooltip" data-bs-placement="top" title="Definir meta por Filial"
                         ><i class="bi bi-list-stars"></i>

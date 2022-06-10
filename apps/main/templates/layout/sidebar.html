@@ -15,6 +15,19 @@
         <li><a class="link_name" href="{% url 'dashboard' %}">Dashboard</a></li>
       </ul>
     </li>
+    {% with s1=perms.ppto_gastos.puede_ingresar_ppto_gastos_todos %}
+    {% with s2=perms.ppto_gastos.puede_ingresar_ppto_gastos %}
+    {% with s3=perms.ppto_viaticos.puede_ingresar_ppto_viaticos %}
+    {% with s4=perms.ppto_viaticos.puede_ingresar_ppto_viaticos_todos %}
+    {% with s5=perms.ppto_viaticos.puede_distribuir_ppto_viaticos %}
+    {% with s6=perms.ppto_inversion.puede_ingresar_ppto_inversion_todos %}
+    {% with s7=perms.ppto_inversion.puede_ingresar_ppto_inversion %}
+    {% with s8=perms.ppto_personal.puede_ingresar_ppto_personal %}
+    {% with s9=perms.ppto_personal.puede_ingresar_ppto_personal_todos %}
+    {% with s10=perms.ppto_indirecto.puede_ingresar_ppto_indirecto %}
+    {% with s11=perms.ppto_costos.puede_ingresar_ppto_costos %}
+    {% with s12=perms.ppto_ingresos.puede_ingresar_ppto_ingresos %}
+    {% if s1 or s2 or s3 or s4 or s5 or s6 or s7 or s8 or s9 or s10 or s11 or s12 %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -51,6 +64,21 @@
         {% endif %}
       </ul>
     </li>
+    {% endif %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+
+
     {% if perms.ppto_maestro.puede_ver_menu_ppto_maestro %}
     <li>
       <a href="{% url 'master_budget_dashboard' %}" class="institutional-golden-color">

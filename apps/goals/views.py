@@ -403,8 +403,12 @@ def goals_global_definition(request, id_global_goal_period):
 
 
 @login_required()
-@permission_required('goals.puede_ver_definicion_de_meta_por_filial', raise_exception=True)
 def subsidiary_goals_definition(request, id_global_goal_definition):
+    if (
+        not request.user.has_perm('goals.puede_ver_definicion_de_meta_asignada') and
+        not request.user.has_perm('goals.puede_ver_definicion_de_meta')
+    ):
+        raise PermissionDenied
     qs_global_detail = get_object_or_404(GlobalGoalDetail, pk=id_global_goal_definition) # NOQA
     zones_requested = request.GET.getlist('code_zone')
     query_parms = QueryGetParms(request.GET)
