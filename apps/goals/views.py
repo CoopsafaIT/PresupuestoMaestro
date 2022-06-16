@@ -10,6 +10,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 
 from utils.sql import execute_sql_query
 from utils.pagination import pagination
+from .transform_data import calculate_rating
 from .reports import (
     generate_subsidiary_goal_excel_file,
     load_excel_file,
@@ -35,7 +36,6 @@ def goals_dashboard(request):
         period = request.GET.get('period')
         month = request.GET.get('month', 12)
         ceco = _set_ceco(request.GET.getlist('ceco[]'))
-
         QUERY_SP = f"EXEC [dbo].[spMetasEjecucionPorAgenciaListar] @CodPeriodo={period}, @Mes={month}, @CodAgencia='{ceco}'" # NOQA
         return execute_sql_query(QUERY_SP)
 
@@ -58,18 +58,20 @@ def goals_dashboard(request):
     ):
         raise PermissionDenied
     if request.is_ajax():
-        result = _get_report_data()
-        if result.get('status') != 'ok':
+        result_query = _get_report_data()
+        if result_query.get('status') != 'ok':
             return HttpResponse(
-                json.dumps({'message': result.get('data')}, cls=DjangoJSONEncoder),
+                json.dumps({'message': result_query.get('data')}, cls=DjangoJSONEncoder),
                 status=500
             )
         else:
-            data = result.get('data')
+            data = result_query.get('data')
+            data, total_rating = calculate_rating(data)
             months_labels = _define_thead_labels()
-            return HttpResponse(
-                json.dumps({'data': data, 'months_labels': months_labels}, cls=DjangoJSONEncoder) # NOQA
-            )
+            return HttpResponse(json.dumps(
+                {'data': data, 'months_labels': months_labels, 'total_rating': total_rating}, # NOQA
+                cls=DjangoJSONEncoder
+            ))
 
     elif request.method == 'GET':
         if request.GET.get('period') and request.GET.getlist('ceco[]'):
@@ -78,8 +80,9 @@ def goals_dashboard(request):
                 messages.error(request, 'No se pudo completar acción')
             else:
                 data = result.get('data')
+                data, total_rating = calculate_rating(data)
                 months_labels = _define_thead_labels()
-                return generate_report_by_subsidiary(data, months_labels)
+                return generate_report_by_subsidiary(request, data, months_labels, total_rating) # NOQA
 
     periods = Periodo.objects.filter(habilitado=True)
     if request.user.has_perm('goals.puede_ver_metas_todos_centros_costos'):

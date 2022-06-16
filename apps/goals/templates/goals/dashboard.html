@@ -86,20 +86,26 @@
     const getGoalData = (res) => {
       let data = JSON.parse(res);
       let months = data.months_labels
+      let total_rating = data.total_rating
       const textFormatoPercentage = 'Porcentaje'
       data = orderArray(data.data)
       $('.tableFixHead').hide()
       $('#tblGoals').find('thead').empty();
       $('#tblGoals').find('thead').append(`
-      <tr>
-        <th>Filial</th>
-        <th>Descripción</th>
-        <th>MetaAnual</th>
-        <th>MetaAlMes</th>
-      </tr>
+        <tr>
+          <th>Filial</th>
+          <th>Descripción</th>
+          <th>MetaAnual</th>
+          <th>MetaAlMes</th>
+        </tr>
       `)
       months.forEach(el =>{$('#tblGoals').find('thead > tr').append(`<th>${el}</th>`)})
-      $('#tblGoals').find('thead > tr').append(`<th>Ejecución Acumulada</th> <th>Ponderación</th> <th>Porcentaje</th>`)
+      $('#tblGoals').find('thead > tr').append(`
+        <th>Ejecución Acumulada</th>
+        <th>Ponderación</th>
+        <th>Porcentaje</th>
+        <th>Calificación ( ${parseFloat(total_rating).toFixed(2)} )</th>`
+      )
       let $th = $('.tableFixHead').find('thead th')
       $('.tableFixHead').on('scroll', function () {
         $th.css('transform', 'translateY(' + this.scrollTop + 'px)');
@@ -176,6 +182,7 @@
               <td>${setValueFormat(el.EjecucionAcumulada, el.Formato)}</td>
               <td>${el.Ponderacion}</td>
               <td><span class="float-end">${parseFloat(parseFloat(el.Porcentaje) * 100).toFixed(2)} %</span></td>
+              <td><span class="float-end">${parseFloat(el.Calificacion).toFixed(2)}</span></td>
             </tr>
           `);
       });

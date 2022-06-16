@@ -440,3 +440,7 @@ DEFINITION_EXECUTION_GOALS = (
     ('A', 'Automaticas'),
     ('M', 'Manuales')
 )
+
+LOAN_GROWTH = "Crecimiento en Cartera de Creditos"
+SAVINGS_GROWTH = "Crecimiento en Ahorros"
+GOALS_NIVEL1 = ['Crecimiento en Cartera de Creditos', 'Crecimiento en Ahorros']
