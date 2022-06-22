@@ -433,8 +433,8 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
             'sum_total': 'SUM(MontoAnualFilial)',
             'sum_ene': 'SUM(MontoEne)', 'sum_feb': 'SUM(MontoFeb)',
             'sum_mar': 'SUM(MontoMar)', 'sum_abr': 'SUM(MontoAbr)',
-            'sum_may': 'SUM(MontoMay)', 'sum_jul': 'SUM(MontoJun)',
-            'sum_jun': 'SUM(MontoJul)', 'sum_ago': 'SUM(MontoAgo)',
+            'sum_may': 'SUM(MontoMay)', 'sum_jun': 'SUM(MontoJun)',
+            'sum_jul': 'SUM(MontoJul)', 'sum_ago': 'SUM(MontoAgo)',
             'sum_sep': 'SUM(MontoSep)', 'sum_oct': 'SUM(MontoOct)',
             'sum_nov': 'SUM(MontoNov)', 'sum_dic': 'SUM(MontoDic)',
         }).filter(
@@ -472,62 +472,62 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
                 'status': 'err',
                 'msg': f'Con el nuevo monto anual {data.get("annual_amount_subsidiary")} excede el Monto Total Global' # NOQA
             }
-        if qs_global_detail.amount_january < new_amounts.get('amount_january'):
+        if qs_global_detail.amount_january < round(new_amounts.get('amount_january'), 2):
             return {
                 'status': 'err',
-                'msg': f'Con el nuevo monto en enero {data.get("amount_january")} excede el Monto Global en Enero' # NOQA
+                'msg': f'Con el nuevo monto en enero {data.get("amount_february")} se excede el Monto Global de enero' # NOQA
             }
-        if qs_global_detail.amount_february < new_amounts.get('amount_february'):
+        if qs_global_detail.amount_february < round(new_amounts.get('amount_february'), 2):
             return {
                 'status': 'err',
-                'msg': f'Con el nuevo monto en febrero {data.get("amount_february")} se excede el Monto Global de febrero' # NOQA
+                'msg': f'Con el nuevo monto en febrero {data.get("amount_january")} se excede el Monto Global de febrero' # NOQA
             }
-        if qs_global_detail.amount_march < new_amounts.get('amount_march'):
+        if qs_global_detail.amount_march < round(new_amounts.get('amount_march'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en marzo {data.get("amount_march")} se excede el Monto Global de marzo' # NOQA
             }
-        if qs_global_detail.amount_april < new_amounts.get('amount_april'):
+        if qs_global_detail.amount_april < round(new_amounts.get('amount_april'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en abril {data.get("amount_april")} se excede el Monto Global de abril' # NOQA
             }
-        if qs_global_detail.amount_may < new_amounts.get('amount_may'):
+        if qs_global_detail.amount_may < round(new_amounts.get('amount_may'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en mayo {data.get("amount_may")} se excede el Monto Global de mayo' # NOQA
             }
-        if qs_global_detail.amount_june < new_amounts.get('amount_june'):
+        if qs_global_detail.amount_june < round(new_amounts.get('amount_june'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en junio {data.get("amount_june")} se excede el Monto Global de junio' # NOQA
             }
-        if qs_global_detail.amount_july < new_amounts.get('amount_july'):
+        if qs_global_detail.amount_july < round(new_amounts.get('amount_july'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en julio {data.get("amount_july")} se excede el Monto Global de julio' # NOQA
             }
-        if qs_global_detail.amount_august < new_amounts.get('amount_august'):
+        if qs_global_detail.amount_august < round(new_amounts.get('amount_august'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en agosto {data.get("amount_august")} se excede el Monto Global de agosto' # NOQA
             }
-        if qs_global_detail.amount_september < new_amounts.get('amount_september'):
+        if qs_global_detail.amount_september < round(new_amounts.get('amount_september'), 2): # NOQA
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en septiembre {data.get("amount_september")} se excede el Monto Global de septiembre' # NOQA
             }
-        if qs_global_detail.amount_october < new_amounts.get('amount_october'):
+        if qs_global_detail.amount_october < round(new_amounts.get('amount_october'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en octubre {data.get("amount_october")} se excede el Monto Global de octubre' # NOQA
             }
-        if qs_global_detail.amount_november < new_amounts.get('amount_november'):
+        if qs_global_detail.amount_november < round(new_amounts.get('amount_november'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en noviembre {data.get("amount_november")} se excede el Monto Global de noviembre' # NOQA
             }
-        if qs_global_detail.amount_december < new_amounts.get('amount_december'):
+        if qs_global_detail.amount_december < round(new_amounts.get('amount_december'), 2):
             return {
                 'status': 'err',
                 'msg': f'Con el nuevo monto en diciembre {data.get("amount_december")} se excede el Monto Global de diciembre' # NOQA
@@ -539,14 +539,14 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
         qs_subsidiary = SubsidiaryGoalDetail.objects.filter(pk=id).first()
         if not qs_subsidiary:
             return {'status': 'err', 'msg': 'Meta de Filial no encontrada'}
-        total = dc(dict_data.pop('annual_amount_subsidiary'))
-        values = [dc(month) for month in list(dict_data.values())]
-        sum_months = sum(values)
-        if not total == round(sum_months):
-            return {
-                'status': 'err',
-                'msg': f'Suma de meses {sum_months} diferente a total: {total}'
-            }
+        # total = dc(dict_data.pop('annual_amount_subsidiary'))
+        # values = [dc(month) for month in list(dict_data.values())]
+        # sum_months = sum(values)
+        # if not total == round(sum_months):
+        #     return {
+        #         'status': 'err',
+        #         'msg': f'Suma de meses {sum_months} diferente a total: {total}'
+        #     }
         return {'status': 'ok', 'msg': ''}
 
     def _validate_subsidiary_execution(id):
@@ -595,6 +595,7 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
             result = load_excel_file(request.FILES['excel-file'])
             sheet = result.get('sheet')
             number_rows = result.get('number_rows')
+            num_upd = 0
             counter = 2
             for item in range(1, number_rows):
                 id = sheet[f'A{counter}'].value
@@ -622,13 +623,15 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
                     )
                 elif result_calculate.get('status') != 'ok':
                     messages.error(
-                        request, f'Error. Identificador: {id} {result_validate.get("msg")}'
+                        request, f'Error. Identificador: {id} {result_calculate.get("msg")}' # NOQA
                     )
                 else:
                     SubsidiaryGoalDetail.objects.filter(pk=id).update(
                         ponderation=ponderation, **data
                     )
+                    num_upd = num_upd + 1
                 counter = counter + 1
+            messages.success(request, f'{num_upd} líneas leidas con éxito!!')
 
         if request.POST.get('method') == 'load-excel-execution':
             if not request.user.has_perm('goals.puede_ingresar_ejecuciones_manuales'):

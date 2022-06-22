@@ -7,8 +7,8 @@ from apps.main.models import (
     Cuentascontables
 )
 from apps.master_budget.models import (
-    MasterParameters,
-    AuditDataMixin
+    MasterParameters, AuditDataMixin, AmountMonthlyMixin,
+    PercentageMonthlyMixin
 )
 
 from utils.constants import OTHERS_ASSETS_CRITERIA
@@ -132,7 +132,7 @@ class NonPerformingAssetsXCategory(AuditDataMixin):
         db_column="CategoriaId",
         null=True,
         blank=True
-    )
+    ) 
     scenario_id = models.ForeignKey(
         NonPerformingAssetsScenario,
         models.DO_NOTHING,
@@ -341,62 +341,36 @@ class OtherAssetsScenario(AuditDataMixin):
         db_table = "pptoMaestroOtrosActivosEsc"
 
 
-class OtherAssets(AuditDataMixin):
+class OtherAssets(AuditDataMixin, AmountMonthlyMixin, PercentageMonthlyMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     scenario_id = models.ForeignKey(
-        OtherAssetsScenario,
-        models.DO_NOTHING,
-        db_column="EscenarioId",
-        null=True,
-        blank=True,
+        OtherAssetsScenario, models.DO_NOTHING, db_column="EscenarioId",
+        null=True, blank=True,
     )
     category_id = models.ForeignKey(
-        OtherAssetsCategory,
-        models.DO_NOTHING,
-        blank=True,
-        null=True,
-        db_column="CategoriaId"
+        OtherAssetsCategory, models.DO_NOTHING, db_column="CategoriaId",
+        blank=True, null=True
     )
-    category = models.IntegerField(
-        db_column="Categoria", null=True, blank=True
-    )
+    category = models.IntegerField(db_column="Categoria", null=True, blank=True)
     category_name = models.CharField(
-        db_column="CategoriaNombre",
-        null=True,
-        blank=True,
-        max_length=150
+        db_column="CategoriaNombre", max_length=150, null=True, blank=True
     )
     previous_balance = models.DecimalField(
-        db_column="SaldoAnterior",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="SaldoAnterior", decimal_places=2, max_digits=23,
+        default=0, blank=True, null=True
     )
     criteria = models.IntegerField(
-        db_column="Criterio",
-        null=True,
-        blank=True,
-        choices=OTHERS_ASSETS_CRITERIA
+        db_column="Criterio", choices=OTHERS_ASSETS_CRITERIA,
+        null=True, blank=True
     )
     comment = models.CharField(
-        db_column="Comentario",
-        null=True,
-        blank=True,
-        max_length=200,
-        default=''
+        db_column="Comentario", max_length=200, default='',
+        null=True, blank=True
     )
-    percentage = models.FloatField(
-        db_column="Procentaje", null=True, blank=True, default=0,
-    )
+    percentage = models.FloatField(db_column="Procentaje", null=True, blank=True, default=0) # NOQA
     new_balance = models.DecimalField(
-        db_column="NuevoSaldo",
-        max_digits=23,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=0,
+        db_column="NuevoSaldo", max_digits=23, decimal_places=2,
+        default=0, blank=True, null=True
     )
 
     class Meta:

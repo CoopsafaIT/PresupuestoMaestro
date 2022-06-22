@@ -216,9 +216,9 @@
       $('#divCanvasBarChart').empty()
       $('#divCanvasBarChart').append('<canvas id="myChart" width="400" height="150"></canvas>')
       
-      let element = $(this).data('element')
+      let el = $(this).data('element')
       let month_labels = $(this).data('labels')
-      const title = `Meta ${element.Nivel2} Periodo: ${element.Año}`
+      const title = `Meta ${el.Nivel2} Periodo: ${el.Año}`
       const ctx = document.getElementById('myChart').getContext('2d');
       const data = {
         labels: month_labels,
@@ -226,18 +226,18 @@
           {
             label: 'Meta',
             data: [
-              element.EneroMeta,
-              element.FebreroMeta,
-              element.MarzoMeta,
-              element.AbrilMeta,
-              element.MayoMeta,
-              element.JunioMeta,
-              element.JulioMeta,
-              element.AgostoMeta,
-              element.SeptiembreMeta,
-              element.OctubreMeta,
-              element.NoviembreMeta,
-              element.DiciembreMeta,
+              el.EneroMeta,
+              el.FebreroMeta,
+              el.MarzoMeta,
+              el.AbrilMeta,
+              el.MayoMeta,
+              el.JunioMeta,
+              el.JulioMeta,
+              el.AgostoMeta,
+              el.SeptiembreMeta,
+              el.OctubreMeta,
+              el.NoviembreMeta,
+              el.DiciembreMeta,
 
             ],
             borderColor: 'rgb(1, 114, 36, 0.5)',
@@ -247,18 +247,18 @@
           {
             label: 'Ejecución',
             data: [
-              element.EneroEjecucion,
-              element.FebreroEjecucion,
-              element.MarzoEjecucion,
-              element.AbrilEjecucion,
-              element.MayoEjecucion,
-              element.JunioEjecucion,
-              element.JulioEjecucion,
-              element.AgostoEjecucion,
-              element.SeptiembreEjecucion,
-              element.OctubreEjecucion,
-              element.NoviembreEjecucion,
-              element.DiciembreEjecucion,
+              el.EneroEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion + el.JunioEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion + el.JunioEjecucion + el.JulioEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion + el.JunioEjecucion + el.JulioEjecucion + el.AgostoEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion + el.JunioEjecucion + el.JulioEjecucion + el.AgostoEjecucion + el.SeptiembreEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion + el.JunioEjecucion + el.JulioEjecucion + el.AgostoEjecucion + el.SeptiembreEjecucion + el.OctubreEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion + el.JunioEjecucion + el.JulioEjecucion + el.AgostoEjecucion + el.SeptiembreEjecucion + el.OctubreEjecucion + el.NoviembreEjecucion,
+              el.EneroEjecucion + el.FebreroEjecucion + el.MarzoEjecucion + el.AbrilEjecucion + el.MayoEjecucion + el.JunioEjecucion + el.JulioEjecucion + el.AgostoEjecucion + el.SeptiembreEjecucion + el.OctubreEjecucion + el.NoviembreEjecucion + el.DiciembreEjecucion,
             ],
             borderColor: 'rgb(139, 23, 23, 0.5)',
             backgroundColor: 'rgb(139, 23, 23)',

@@ -3,7 +3,6 @@ from datetime import datetime as dt
 from django.http import HttpResponse
 from openpyxl import Workbook, load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
-from openpyxl.styles.alignment import Alignment
 from openpyxl.styles import PatternFill, Font
 from openpyxl.drawing.image import Image
 

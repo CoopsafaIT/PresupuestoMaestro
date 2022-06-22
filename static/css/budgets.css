@@ -17,3 +17,7 @@
 .td-border-success{
   border-left: solid 2px var(--institutional-green-color) !important;
 }
+
+.input-amount-size{
+  font-size: 0.8rem !important;
+}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -7,6 +8,12 @@ from apps.main.models import Periodo
 from utils.constants import (
     STATUS, TYPE_COMPLEMENTARY_PROJECTION, MONTH_CHOICES,
 )
+
+
+def is_percentage(value):
+    if value <=1:
+        return True
+    return False
 
 
 class CommentMixin(models.Model):
@@ -648,6 +655,60 @@ class PercentageIncreasesMonthlyMixin(models.Model):
     )
     percentage_increase_december = models.FloatField(
         db_column="PorcentajeincrementoDic", null=True, blank=True, default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
+class PercentageMonthlyMixin(models.Model):
+    percentage_january = models.FloatField(
+        db_column="PorcentajeEne", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_february = models.FloatField(
+        db_column="PorcentajeFeb", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_march = models.FloatField(
+        db_column="PorcentajeMar", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_april = models.FloatField(
+        db_column="PorcentajeAbr", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_may = models.FloatField(
+        db_column="PorcentajeMay", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_june = models.FloatField(
+        db_column="PorcentajeJun", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_july = models.FloatField(
+        db_column="PorcentajeJul", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_august = models.FloatField(
+        db_column="PorcentajeAgo", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_september = models.FloatField(
+        db_column="PorcentajeSep", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_october = models.FloatField(
+        db_column="PorcentajeOct", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_november = models.FloatField(
+        db_column="PorcentajeNov", null=True, blank=True, default=0,
+        validators=[is_percentage]
+    )
+    percentage_december = models.FloatField(
+        db_column="PorcentajeDic", null=True, blank=True, default=0,
+        validators=[is_percentage]
     )
 
     class Meta:

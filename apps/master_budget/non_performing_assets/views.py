@@ -20,10 +20,10 @@ from .models import (
     OtherAssetsCategory,
     OtherAssets
 )
+from .request_post import others_assets_monthly_amount_clean, others_assets_monthly_percentage_clean
 from .forms import (
-    NonPerformingAssetsScenarioForm,
-    ScenarioCloneForm,
-    OthersAssetsScenarioForm
+    NonPerformingAssetsScenarioForm, ScenarioCloneForm, OthersAssetsScenarioForm,
+    OtherAssetsDefineAmountMonthlyForm, OtherAssetsDefinePercentageMonthlyForm,
 )
 from .request_get import QueryGetParms
 from utils.pagination import pagination
@@ -512,9 +512,25 @@ def scenario_others_assets(request, id):
             item.new_balance = request.POST.get('new_balance').replace(',', '')
             item.criteria = request.POST.get('criteria')
             item.save()
-            messages.success(
-                request, "Actualización realizada con éxito!"
-            )
+            messages.success(request, "Actualización realizada con éxito!")
+        elif request.POST.get('method') == 'define-monthly-by-amount':
+            qs_item = get_object_or_404(OtherAssets, pk=request.POST.get('pk'))
+            data = others_assets_monthly_amount_clean(request.POST)
+            form = OtherAssetsDefineAmountMonthlyForm(data, instance=qs_item)
+            if not form.is_valid():
+                messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
+            else:
+                OtherAssets.objects.filter(pk=qs_item.pk).update(**form.cleaned_data)
+                messages.success(request, "Actualización realizada con éxito!")
+        elif request.POST.get('method') == 'define-monthly-by-percentage':
+            qs_item = get_object_or_404(OtherAssets, pk=request.POST.get('pk'))
+            data = others_assets_monthly_percentage_clean(request.POST)
+            form = OtherAssetsDefinePercentageMonthlyForm(data, instance=qs_item)
+            if not form.is_valid():
+                messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
+            else:
+                OtherAssets.objects.filter(pk=qs_item.pk).update(**form.cleaned_data)
+                messages.success(request, "Actualización realizada con éxito!")
         elif request.POST.get('method') == 'change-status':
             if not qs.is_active:
                 OtherAssetsScenario.objects.filter(
