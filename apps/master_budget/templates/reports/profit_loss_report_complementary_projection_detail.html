@@ -60,36 +60,134 @@
 
 <script>
   $(document).ready(()=>{
+    const Locales = { maximumFractionDigits: 2}
+    const numberLocale = (value) => new Intl.NumberFormat('en-US', Locales).format(value)
+    const convertDecimalToPercentage = (value)=> numberLocale(parseFloat(value) * 100)
+    const calculateTotalPercentage = () =>{
+      let sumTotal = 0;
+      $('.percentage-monthly').each( (index, elem) => sumTotal += parseFloat($(elem).val()))
+      $('#idTotalPercentageMonthly').html(numberLocale(sumTotal))
+    }
 
-    $('.fill-monthly-complementary-projection').click(function(){
-      let value = $('#id_complementary_projection_month-1').val()
-      $('.complementary_projection_monthly').val( numberWithCommas(value) )
-    })
+    const calculateTotalAmount = () =>{
+      let sumTotal = 0;
+      $('.amount-monthly').each( (index, elem) => sumTotal += parseFloat($(elem).val().replaceAll(',', '')) )
+      $('#idTotalAmountMonthly').html(numberLocale(sumTotal))
+    }
+
+    const changeInputAmountEditStatus = (newInputStatus)=>{
+        $('#id_complementary_projection_month-amount-1').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-2').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-3').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-4').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-5').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-6').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-7').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-8').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-9').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-10').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-11').attr('disabled', newInputStatus)
+        $('#id_complementary_projection_month-amount-12').attr('disabled', newInputStatus)
+      }
+
+    const changeInputPercentageEditStatus = (newInputStatus)=>{
+      $('#id_complementary_projection_month-1').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-2').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-3').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-4').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-5').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-6').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-7').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-8').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-9').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-10').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-11').attr('disabled', newInputStatus)
+      $('#id_complementary_projection_month-12').attr('disabled', newInputStatus)
+    }
+    
+    const fillTableMonth = (resString) => {
+      let resp = JSON.parse(resString)
+      let {qs: data, amount_base: amountBase} = resp
+      $('#catalogComplementaryProjectionName').text(data[0].category_id__level_four)
+
+      $('#id_complementary_projection_month-1').val(data[0].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-2').val(data[1].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-3').val(data[2].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-4').val(data[3].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-5').val(data[4].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-6').val(data[5].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-7').val(data[6].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-8').val(data[7].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-9').val(data[8].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-10').val(data[9].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-11').val(data[10].percentage || 0).attr('disabled', true)
+      $('#id_complementary_projection_month-12').val(data[11].percentage || 0).attr('disabled', true)
+
+      $('#id_complementary_projection_month-amount-1').val(numberLocale(data[0].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-2').val(numberLocale(data[1].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-3').val(numberLocale(data[2].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-4').val(numberLocale(data[3].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-5').val(numberLocale(data[4].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-6').val(numberLocale(data[5].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-7').val(numberLocale(data[6].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-8').val(numberLocale(data[7].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-9').val(numberLocale(data[8].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-10').val(numberLocale(data[9].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-11').val(numberLocale(data[10].amount)).attr('disabled', true)
+      $('#id_complementary_projection_month-amount-12').val(numberLocale(data[11].amount)).attr('disabled', true)
+      $('#id_amountBase_last_year').html(numberLocale(amountBase || 0))
+      $('#save_complementary_projection').data('amount_base', amountBase);
+    }
+
+    const handleError = (e) => {
+      loaderShow(false)
+      alert("Ha ocurrido un error!")
+    }
 
     $('#save_complementary_projection').click(function(){
       let url ='{{request.get_full_path}}';
       let categoryId = $('#save_complementary_projection').data('category_id');
-      let data = [
-        {'month': '1', 'percentage': $('#id_complementary_projection_month-1').val().replaceAll(',', '')},
-        {'month': '2', 'percentage': $('#id_complementary_projection_month-2').val().replaceAll(',', '')},
-        {'month': '3', 'percentage': $('#id_complementary_projection_month-3').val().replaceAll(',', '')},
-        {'month': '4', 'percentage': $('#id_complementary_projection_month-4').val().replaceAll(',', '')},
-        {'month': '5', 'percentage': $('#id_complementary_projection_month-5').val().replaceAll(',', '')},
-        {'month': '6', 'percentage': $('#id_complementary_projection_month-6').val().replaceAll(',', '')},
-        {'month': '7', 'percentage': $('#id_complementary_projection_month-7').val().replaceAll(',', '')},
-        {'month': '8', 'percentage': $('#id_complementary_projection_month-8').val().replaceAll(',', '')},
-        {'month': '9', 'percentage': $('#id_complementary_projection_month-9').val().replaceAll(',', '')},
-        {'month': '10', 'percentage': $('#id_complementary_projection_month-10').val().replaceAll(',', '')},
-        {'month': '11', 'percentage': $('#id_complementary_projection_month-11').val().replaceAll(',', '')},
-        {'month': '12', 'percentage': $('#id_complementary_projection_month-12').val().replaceAll(',', '')}
-      ]
+      let amount = $('#save_complementary_projection').data('amount_base');
+      let method = $('#save_complementary_projection').data('method');
+      let data = []
+      if(method === "define-monthly-by-amount"){
+        data = [
+          {'month': '1', 'amount': $('#id_complementary_projection_month-amount-1').val().replaceAll(',', '')},
+          {'month': '2', 'amount': $('#id_complementary_projection_month-amount-2').val().replaceAll(',', '')},
+          {'month': '3', 'amount': $('#id_complementary_projection_month-amount-3').val().replaceAll(',', '')},
+          {'month': '4', 'amount': $('#id_complementary_projection_month-amount-4').val().replaceAll(',', '')},
+          {'month': '5', 'amount': $('#id_complementary_projection_month-amount-5').val().replaceAll(',', '')},
+          {'month': '6', 'amount': $('#id_complementary_projection_month-amount-6').val().replaceAll(',', '')},
+          {'month': '7', 'amount': $('#id_complementary_projection_month-amount-7').val().replaceAll(',', '')},
+          {'month': '8', 'amount': $('#id_complementary_projection_month-amount-8').val().replaceAll(',', '')},
+          {'month': '9', 'amount': $('#id_complementary_projection_month-amount-9').val().replaceAll(',', '')},
+          {'month': '10', 'amount': $('#id_complementary_projection_month-amount-10').val().replaceAll(',', '')},
+          {'month': '11', 'amount': $('#id_complementary_projection_month-amount-11').val().replaceAll(',', '')},
+          {'month': '12', 'amount': $('#id_complementary_projection_month-amount-12').val().replaceAll(',', '')}
+        ]
+      }else {
+        data = [
+          {'month': '1', 'percentage': $('#id_complementary_projection_month-1').val().replaceAll(',', '')},
+          {'month': '2', 'percentage': $('#id_complementary_projection_month-2').val().replaceAll(',', '')},
+          {'month': '3', 'percentage': $('#id_complementary_projection_month-3').val().replaceAll(',', '')},
+          {'month': '4', 'percentage': $('#id_complementary_projection_month-4').val().replaceAll(',', '')},
+          {'month': '5', 'percentage': $('#id_complementary_projection_month-5').val().replaceAll(',', '')},
+          {'month': '6', 'percentage': $('#id_complementary_projection_month-6').val().replaceAll(',', '')},
+          {'month': '7', 'percentage': $('#id_complementary_projection_month-7').val().replaceAll(',', '')},
+          {'month': '8', 'percentage': $('#id_complementary_projection_month-8').val().replaceAll(',', '')},
+          {'month': '9', 'percentage': $('#id_complementary_projection_month-9').val().replaceAll(',', '')},
+          {'month': '10', 'percentage': $('#id_complementary_projection_month-10').val().replaceAll(',', '')},
+          {'month': '11', 'percentage': $('#id_complementary_projection_month-11').val().replaceAll(',', '')},
+          {'month': '12', 'percentage': $('#id_complementary_projection_month-12').val().replaceAll(',', '')}
+        ]
+      }
       loaderShow(true)
       $.ajax({
         type: 'POST',
         data: {
           categoryId: categoryId,
-          amountBase: $('#id_amountBase_last_year').val().replaceAll(',',''),
-          
+          amountBase: amount,
+          method: method,
           data: JSON.stringify(data)
         },
         url: url
@@ -109,56 +207,41 @@
       loaderShow(true)
       $.ajax({
         type: 'GET',
-        data: {
-          categoryId: categoryId
-        },
+        data: {categoryId: categoryId},
         url: url
       })
       .done((res)=>{
         fillTableMonth(res)
+        calculateTotalPercentage()
+        calculateTotalAmount()
         loaderShow(false)
         $('#editDetailComplementaryProjectionModal').modal('show');
       })
       .fail(handleError)
     })
 
-    const fillTableMonth = (resString) => {
-      let resp = JSON.parse(resString)
-      let {qs: data, amount_base: amountBase} = resp
-      
-      $('#catalogComplementaryProjectionName').text(data[0].category_id__level_four)
-      $('#id_complementary_projection_month-1').val(data[0].percentage || 0)
-      $('#id_complementary_projection_month-2').val(data[1].percentage || 0)
-      $('#id_complementary_projection_month-3').val(data[2].percentage || 0)
-      $('#id_complementary_projection_month-4').val(data[3].percentage || 0)
-      $('#id_complementary_projection_month-5').val(data[4].percentage || 0)
-      $('#id_complementary_projection_month-6').val(data[5].percentage || 0)
-      $('#id_complementary_projection_month-7').val(data[6].percentage || 0)
-      $('#id_complementary_projection_month-8').val(data[7].percentage || 0)
-      $('#id_complementary_projection_month-9').val(data[8].percentage || 0)
-      $('#id_complementary_projection_month-10').val(data[9].percentage || 0)
-      $('#id_complementary_projection_month-11').val(data[10].percentage || 0)
-      $('#id_complementary_projection_month-12').val(data[11].percentage || 0)
-      $('#id_complementary_projection_month-amount-1').val(data[0].amount || 0)
-      $('#id_complementary_projection_month-amount-2').val(data[1].amount || 0)
-      $('#id_complementary_projection_month-amount-3').val(data[2].amount || 0)
-      $('#id_complementary_projection_month-amount-4').val(data[3].amount || 0)
-      $('#id_complementary_projection_month-amount-5').val(data[4].amount || 0)
-      $('#id_complementary_projection_month-amount-6').val(data[5].amount || 0)
-      $('#id_complementary_projection_month-amount-7').val(data[6].amount || 0)
-      $('#id_complementary_projection_month-amount-8').val(data[7].amount || 0)
-      $('#id_complementary_projection_month-amount-9').val(data[8].amount || 0)
-      $('#id_complementary_projection_month-amount-10').val(data[9].amount || 0)
-      $('#id_complementary_projection_month-amount-11').val(data[10].amount || 0)
-      $('#id_complementary_projection_month-amount-12').val(data[11].amount || 0)
-      $('#id_amountBase_last_year').val(amountBase || 0)
-    }
+    $(document).on('click', '.editMonthlyAmount', function(){
+      let method = $(this).data('method');
+      const defineMonthlyByAmount = 'define-monthly-by-amount';
+      const defineMonthlyByPercentage = 'define-monthly-by-percentage';
 
-    const handleError = (e) => {
-      console.log(e);
-      loaderShow(false)
-      alert("Ha ocurrido un error!")
-    }
+      if($(this).data('method') === defineMonthlyByAmount){
+        changeInputAmountEditStatus(false)
+        changeInputPercentageEditStatus(true)
+        $('#btnDefineMonthlyAmount').removeClass('btn-outline-secondary').addClass('btn-success')
+        $('#btnDefineMonthlyPercentage').removeClass('btn-success').addClass('btn-outline-secondary')
+        $('#save_complementary_projection').data('method', defineMonthlyByAmount)
+      }else{
+        changeInputAmountEditStatus(true);
+        changeInputPercentageEditStatus(false);
+        $('#btnDefineMonthlyAmount').removeClass('btn-success').addClass('btn-outline-secondary')
+        $('#btnDefineMonthlyPercentage').removeClass('btn-outline-secondary').addClass('btn-success')
+        $('#save_complementary_projection').data('method', defineMonthlyByPercentage)
+      }
+    })
+
+    $(document).on('change', '.percentage-monthly', calculateTotalPercentage)
+    $(document).on('change', '.amount-monthly', calculateTotalAmount)
   })
 </script>
 {% endblock javascript %}

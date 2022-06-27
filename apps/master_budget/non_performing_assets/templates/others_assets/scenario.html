@@ -223,7 +223,7 @@
         let method = $(this).data('method');
         const defineMonthlyByAmount = 'define-monthly-by-amount';
         const defineMonthlyByPercentage = 'define-monthly-by-percentage';
-        
+
         if($(this).data('method') === defineMonthlyByAmount){
           changeInputAmountEditStatus(false)
           changeInputPercentageEditStatus(true)
@@ -239,8 +239,6 @@
         }
       })
       
-      
-
       $(document).on('change', '.percentage-monthly', calculateTotalPercentage)
       $(document).on('change', '.amount-monthly', calculateTotalAmount)
     })

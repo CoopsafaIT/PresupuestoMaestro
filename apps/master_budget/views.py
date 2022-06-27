@@ -199,14 +199,26 @@ def profit_loss_report_complementary_projection_detail(request, period_id):
             category_id = request.POST.get('categoryId')
             amount_base = dc(request.POST.get('amountBase'))
             data = json.loads(request.POST.get('data'))
-            for item in data:
-                percentage = dc(item.get('percentage', 0))
-                amount = amount_base * percentage / 100
-                LossesEarningsComplementaryProjection.objects.filter(
-                    period_id=period_id,
-                    category_id=category_id,
-                    month=item.get('month'),
-                ).update(amount=amount, percentage=percentage)
+            print(data)
+            if request.POST.get('method') == "define-monthly-by-percentage":
+                for item in data:
+                    percentage = dc(item.get('percentage', 0))
+                    amount = amount_base * percentage / 100
+                    LossesEarningsComplementaryProjection.objects.filter(
+                        period_id=period_id,
+                        category_id=category_id,
+                        month=item.get('month'),
+                    ).update(amount=amount, percentage=percentage)
+            else:
+                for item in data:
+                    amount_item = dc(item.get('amount', 0))
+                    percentage = amount_item / amount_base * 100
+                    LossesEarningsComplementaryProjection.objects.filter(
+                        period_id=period_id,
+                        category_id=category_id,
+                        month=item.get('month'),
+                    ).update(amount=amount_item, percentage=percentage)
+
             return HttpResponse(json.dumps({}, cls=DjangoJSONEncoder))
 
     type_request = request.GET.get('type', 'G')

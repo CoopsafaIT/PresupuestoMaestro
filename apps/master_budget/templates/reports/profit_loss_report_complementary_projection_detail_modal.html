@@ -1,337 +1,178 @@
 {% load static %}
 {% load humanize %}
-<div class="modal fade" id="editDetailComplementaryProjectionModal"
-  tabindex="-1" aria-labelledby="editDetailComplementaryProjectionModalLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="editDetailComplementaryProjectionModal" tabindex="-1"
+  aria-labelledby="editDetailComplementaryProjectionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title fw-light fs-5">
-          Ingresar Proyección Complementaria Mensual <span id="catalogComplementaryProjectionName"></span>
+          Proyección Complementaria Mensual: <span id="catalogComplementaryProjectionName"></span> 
+          | Año Anterior: <span id="id_amountBase_last_year"></span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <div class="row mt-4">
-            <div class="col-md-2">
-              <div class="mb-3">
-                <label for="">Saldo Año Anterior</label>
-                <input 
-                  type="number" readonly value="0"
-                  class="mb-2 form-control" id="id_amountBase_last_year"
-                />
-              </div>
-            </div>
-            <div class="col-md-12">
-              <div class="table-responsive">
-                <table class="table table-sm table-bordered">
-                  <thead>
-                    <tr>
-                      <th class="text-center">Ene</th>
-                      <th class="text-center">Feb</th>
-                      <th class="text-center">Mar</th>
-                      <th class="text-center">Abr</th>
-                      <th class="text-center">May</th>
-                      <th class="text-center">Jun</th>
-                      <th class="text-center">Jul</th>
-                      <th class="text-center">Ago</th>
-                      <th class="text-center">Sep</th>
-                      <th class="text-center">Oct</th>
-                      <th class="text-center">Nov</th>
-                      <th class="text-center">Dic</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div class="d-grid gap-2 d-flex justify-content-center">
-                          <input 
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="any"
-                            value="0"
-                            class="form-control"
-                            name="ene" id="id_complementary_projection_month-1"
-                            required 
-                          />
-                          <button type="button" class="btn btn-sm btn-outline-primary fill-monthly-complementary-projection">
-                            <i class="bi bi-arrow-right"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="feb" id="id_complementary_projection_month-2"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="mar" id="id_complementary_projection_month-3"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="abr" id="id_complementary_projection_month-4"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="may" id="id_complementary_projection_month-5"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="jun" id="id_complementary_projection_month-6"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="jul" id="id_complementary_projection_month-7"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="ago" id="id_complementary_projection_month-8"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="sep" id="id_complementary_projection_month-9"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="oct" id="id_complementary_projection_month-10"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="nov" id="id_complementary_projection_month-11"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="any"
-                          value="0"
-                          class="form-control "
-                          name="dic" id="id_complementary_projection_month-12"
-                          required 
-                        />
-                      </td>
-                    </tr>
-                    
-                    <tr>
-                      <td>
-                        <div class="d-grid gap-2 d-flex justify-content-center">
-                          <input 
-                            readonly
-                            type="number"
-                            value="0"
-                            class="form-control"
-                            name="ene" id="id_complementary_projection_month-amount-1"
-                            required 
-                          />
-                          <button type="button" class="btn btn-sm btn-outline-primary fill-monthly-complementary-projection">
-                            <i class="bi bi-arrow-right"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="feb" id="id_complementary_projection_month-amount-2"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="mar" id="id_complementary_projection_month-amount-3"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="abr" id="id_complementary_projection_month-amount-4"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="may" id="id_complementary_projection_month-amount-5"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"                         
-                          value="0"
-                          class="form-control "
-                          name="jun" id="id_complementary_projection_month-amount-6"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="jul" id="id_complementary_projection_month-amount-7"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="ago" id="id_complementary_projection_month-amount-8"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="sep" id="id_complementary_projection_month-amount-9"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="oct" id="id_complementary_projection_month-amount-10"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          readonly
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="nov" id="id_complementary_projection_month-amount-11"
-                          required 
-                        />
-                      </td>
-                      <td>
-                        <input
-                          readonly 
-                          type="number"
-                          value="0"
-                          class="form-control "
-                          name="dic" id="id_complementary_projection_month-amount-12"
-                          required 
-                        />
-                      </td>
-                    
-                      
-                  </tbody>
-                </table>
-              </div>
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <tr class="text-center">Detalle</tr>
+                    <th class="text-center">Ene</th>
+                    <th class="text-center">Feb</th>
+                    <th class="text-center">Mar</th>
+                    <th class="text-center">Abr</th>
+                    <th class="text-center">May</th>
+                    <th class="text-center">Jun</th>
+                    <th class="text-center">Jul</th>
+                    <th class="text-center">Ago</th>
+                    <th class="text-center">Sep</th>
+                    <th class="text-center">Oct</th>
+                    <th class="text-center">Nov</th>
+                    <th class="text-center">Dic</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center">
+                      <button 
+                        class="btn btn-sm btn-outline-secondary editMonthlyAmount" 
+                        data-method="define-monthly-by-percentage" type="button" id="btnDefineMonthlyPercentage"
+                        ><i class="bi bi-percent"></i>
+                      </button>
+                      <p class="fw-light input-amount-size" id="idTotalPercentageMonthly"></p>
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="ene" id="id_complementary_projection_month-1" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="feb" id="id_complementary_projection_month-2" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="mar" id="id_complementary_projection_month-3" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="abr" id="id_complementary_projection_month-4" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="may" id="id_complementary_projection_month-5" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="jun" id="id_complementary_projection_month-6" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="jul" id="id_complementary_projection_month-7" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="ago" id="id_complementary_projection_month-8" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="sep" id="id_complementary_projection_month-9" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="oct" id="id_complementary_projection_month-10" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="nov" id="id_complementary_projection_month-11" required />
+                    </td>
+                    <td>
+                      <input type="number" min="0" max="100" step="any" value="0"
+                        class="form-control input-amount-size percentage-monthly"
+                        name="dic" id="id_complementary_projection_month-12" required />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="text-center">
+                      <button 
+                        class="btn btn-sm btn-outline-secondary editMonthlyAmount" 
+                        data-method="define-monthly-by-amount" type="button" id="btnDefineMonthlyAmount"
+                        ><i class="bi bi-currency-dollar"></i>
+                      </button>
+                      <p class="fw-light input-amount-size" id="idTotalAmountMonthly"></p>
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="ene" id="id_complementary_projection_month-amount-1" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="feb" id="id_complementary_projection_month-amount-2" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="mar" id="id_complementary_projection_month-amount-3" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="abr" id="id_complementary_projection_month-amount-4" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="may" id="id_complementary_projection_month-amount-5" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="jun" id="id_complementary_projection_month-amount-6" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="jul" id="id_complementary_projection_month-amount-7" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="ago" id="id_complementary_projection_month-amount-8" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="sep" id="id_complementary_projection_month-amount-9" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="oct" id="id_complementary_projection_month-amount-10" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="nov" id="id_complementary_projection_month-amount-11" required />
+                    </td>
+                    <td>
+                      <input type="text" value="0" class="form-control validation-input-text input-amount-size amount-monthly"
+                        name="dic" id="id_complementary_projection_month-amount-12" required />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-outline-safa" id="save_complementary_projection" data-category_id="0">Aceptar</button>
+        <button type="button" class="btn btn-outline-safa" id="save_complementary_projection"
+          data-category_id="0" data-amount_base="0" data-method="">Aceptar</button>
       </div>
     </div>
   </div>
