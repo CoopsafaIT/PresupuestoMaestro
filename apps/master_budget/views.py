@@ -199,7 +199,6 @@ def profit_loss_report_complementary_projection_detail(request, period_id):
             category_id = request.POST.get('categoryId')
             amount_base = dc(request.POST.get('amountBase'))
             data = json.loads(request.POST.get('data'))
-            print(data)
             if request.POST.get('method') == "define-monthly-by-percentage":
                 for item in data:
                     percentage = dc(item.get('percentage', 0))
