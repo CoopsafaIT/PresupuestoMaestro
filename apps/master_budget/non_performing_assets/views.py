@@ -20,10 +20,10 @@ from .models import (
     OtherAssetsCategory,
     OtherAssets
 )
-from .request_post import others_assets_monthly_amount_clean, others_assets_monthly_percentage_clean
+from .request_post import others_assets_monthly_amount_clean
 from .forms import (
     NonPerformingAssetsScenarioForm, ScenarioCloneForm, OthersAssetsScenarioForm,
-    OtherAssetsDefineAmountMonthlyForm, OtherAssetsDefinePercentageMonthlyForm,
+    OtherAssetsDefineAmountMonthlyForm,
 )
 from .request_get import QueryGetParms
 from utils.pagination import pagination
@@ -393,10 +393,7 @@ def scenarios_others_assets(request):
         if request.POST.get('method') == 'create':
             form = OthersAssetsScenarioForm(request.POST)
             if not form.is_valid():
-                messages.warning(
-                    request,
-                    f'Formulario no válido: {form.errors.as_text()}'
-                )
+                messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
             else:
                 if request.POST.get('is_active') == 'True':
                     OtherAssetsScenario.objects.filter(
@@ -414,13 +411,8 @@ def scenarios_others_assets(request):
                     ).count()
                 )
                 _new.save()
-                messages.success(
-                    request,
-                    'Escenario creado con éxito!'
-                )
-                for qs_category in OtherAssetsCategory.objects.filter(
-                    is_active=True
-                ):
+                messages.success(request, 'Escenario creado con éxito!')
+                for qs_category in OtherAssetsCategory.objects.filter(is_active=True):
                     query = f"{qs_category.identifier} '{_new.parameter_id.pk}'"
                     result = execute_sql_query(query)
                     if result.get('status') == 'ok':
@@ -432,17 +424,25 @@ def scenarios_others_assets(request):
                                 category_name=item.get('Categoria', ''),
                                 previous_balance=item.get('Saldo', 0),
                                 percentage=0,
-                                new_balance=0
+                                new_balance=0,
+                                amount_january=item.get('Saldo', 0),
+                                amount_february=item.get('Saldo', 0),
+                                amount_march=item.get('Saldo', 0),
+                                amount_april=item.get('Saldo', 0),
+                                amount_may=item.get('Saldo', 0),
+                                amount_june=item.get('Saldo', 0),
+                                amount_july=item.get('Saldo', 0),
+                                amount_august=item.get('Saldo', 0),
+                                amount_september=item.get('Saldo', 0),
+                                amount_october=item.get('Saldo', 0),
+                                amount_november=item.get('Saldo', 0),
+                                amount_december=item.get('Saldo', 0)
                             )
                     else:
                         messages.danger(
-                            request,
-                            f'No se pudo extraer información Historica de '
-                            f'categoria: {qs_category}'
+                            request, f'No se pudo extraer información Historica de categoria: {qs_category}' # NOQA
                         )
-                redirect_url = reverse(
-                    'scenario_others_assets', kwargs={'id': _new.pk}
-                )
+                redirect_url = reverse('scenario_others_assets', kwargs={'id': _new.pk})
                 full_redirect_url = f'{redirect_url}?option='
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
@@ -482,7 +482,6 @@ def scenarios_others_assets(request):
             full_redirect_url = f'{redirect_url}?option='
             return redirect(full_redirect_url)
 
-
     query_parms = QueryGetParms(request.GET)
     filters = query_parms.get_query_filters()
     qs = OtherAssetsScenario.objects.filter(**filters).exclude(deleted=True).order_by(
@@ -517,15 +516,6 @@ def scenario_others_assets(request, id):
             qs_item = get_object_or_404(OtherAssets, pk=request.POST.get('pk'))
             data = others_assets_monthly_amount_clean(request.POST)
             form = OtherAssetsDefineAmountMonthlyForm(data, instance=qs_item)
-            if not form.is_valid():
-                messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
-            else:
-                OtherAssets.objects.filter(pk=qs_item.pk).update(**form.cleaned_data)
-                messages.success(request, "Actualización realizada con éxito!")
-        elif request.POST.get('method') == 'define-monthly-by-percentage':
-            qs_item = get_object_or_404(OtherAssets, pk=request.POST.get('pk'))
-            data = others_assets_monthly_percentage_clean(request.POST)
-            form = OtherAssetsDefinePercentageMonthlyForm(data, instance=qs_item)
             if not form.is_valid():
                 messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
             else:

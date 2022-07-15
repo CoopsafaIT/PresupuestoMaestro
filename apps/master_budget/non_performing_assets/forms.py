@@ -108,71 +108,34 @@ class ScenarioCloneForm(forms.Form):
     )
 
 
-class OtherAssetsDefinePercentageMonthlyForm(forms.ModelForm):
-    def clean(self):
-        super(OtherAssetsDefinePercentageMonthlyForm, self).clean()
-        cleaned_data = self.cleaned_data
-
-        instance = self.instance
-        new_balance = float(instance.new_balance)
-        values = [month for month in list(cleaned_data.values())]
-        sum_values = sum(values)
-        if round(sum_values, 2) > 1:
-            raise forms.ValidationError("Suma Porcentaje Mensual supera al 100%")
-        cleaned_data['amount_january'] = cleaned_data['percentage_january'] * new_balance
-        cleaned_data['amount_february'] = cleaned_data['percentage_february'] * new_balance
-        cleaned_data['amount_march'] = cleaned_data['percentage_march'] * new_balance
-        cleaned_data['amount_april'] = cleaned_data['percentage_april'] * new_balance
-        cleaned_data['amount_may'] = cleaned_data['percentage_may'] * new_balance
-        cleaned_data['amount_june'] = cleaned_data['percentage_june'] * new_balance
-        cleaned_data['amount_july'] = cleaned_data['percentage_july'] * new_balance
-        cleaned_data['amount_august'] = cleaned_data['percentage_august'] * new_balance
-        cleaned_data['amount_september'] = cleaned_data['percentage_september'] * new_balance
-        cleaned_data['amount_october'] = cleaned_data['percentage_october'] * new_balance
-        cleaned_data['amount_november'] = cleaned_data['percentage_november'] * new_balance
-        cleaned_data['amount_december'] = cleaned_data['percentage_december'] * new_balance
-        return cleaned_data
-
-    class Meta:
-        model = OtherAssets
-        fields = (
-            'percentage_january', 'percentage_february', 'percentage_march',
-            'percentage_april', 'percentage_may', 'percentage_june',
-            'percentage_july', 'percentage_august', 'percentage_september',
-            'percentage_october', 'percentage_november', 'percentage_december'
-        )
-
-
 class OtherAssetsDefineAmountMonthlyForm(forms.ModelForm):
 
     def clean(self):
         super(OtherAssetsDefineAmountMonthlyForm, self).clean()
-        cleaned_data = self.cleaned_data
-
+        data = self.cleaned_data
         instance = self.instance
-        values = [dc(month) for month in list(cleaned_data.values())]
-        sum_values = sum(values)
-        if round(sum_values, 2) > round(instance.new_balance, 2):
-            raise forms.ValidationError("Suma Monto Mensual supera a Monto Anual")
-        cleaned_data['percentage_january'] = cleaned_data['amount_january'] / instance.new_balance
-        cleaned_data['percentage_february'] = cleaned_data['amount_february'] / instance.new_balance
-        cleaned_data['percentage_march'] = cleaned_data['amount_march'] / instance.new_balance
-        cleaned_data['percentage_april'] = cleaned_data['amount_april'] / instance.new_balance
-        cleaned_data['percentage_may'] = cleaned_data['amount_may'] / instance.new_balance
-        cleaned_data['percentage_june'] = cleaned_data['amount_june'] / instance.new_balance
-        cleaned_data['percentage_july'] = cleaned_data['amount_july'] / instance.new_balance
-        cleaned_data['percentage_august'] = cleaned_data['amount_august'] / instance.new_balance
-        cleaned_data['percentage_september'] = cleaned_data['amount_september'] / instance.new_balance # NOQA
-        cleaned_data['percentage_october'] = cleaned_data['amount_october'] / instance.new_balance
-        cleaned_data['percentage_november'] = cleaned_data['amount_november'] / instance.new_balance
-        cleaned_data['percentage_december'] = cleaned_data['amount_december'] / instance.new_balance
-        return cleaned_data
+
+        data['amount_january'] = instance.previous_balance + data['increases_january']
+        data['amount_february'] = data['amount_january'] + data['increases_february']
+        data['amount_march'] = data['amount_february'] + data['increases_march']
+        data['amount_april'] = data['amount_march'] + data['increases_april']
+        data['amount_may'] = data['amount_april'] + data['increases_may']
+        data['amount_june'] = data['amount_may'] + data['increases_june']
+        data['amount_july'] = data['amount_june'] + data['increases_july']
+        data['amount_august'] = data['amount_july'] + data['increases_august']
+        data['amount_september'] = data['amount_august'] + data['increases_september']
+        data['amount_october'] = data['amount_september'] + data['increases_october']
+        data['amount_november'] = data['amount_october'] + data['increases_november']
+        data['amount_december'] = data['amount_november'] + data['increases_december']
+        if round(float(data['amount_december']), 2) > round(instance.new_balance, 2):
+            raise forms.ValidationError("Monto a diciembre es mayor al nuevo monto anual esperado")
+        return data
 
     class Meta:
         model = OtherAssets
         fields = (
-            'amount_january', 'amount_february', 'amount_march',
-            'amount_april', 'amount_may', 'amount_june',
-            'amount_july', 'amount_august', 'amount_september',
-            'amount_october', 'amount_november', 'amount_december'
+            'increases_january', 'increases_february', 'increases_march',
+            'increases_april', 'increases_may', 'increases_june',
+            'increases_july', 'increases_august', 'increases_september',
+            'increases_october', 'increases_november', 'increases_december'
         )

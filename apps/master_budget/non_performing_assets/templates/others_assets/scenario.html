@@ -68,50 +68,17 @@
       const Locales = { maximumFractionDigits: 2}
       const numberLocale = (value) => new Intl.NumberFormat('en-US', Locales).format(value)
       const convertDecimalToPercentage = (value)=> numberLocale(parseFloat(value) * 100)
-      
-      const calculateTotalPercentage = () =>{
-        let sumTotal = 0;
-        $('.percentage-monthly').each( (index, elem) => sumTotal += parseFloat($(elem).val()))
-        $('#idTotalPercentageMonthly').html(numberLocale(sumTotal))
-      }
 
       const calculateTotalAmount = () =>{
         let sumTotal = 0;
-        $('.amount-monthly').each( (index, elem) => {
-          sumTotal += parseFloat($(elem).val().replaceAll(',', ''))
-        })
-        $('#idTotalAmountMonthly').html(numberLocale(sumTotal))
+        $('.amount-monthly').each( (index, elem) => sumTotal += parseFloat($(elem).val().replaceAll(',', '')))
+        $('#idIncreases').html(numberLocale(sumTotal))
+        const previousBalance = parseFloat($('#idPreviousBalance').text().replaceAll(',', ''))
+        const newBalance = parseFloat($('#idNewBalance').text().replaceAll(',', ''))
+        const difference = newBalance - (sumTotal + previousBalance)
+        $('#idDiference').html(numberLocale(difference))
       }
 
-      const changeInputAmountEditStatus = (newInputStatus)=>{
-        $('#id_define_monthly_amount_january').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_february').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_march').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_april').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_may').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_june').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_july').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_august').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_september').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_october').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_november').attr('disabled', newInputStatus)
-        $('#id_define_monthly_amount_december').attr('disabled', newInputStatus)
-      }
-
-      const changeInputPercentageEditStatus = (newInputStatus)=>{
-        $('#id_percentage_january').attr('disabled', newInputStatus)
-        $('#id_percentage_february').attr('disabled', newInputStatus)
-        $('#id_percentage_march').attr('disabled', newInputStatus)
-        $('#id_percentage_april').attr('disabled', newInputStatus)
-        $('#id_percentage_may').attr('disabled', newInputStatus)
-        $('#id_percentage_june').attr('disabled', newInputStatus)
-        $('#id_percentage_july').attr('disabled', newInputStatus)
-        $('#id_percentage_august').attr('disabled', newInputStatus)
-        $('#id_percentage_september').attr('disabled', newInputStatus)
-        $('#id_percentage_october').attr('disabled', newInputStatus)
-        $('#id_percentage_november').attr('disabled', newInputStatus)
-        $('#id_percentage_december').attr('disabled', newInputStatus)
-      }
 
       $('.add_criteria').click(function(){
         let pk = $(this).data('pk')
@@ -190,35 +157,36 @@
         $('#newAnnualAmountDefineMonthlyAmount').html(new Intl.NumberFormat().format($(this).data('new-balance')))
         $('#editMonthlyAmountDefinitionModal').modal('show');
 
-        $('#id_define_monthly_amount_january').val(numberLocale($(this).data('amount_january'))).attr('disabled', true)
-        $('#id_define_monthly_amount_february').val(numberLocale($(this).data('amount_february'))).attr('disabled', true)
-        $('#id_define_monthly_amount_march').val(numberLocale($(this).data('amount_march'))).attr('disabled', true)
-        $('#id_define_monthly_amount_april').val(numberLocale($(this).data('amount_april'))).attr('disabled', true)
-        $('#id_define_monthly_amount_may').val(numberLocale($(this).data('amount_may'))).attr('disabled', true)
-        $('#id_define_monthly_amount_june').val(numberLocale($(this).data('amount_june'))).attr('disabled', true)
-        $('#id_define_monthly_amount_july').val(numberLocale($(this).data('amount_july'))).attr('disabled', true)
-        $('#id_define_monthly_amount_august').val(numberLocale($(this).data('amount_august'))).attr('disabled', true)
-        $('#id_define_monthly_amount_september').val(numberLocale($(this).data('amount_september'))).attr('disabled', true)
-        $('#id_define_monthly_amount_october').val(numberLocale($(this).data('amount_october'))).attr('disabled', true)
-        $('#id_define_monthly_amount_november').val(numberLocale($(this).data('amount_november'))).attr('disabled', true)
-        $('#id_define_monthly_amount_december').val(numberLocale($(this).data('amount_december'))).attr('disabled', true)
+        $('#id_define_monthly_amount_january').text(numberLocale($(this).data('amount_january')))
+        $('#id_define_monthly_amount_february').text(numberLocale($(this).data('amount_february')))
+        $('#id_define_monthly_amount_march').text(numberLocale($(this).data('amount_march')))
+        $('#id_define_monthly_amount_april').text(numberLocale($(this).data('amount_april')))
+        $('#id_define_monthly_amount_may').text(numberLocale($(this).data('amount_may')))
+        $('#id_define_monthly_amount_june').text(numberLocale($(this).data('amount_june')))
+        $('#id_define_monthly_amount_july').text(numberLocale($(this).data('amount_july')))
+        $('#id_define_monthly_amount_august').text(numberLocale($(this).data('amount_august')))
+        $('#id_define_monthly_amount_september').text(numberLocale($(this).data('amount_september')))
+        $('#id_define_monthly_amount_october').text(numberLocale($(this).data('amount_october')))
+        $('#id_define_monthly_amount_november').text(numberLocale($(this).data('amount_november')))
+        $('#id_define_monthly_amount_december').text(numberLocale($(this).data('amount_december')))
 
-        $('#id_percentage_january').val(convertDecimalToPercentage($(this).data('percentage_january'))).attr('disabled', true)
-        $('#id_percentage_february').val(convertDecimalToPercentage($(this).data('percentage_february'))).attr('disabled', true)
-        $('#id_percentage_march').val(convertDecimalToPercentage($(this).data('percentage_march'))).attr('disabled', true)
-        $('#id_percentage_april').val(convertDecimalToPercentage($(this).data('percentage_april'))).attr('disabled', true)
-        $('#id_percentage_may').val(convertDecimalToPercentage($(this).data('percentage_may'))).attr('disabled', true)
-        $('#id_percentage_june').val(convertDecimalToPercentage($(this).data('percentage_june'))).attr('disabled', true)
-        $('#id_percentage_july').val(convertDecimalToPercentage($(this).data('percentage_july'))).attr('disabled', true)
-        $('#id_percentage_august').val(convertDecimalToPercentage($(this).data('percentage_august'))).attr('disabled', true)
-        $('#id_percentage_september').val(convertDecimalToPercentage($(this).data('percentage_september'))).attr('disabled', true)
-        $('#id_percentage_october').val(convertDecimalToPercentage($(this).data('percentage_october'))).attr('disabled', true)
-        $('#id_percentage_november').val(convertDecimalToPercentage($(this).data('percentage_november'))).attr('disabled', true)
-        $('#id_percentage_december').val(convertDecimalToPercentage($(this).data('percentage_december'))).attr('disabled', true)
-        calculateTotalPercentage()
+        $('#id_define_monthly_increases_january').val(numberLocale($(this).data('increases_january')))
+        $('#id_define_monthly_increases_february').val(numberLocale($(this).data('increases_february')))
+        $('#id_define_monthly_increases_march').val(numberLocale($(this).data('increases_march')))
+        $('#id_define_monthly_increases_april').val(numberLocale($(this).data('increases_april')))
+        $('#id_define_monthly_increases_may').val(numberLocale($(this).data('increases_may')))
+        $('#id_define_monthly_increases_june').val(numberLocale($(this).data('increases_june')))
+        $('#id_define_monthly_increases_july').val(numberLocale($(this).data('increases_july')))
+        $('#id_define_monthly_increases_august').val(numberLocale($(this).data('increases_august')))
+        $('#id_define_monthly_increases_september').val(numberLocale($(this).data('increases_september')))
+        $('#id_define_monthly_increases_october').val(numberLocale($(this).data('increases_october')))
+        $('#id_define_monthly_increases_november').val(numberLocale($(this).data('increases_november')))
+        $('#id_define_monthly_increases_december').val(numberLocale($(this).data('increases_december')))
+        $('#idPreviousBalance').text(numberLocale($(this).data('previous-balance')))
+        $('#idNewBalance').text(numberLocale($(this).data('new-balance')))
+
         calculateTotalAmount()
       })
-
       $(document).on('click', '.editMonthlyAmount', function(){
         let method = $(this).data('method');
         const defineMonthlyByAmount = 'define-monthly-by-amount';
@@ -239,7 +207,6 @@
         }
       })
       
-      $(document).on('change', '.percentage-monthly', calculateTotalPercentage)
       $(document).on('change', '.amount-monthly', calculateTotalAmount)
     })
   </script>

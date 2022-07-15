@@ -7,8 +7,7 @@ from apps.main.models import (
     Cuentascontables
 )
 from apps.master_budget.models import (
-    MasterParameters, AuditDataMixin, AmountMonthlyMixin,
-    PercentageMonthlyMixin
+    MasterParameters, AuditDataMixin, AmountMonthlyMixin, AmountIncreasesMonthlyMixin
 )
 
 from utils.constants import OTHERS_ASSETS_CRITERIA
@@ -341,7 +340,7 @@ class OtherAssetsScenario(AuditDataMixin):
         db_table = "pptoMaestroOtrosActivosEsc"
 
 
-class OtherAssets(AuditDataMixin, AmountMonthlyMixin, PercentageMonthlyMixin):
+class OtherAssets(AuditDataMixin, AmountMonthlyMixin, AmountIncreasesMonthlyMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     scenario_id = models.ForeignKey(
         OtherAssetsScenario, models.DO_NOTHING, db_column="EscenarioId",

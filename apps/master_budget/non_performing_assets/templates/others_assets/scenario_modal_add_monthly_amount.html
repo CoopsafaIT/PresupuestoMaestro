@@ -6,7 +6,7 @@
       <div class="modal-header">
         <div class="row" style="width: 100%;">
           <div class="col-md-12">
-            <h3 class="fw-light">
+            <h3 class="h3 fw-light">
               Cuenta: <span id="accountNameDefineMonthlyAmount"></span>  |   
               Nuevo Saldo Anual: <span id="newAnnualAmountDefineMonthlyAmount"></span>
             </h3>
@@ -16,7 +16,7 @@
       <div class="modal-body">
         <form method="post" id="idFormScenarioEdit">
           {% csrf_token %}
-          <input type="hidden" name="method" value="" id="inputMethodMonthlyAmount">
+          <input type="hidden" name="method" value="define-monthly-by-amount">
           <input type="hidden" name="pk" id="inputPkMonthlyAmount">
           <div class="row mt-4">
             <div class="col-md-12">
@@ -41,204 +41,139 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="text-center">
-                        <button 
-                          class="btn btn-sm btn-outline-secondary editMonthlyAmount" 
-                          data-method="define-monthly-by-amount" type="button"
-                          id="btnDefineMonthlyAmount"
-                        >
-                          <i class="bi bi-currency-dollar"></i>
-                        </button>
-                        <p class="fw-light input-amount-size" id="idTotalAmountMonthly"></p>
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_january" id="id_define_monthly_amount_january" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_february" id="id_define_monthly_amount_february" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_march" id="id_define_monthly_amount_march" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_april" id="id_define_monthly_amount_april" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_may" id="id_define_monthly_amount_may" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_june" id="id_define_monthly_amount_june" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_july" id="id_define_monthly_amount_july" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_august" id="id_define_monthly_amount_august" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_september" id="id_define_monthly_amount_september" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_october" id="id_define_monthly_amount_october" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_november" id="id_define_monthly_amount_november" required 
-                        />
-                      </td>
-                      <td>
-                        <input 
-                          type="text" value="0"
-                          class="form-control validation-input-text input-amount-size amount-monthly"
-                          name="amount_december" id="id_define_monthly_amount_december" required 
-                        />
-                      </td>
+                      <td class="text-center input-amount-size">Monto</td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_january"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_february"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_march"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_april"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_may"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_june"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_july"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_august"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_september"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_october"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_november"></td>
+                      <td class="input-amount-size" id="id_define_monthly_amount_december"></td>
                     </tr>
                     <tr>
-                      <td class="text-center">
-                        <button 
-                          class="btn btn-sm btn-outline-secondary editMonthlyAmount" 
-                          data-method="define-monthly-by-percentage" type="button"
-                          id="btnDefineMonthlyPercentage"
-                        >
-                          <i class="bi bi-percent"></i>
-                        </button>
-                        <p class="fw-light input-amount-size" id="idTotalPercentageMonthly"></p>
-                      </td>
+                      <td class="text-center input-amount-size">Incremento</td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_january" id="id_percentage_january" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_january" id="id_define_monthly_increases_january" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_february" id="id_percentage_february" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_february" id="id_define_monthly_increases_february" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_march" id="id_percentage_march" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_march" id="id_define_monthly_increases_march" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_april" id="id_percentage_april" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_april" id="id_define_monthly_increases_april" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_may" id="id_percentage_may" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_may" id="id_define_monthly_increases_may" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_june" id="id_percentage_june" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_june" id="id_define_monthly_increases_june" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_july" id="id_percentage_july" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_july" id="id_define_monthly_increases_july" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_august" id="id_percentage_august" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_august" id="id_define_monthly_increases_august" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_september" id="id_percentage_september" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_september" id="id_define_monthly_increases_september" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_october" id="id_percentage_october" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_october" id="id_define_monthly_increases_october" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_november" id="id_percentage_november" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_november" id="id_define_monthly_increases_november" required 
                         />
                       </td>
                       <td>
                         <input 
-                          type="number" max="100" min="0" step="any" value="0"
-                          class="form-control input-amount-size percentage-monthly"
-                          name="percentage_december" id="id_percentage_december" required 
+                          type="text" value="0"
+                          class="form-control validation-input-text input-amount-size amount-monthly"
+                          name="increases_december" id="id_define_monthly_increases_december" required 
                         />
                       </td>
                     </tr>
-                    
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
         </form>
+        <div class="row">
+          <div class="col-md-5 mt-3">
+            <div class="table-responsive table-bordered">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <th>Saldo Anterior</th>
+                    <td id="idPreviousBalance"></td>
+                  </tr>
+                  <tr>
+                    <th>Total Incremento Mensual</th>
+                    <td id="idIncreases"></td>
+                  </tr>
+                  <tr>
+                    <th>Saldo a Final esperado</th>
+                    <td id="idNewBalance"></td>
+                  </tr>
+                  <tr>
+                    <th>Diferencia</th>
+                    <td id="idDiference"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
