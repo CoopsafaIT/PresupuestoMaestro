@@ -118,15 +118,17 @@
         let pk = $(this).data('pk')
         let category_name = $(this).data('category')
         let amount = $(this).data('amount')
+        let month = $(this).data('month')
         let type = $(this).data('type')
 
         $('#title_increases_decreases').text(
           `Editar ${ type === 'decreases' ? 'Disminución': 'Aumento'} en ${ category_name }`
         )
+        console.log(month);
         $('#pk_increases_decreases').val(pk)
-        
         $('#id_amount_increases_decreases').val(amount)
         $('#id_comment_increases_decreases').val(comment)
+        $(`#id_month_increases_decreases option[value= '${month}']`).prop('selected', true).trigger("change");
 
         $('#type_increases_decreases').val(type)
         $('#editAmountIncreasesDecreasesScenarioModal').modal('show');

@@ -7,7 +7,7 @@ from django.db.models import Q, Sum
 # from decimal import Decimal as dc
 
 from apps.master_budget.models import MasterParameters
-from utils.constants import STATUS_SCENARIO, OTHERS_ASSETS_CRITERIA
+from utils.constants import STATUS_SCENARIO, OTHERS_ASSETS_CRITERIA, MONTH_CHOICES
 from apps.main.models import Detallexpresupuestoinversion
 from .models import (
     NonPerformingAssetsScenario,
@@ -240,20 +240,18 @@ def scenario_non_performing_assets(request, id):
     if request.method == 'POST':
         if request.POST.get('method') == 'amount-increases-decreases':
             amount = request.POST.get('amount', '0').replace(',', '')
-            row = get_object_or_404(
-                NonPerformingAssetsXCategory, pk=request.POST.get('pk')
-            )
+            row = get_object_or_404(NonPerformingAssetsXCategory, pk=request.POST.get('pk'))
             if request.POST.get('type') == 'decreases':
                 row.amount_decreases = amount
                 row.comment_decreases = request.POST.get('comment', 0)
+                row.month_decreases = request.POST.get('month', 1)
                 row.save()
             else:
                 row.amount_increases = amount
                 row.comment_increases = request.POST.get('comment', 0)
+                row.month_increases = request.POST.get('month', 1)
                 row.save()
-            messages.success(
-                request, 'Actualización realizada con éxito!'
-            )
+            messages.success(request, 'Actualización realizada con éxito!')
         elif request.POST.get('method') == 'edit-budgeted':
             remove = json.loads(request.POST.get('remove', '[]'))
             add = json.loads(request.POST.get('add', '[]'))
@@ -377,6 +375,7 @@ def scenario_non_performing_assets(request, id):
         'qs_budgeted_for_scenario': qs_budgeted_for_scenario,
         'qs_sum': qs_sum[0],
         'result': result,
+        'months': MONTH_CHOICES,
         'form_clone': ScenarioCloneForm()
     }
     return render(request, 'non_performing_assets/scenario.html', ctx)

@@ -32,4 +32,12 @@ urlpatterns = [
         views.scenario_liabilities_loans_comments,
         name="scenario_liabilities_loans_comments"
     ),
+    path(
+        'others-passives/scenarios/', views.scenarios_others_passives, name="scenarios_others_passives" # NOQA
+    ),
+    path(
+        'others-passives/scenario/detail/<int:id>/',
+        views.scenario_others_passives,
+        name="scenario_others_passives"
+    ),
 ]

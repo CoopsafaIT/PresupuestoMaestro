@@ -1,0 +1,243 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Escenarios Pasivos sin costo financiero{% endblock title %}
+
+{% block breadcrumb %} 
+  <li class="breadcrumb-item text-white ">
+    <a href="{% url 'scenarios_others_passives' %}" class="text-white text-decoration-none">/ Pasivos sin costo financiero - Escenarios</a>
+  </li>
+  <li class="breadcrumb-item active text-white before-none" aria-current="page"> / Correlativo: {{qs.correlative}}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'others_passives/scenario_change_status.html' %}
+{% include 'others_passives/scenario_clone.html' %}
+{% include 'others_passives/scenario_delete.html' %}
+{% include 'others_passives/scenario_modal_add_monthly_amount.html' %}
+{% include 'others_passives/scenario_edit_criteria.html' %}
+<div class="container-fluid mt-1">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-5">
+          <h5
+            class="card-title fw-light fs-5"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="{{qs.comment}}"
+            >Fecha Cierre {{qs.parameter_id}}
+          </h5>
+        </div>
+        <div class="col-md-7">
+          <div class="d-grid gap-2 d-flex justify-content-end">
+            <button
+              id="openModalChangeScenario"
+              type="button"
+              class="btn btn-outline-dark btn-sm float-end"
+              data-url="{% url 'scenario_others_passives' qs.pk %}"
+              data-text="{{qs.is_active|yesno:'Secundario,Principal'}}"
+            >
+            {{qs.is_active|yesno:'Mover a Secundario, Mover a Principal'}}
+            </button>
+            <button
+              id="openModalDeleteScenario"
+              type="button" 
+              data-url="{% url 'scenario_others_passives' qs.pk %}"
+              class="btn btn-outline-dark btn-sm float-end"
+            >Eliminar
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      {% include 'others_assets/scenario_table_detail.html' %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+  <script>
+    $(document).ready(()=>{
+      const Locales = { maximumFractionDigits: 2}
+      const numberLocale = (value) => new Intl.NumberFormat('en-US', Locales).format(value)
+      const convertDecimalToPercentage = (value)=> numberLocale(parseFloat(value) * 100)
+
+      const calculateTotalAmount = () =>{
+        let sumTotal = 0;
+        $('.amount-monthly').each( (index, elem) => sumTotal += parseFloat($(elem).val().replaceAll(',', '')))
+        $('#idIncreases').html(numberLocale(sumTotal))
+        const previousBalance = parseFloat($('#idPreviousBalance').text().replaceAll(',', ''))
+        const newBalance = parseFloat($('#idNewBalance').text().replaceAll(',', ''))
+        const difference = newBalance - (sumTotal + previousBalance)
+        $('#idDiference').html(numberLocale(difference))
+      }
+
+
+      $('.add_criteria').click(function(){
+        let pk = $(this).data('pk')
+        let criteria = $(this).data('criteria')
+        let comment = $(this).data('comment')
+        let categoryName = $(this).data('category-name')
+        let previousBalanceCommas = $(this).data('previous-balance-commas')
+        let previousBalance = $(this).data('previous-balance')
+        let percentage = $(this).data('percentage')
+        let newBalance = $(this).data('new-balance')
+        let newBalanceCommas = $(this).data('new-balance-commas')
+        $('#id_pk_criteria').val(pk)
+        $(`#id_criteria option[value= '${criteria}']`).prop('selected', true).trigger("change");
+        $('#id_comment_criteria').val(comment)
+        $('#id_criteria_percentage').val(percentage)
+        $('#id_criteria_new_balance').val(newBalanceCommas)
+
+        // Hidden
+        $('#id_criteria_previous_balance_hidden').val(previousBalance)
+        $('#id_criteria_new_balance_hidden').val(newBalance)
+
+        $('#title_criteria').text(`Editar ${ categoryName }. | Saldo Anterior ${previousBalanceCommas}`)
+        $('#editCriteriaScenarioModal').modal('show');
+      })
+
+      $(document).on('change', '#id_criteria', function(){
+        let value = $(this).val()
+        if(!!value === false) return
+        $('#id_criteria_percentage').removeAttr('readonly')
+        $('#id_criteria_new_balance').removeAttr('readonly')
+
+        if(value === '1'){
+          let previousValue = $('#id_criteria_previous_balance_hidden').val()
+          $('#id_criteria_new_balance').val( numberWithCommas(previousValue) )
+          $('#id_criteria_percentage').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').attr('readonly', true)
+          $('#id_criteria_new_balance').attr('readonly', true)
+        }else if(value === '2' || value === '3'){
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_new_balance').attr('readonly', true) 
+        }else if(value === '4'){
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').val( numberWithCommas( parseFloat(0).toFixed(2)) )
+          $('#id_criteria_percentage').attr('readonly', true) 
+        }
+      })
+
+      $(document).on('keyup', '#id_criteria_percentage', function(){
+        let percentage = $(this).val()
+        let criteria = $('#id_criteria').val()
+        let previousValue = $('#id_criteria_previous_balance_hidden').val()
+        percentage = parseFloat(percentage)
+        previousValue = parseFloat(previousValue)
+
+        if(criteria === '2'){
+          let result = (Math.abs(percentage) / 100) * previousValue
+          result = previousValue + result
+          if (!!result === false) result = 0
+          $('#id_criteria_new_balance').removeAttr('readonly')
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(result).toFixed(2)))
+          $('#id_criteria_new_balance').attr('readonly', true) 
+        }else if(criteria === '3'){
+          let result = (Math.abs(percentage) / 100) * previousValue
+          result = previousValue - result
+          if (!!result === false) result = 0
+          $('#id_criteria_new_balance').val( numberWithCommas( parseFloat(result).toFixed(2)))
+          $('#id_criteria_new_balance').attr('readonly', true) 
+        }
+      })
+
+      $('.add_monthly_amount').on('click', function(){
+        $('#inputPkMonthlyAmount').val($(this).data('pk'))
+
+        $('#accountNameDefineMonthlyAmount').html($(this).data('category-name'))
+        $('#newAnnualAmountDefineMonthlyAmount').html(new Intl.NumberFormat().format($(this).data('new-balance')))
+        $('#editMonthlyAmountDefinitionModal').modal('show');
+
+        $('#id_define_monthly_amount_january').text(numberLocale($(this).data('amount_january')))
+        $('#id_define_monthly_amount_february').text(numberLocale($(this).data('amount_february')))
+        $('#id_define_monthly_amount_march').text(numberLocale($(this).data('amount_march')))
+        $('#id_define_monthly_amount_april').text(numberLocale($(this).data('amount_april')))
+        $('#id_define_monthly_amount_may').text(numberLocale($(this).data('amount_may')))
+        $('#id_define_monthly_amount_june').text(numberLocale($(this).data('amount_june')))
+        $('#id_define_monthly_amount_july').text(numberLocale($(this).data('amount_july')))
+        $('#id_define_monthly_amount_august').text(numberLocale($(this).data('amount_august')))
+        $('#id_define_monthly_amount_september').text(numberLocale($(this).data('amount_september')))
+        $('#id_define_monthly_amount_october').text(numberLocale($(this).data('amount_october')))
+        $('#id_define_monthly_amount_november').text(numberLocale($(this).data('amount_november')))
+        $('#id_define_monthly_amount_december').text(numberLocale($(this).data('amount_december')))
+
+        $('#id_define_monthly_increases_january').val(numberLocale($(this).data('increases_january')))
+        $('#id_define_monthly_increases_february').val(numberLocale($(this).data('increases_february')))
+        $('#id_define_monthly_increases_march').val(numberLocale($(this).data('increases_march')))
+        $('#id_define_monthly_increases_april').val(numberLocale($(this).data('increases_april')))
+        $('#id_define_monthly_increases_may').val(numberLocale($(this).data('increases_may')))
+        $('#id_define_monthly_increases_june').val(numberLocale($(this).data('increases_june')))
+        $('#id_define_monthly_increases_july').val(numberLocale($(this).data('increases_july')))
+        $('#id_define_monthly_increases_august').val(numberLocale($(this).data('increases_august')))
+        $('#id_define_monthly_increases_september').val(numberLocale($(this).data('increases_september')))
+        $('#id_define_monthly_increases_october').val(numberLocale($(this).data('increases_october')))
+        $('#id_define_monthly_increases_november').val(numberLocale($(this).data('increases_november')))
+        $('#id_define_monthly_increases_december').val(numberLocale($(this).data('increases_december')))
+        $('#idPreviousBalance').text(numberLocale($(this).data('previous-balance')))
+        $('#idNewBalance').text(numberLocale($(this).data('new-balance')))
+
+        calculateTotalAmount()
+      })
+      $(document).on('click', '.editMonthlyAmount', function(){
+        let method = $(this).data('method');
+        const defineMonthlyByAmount = 'define-monthly-by-amount';
+        const defineMonthlyByPercentage = 'define-monthly-by-percentage';
+
+        if($(this).data('method') === defineMonthlyByAmount){
+          changeInputAmountEditStatus(false)
+          changeInputPercentageEditStatus(true)
+          $('#btnDefineMonthlyAmount').removeClass('btn-outline-secondary').addClass('btn-success')
+          $('#btnDefineMonthlyPercentage').removeClass('btn-success').addClass('btn-outline-secondary')
+          $('#inputMethodMonthlyAmount').val(defineMonthlyByAmount)
+        }else{
+          changeInputAmountEditStatus(true);
+          changeInputPercentageEditStatus(false);
+          $('#btnDefineMonthlyAmount').removeClass('btn-success').addClass('btn-outline-secondary')
+          $('#btnDefineMonthlyPercentage').removeClass('btn-outline-secondary').addClass('btn-success')
+          $('#inputMethodMonthlyAmount').val(defineMonthlyByPercentage)
+        }
+      })
+      
+      $(document).on('change', '.amount-monthly', calculateTotalAmount)
+    })
+  </script>
+
+  <!-- Modals Scripts -->
+  <script>
+    $(document).ready(()=>{
+      $('.select2-style').select2({
+        language: "es",
+        dropdownParent: $('#cloneScenarioModal')
+      });
+
+
+      $('#openModalCloneScenario').click(()=> $('#cloneScenarioModal').modal('show'))
+      $('#openModalChangeScenario').click(()=> {
+        let url = $('#openModalChangeScenario').data('url')
+        let text = $('#openModalChangeScenario').data('text')
+        $('#formChangeStatusScenario').attr('action', url);
+        $('#textChangeStatus').html(`¿Desea mover escenario a ${text}?`)
+        $('#changeStatusScenarioModal').modal('show')
+      })
+      $('#openModalDeleteScenario').click(()=> {
+        let url = $('#openModalDeleteScenario').data('url')
+        $('#formDeleteScenario').attr('action', url);
+        $('#textDelete').html(`¿Desea eliminar escenario?`)
+        $('#deleteScenarioModal').modal('show')
+      })
+      
+      $('#openModalGlobalScenario').click(()=>{
+        $('#globalNonPerformingAssetsScenarioModal').modal('show')
+      })
+    })
+  </script>
+  <!-- End Modals Scripts -->
+
+{% endblock javascript %}

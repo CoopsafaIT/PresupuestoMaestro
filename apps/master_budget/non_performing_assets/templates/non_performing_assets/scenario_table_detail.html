@@ -36,6 +36,7 @@
                 data-amount="{{item.amount_decreases}}"
                 data-category="{{item.category_id.name}}"
                 data-pk="{{item.pk}}"
+                data-month="{{item.month_decreases|default:''}}"
                 data-comment="{{item.comment_decreases|default:''}}"
                 data-type="decreases"
                 {% if item.comment_decreases %}
@@ -50,6 +51,7 @@
                 style="cursor: pointer;"
                 class="add_amount_increases_decreases"
                 data-amount="{{item.amount_increases}}"
+                data-month="{{item.month_increases|default:''}}"
                 data-category="{{item.category_id.name}}"
                 data-pk="{{item.pk}}"
                 data-comment="{{item.comment_increases|default:''}}"

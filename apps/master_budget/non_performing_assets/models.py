@@ -1,10 +1,8 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from apps.main.models import (
-    Periodo,
-    Detallexpresupuestoinversion,
-    Cuentascontables
+    Periodo, Detallexpresupuestoinversion, Cuentascontables
 )
 from apps.master_budget.models import (
     MasterParameters, AuditDataMixin, AmountMonthlyMixin, AmountIncreasesMonthlyMixin
@@ -131,7 +129,7 @@ class NonPerformingAssetsXCategory(AuditDataMixin):
         db_column="CategoriaId",
         null=True,
         blank=True
-    ) 
+    )
     scenario_id = models.ForeignKey(
         NonPerformingAssetsScenario,
         models.DO_NOTHING,
@@ -200,6 +198,14 @@ class NonPerformingAssetsXCategory(AuditDataMixin):
         blank=True,
         null=True,
         default=0,
+    )
+    month_decreases = models.IntegerField(
+        db_column="MesesDisminucion", blank=True, null=True,
+        validators=[MinValueValidator(1), MaxValueValidator(12)],
+    )
+    month_increases = models.IntegerField(
+        db_column="MesesAumento", blank=True, null=True,
+        validators=[MinValueValidator(1), MaxValueValidator(12)],
     )
     new_total_balance = models.DecimalField(
         db_column="NuevoSaldoTotal",

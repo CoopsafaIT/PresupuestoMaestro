@@ -616,7 +616,7 @@ def subsidiary_goals_definition(request, id_global_goal_definition):
                     'amount_december': sheet[f'P{counter}'].value
                 }
                 result_validate = _validate_subsidiary_data(id=id, dict_data=data.copy())
-                result_calculate = _calculate_new_amounts(id, data)
+                result_calculate = 'ok'  # _calculate_new_amounts(id, data)
                 if result_validate.get('status') != 'ok':
                     messages.error(
                         request, f'Error. Identificador: {id} {result_validate.get("msg")}'

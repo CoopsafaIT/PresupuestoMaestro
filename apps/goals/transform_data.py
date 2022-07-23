@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # from utils.constants import LOAN_GROWTH, SAVINGS_GROWTH
 
@@ -15,4 +16,4 @@ def calculate_rating(data):
     total.name = 'Total'
     total_rating = total.Calificacion
 
-    return [df.to_dict(orient='records'), total_rating]
+    return [df.replace({np.nan: None}).to_dict(orient='records'), total_rating]

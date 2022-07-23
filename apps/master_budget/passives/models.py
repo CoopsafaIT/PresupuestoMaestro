@@ -10,9 +10,11 @@ from apps.master_budget.models import (
     GrowthPercentageMonthlyMixin,
     RateMonthlyMixin,
     TermMonthlyMixin,
+    AmountMonthlyMixin,
+    AmountIncreasesMonthlyMixin,
     MasterParameters
 )
-from utils.constants import MONTH_CHOICES
+from utils.constants import MONTH_CHOICES, OTHERS_ASSETS_CRITERIA
 
 
 class SavingsLiabilitiesCategory(AuditDataMixin):
@@ -389,3 +391,106 @@ class LiabilitiesLoans(AuditDataMixin):
 
     def __str__(self):
         return f"{self.month}"
+
+
+class OtherPassivesCategory(AuditDataMixin):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    name = models.CharField(null=True, blank=True, max_length=50, db_column="Nombre")
+    is_active = models.BooleanField(
+        null=True, blank=True, default=True, db_column="Estado"
+    )
+    identifier = models.CharField(
+        null=True, blank=True, max_length=150, db_column="Identificador"
+    )
+    created_by = models.ForeignKey(
+        User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="ActualizadoPor",
+        null=True,
+        blank=True,
+        related_name="user_update_others_passives_category",
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroOtrosPasivosCat"
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+class OtherPassivesScenario(AuditDataMixin):
+    id = models.AutoField(primary_key=True, db_column='Id')
+    period_id = models.ForeignKey(
+        Periodo, models.DO_NOTHING, db_column="PeriodoId", null=True, blank=True
+    )
+    parameter_id = models.ForeignKey(
+        MasterParameters, models.DO_NOTHING, db_column="ParametroId"
+    )
+    correlative = models.CharField(
+        null=True, blank=True, max_length=50, db_column="Correlativo"
+    )
+    comment = models.CharField(
+        null=True, blank=True, max_length=500, db_column="Comentario"
+    )
+    is_active = models.BooleanField(
+        null=True, blank=True, default=True, db_column="Estado"
+    )
+    deleted = models.BooleanField(
+        null=True, blank=True, default=False, db_column="Eliminado"
+    )
+    created_by = models.ForeignKey(
+        User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        models.DO_NOTHING,
+        db_column="ActualizadoPor",
+        related_name="user_upd_others_passives_scenario",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroOtrosPasivosEsc"
+
+
+class OtherPassives(AuditDataMixin, AmountMonthlyMixin, AmountIncreasesMonthlyMixin):
+    id = models.AutoField(primary_key=True, db_column="Id")
+    scenario_id = models.ForeignKey(
+        OtherPassivesScenario, models.DO_NOTHING, db_column="EscenarioId",
+        null=True, blank=True,
+    )
+    category_id = models.ForeignKey(
+        OtherPassivesCategory, models.DO_NOTHING, db_column="CategoriaId",
+        blank=True, null=True
+    )
+    category = models.IntegerField(db_column="Categoria", null=True, blank=True)
+    category_name = models.CharField(
+        db_column="CategoriaNombre", max_length=150, null=True, blank=True
+    )
+    previous_balance = models.DecimalField(
+        db_column="SaldoAnterior", decimal_places=2, max_digits=23,
+        default=0, blank=True, null=True
+    )
+    criteria = models.IntegerField(
+        db_column="Criterio", choices=OTHERS_ASSETS_CRITERIA,
+        null=True, blank=True
+    )
+    comment = models.CharField(
+        db_column="Comentario", max_length=200, default='',
+        null=True, blank=True
+    )
+    percentage = models.FloatField(db_column="Procentaje", null=True, blank=True, default=0) # NOQA
+    new_balance = models.DecimalField(
+        db_column="NuevoSaldo", max_digits=23, decimal_places=2,
+        default=0, blank=True, null=True
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroOtrosPasivos"
