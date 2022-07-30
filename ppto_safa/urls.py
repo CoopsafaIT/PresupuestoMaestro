@@ -40,6 +40,10 @@ urlpatterns = [
         'master-budget/payment-payroll/',
         include('apps.master_budget.payment_payroll.urls')
     ),
+    path(
+        'master-budget/equity/',
+        include('apps.master_budget.patrimony.urls')
+    ),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT
