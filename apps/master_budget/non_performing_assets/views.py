@@ -280,8 +280,7 @@ def scenario_non_performing_assets(request, id):
                     qs_category.save()
                     qs_item.delete()
                 messages.success(
-                    request,
-                    f"Se han removido {len(remove)} activos del escenario con éxito"
+                    request, f"Se han removido {len(remove)} activos del escenario con éxito"
                 )
             if add:
                 for item in add:

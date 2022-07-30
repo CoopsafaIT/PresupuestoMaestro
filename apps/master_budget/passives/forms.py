@@ -198,7 +198,7 @@ class OtherPassivesDefineAmountMonthlyForm(forms.ModelForm):
         data['amount_october'] = data['amount_september'] + data['increases_october']
         data['amount_november'] = data['amount_october'] + data['increases_november']
         data['amount_december'] = data['amount_november'] + data['increases_december']
-        if round(float(data['amount_december']), 2) > round(instance.new_balance, 2):
+        if round(float(data['amount_december']), 2) > round(float(instance.new_balance), 2):
             raise forms.ValidationError("Monto a diciembre es mayor al nuevo monto anual esperado")
         return data
 

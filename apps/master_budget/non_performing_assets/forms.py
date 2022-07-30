@@ -114,7 +114,6 @@ class OtherAssetsDefineAmountMonthlyForm(forms.ModelForm):
         super(OtherAssetsDefineAmountMonthlyForm, self).clean()
         data = self.cleaned_data
         instance = self.instance
-
         data['amount_january'] = instance.previous_balance + data['increases_january']
         data['amount_february'] = data['amount_january'] + data['increases_february']
         data['amount_march'] = data['amount_february'] + data['increases_march']
@@ -127,7 +126,7 @@ class OtherAssetsDefineAmountMonthlyForm(forms.ModelForm):
         data['amount_october'] = data['amount_september'] + data['increases_october']
         data['amount_november'] = data['amount_october'] + data['increases_november']
         data['amount_december'] = data['amount_november'] + data['increases_december']
-        if round(float(data['amount_december']), 2) > round(instance.new_balance, 2):
+        if round(float(data['amount_december']), 2) > round(float(instance.new_balance), 2):
             raise forms.ValidationError("Monto a diciembre es mayor al nuevo monto anual esperado")
         return data
 
