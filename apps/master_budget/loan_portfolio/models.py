@@ -11,6 +11,7 @@ from apps.master_budget.models import (
     AmountAccountsReceivableMonthlyMixin, MonthlyAdjustmentAmountMixin, CommentMixin,
     CommissionPercentageMonthlyMixin, GrowthPercentageMonthlyMixin,
     PercentageArrearsMonthlyMixin, RateMonthlyMixin, TermMonthlyMixin,
+    RecoveryPercentageMonthlyMixin, PercentageInterestDueMonthlyMixin
 )
 
 
@@ -84,44 +85,23 @@ class LoanPortfolioCategoryMap(AuditDataMixin):
 class LoanPortfolioScenario(
     AuditDataMixin, CommissionPercentageMonthlyMixin,
     GrowthPercentageMonthlyMixin, PercentageArrearsMonthlyMixin,
-    RateMonthlyMixin, TermMonthlyMixin, MonthlyAdjustmentAmountMixin
+    RateMonthlyMixin, TermMonthlyMixin, MonthlyAdjustmentAmountMixin,
+    RecoveryPercentageMonthlyMixin, PercentageInterestDueMonthlyMixin
 ):
     id = models.AutoField(primary_key=True, db_column="Id")
-    period_id = models.ForeignKey(
-        Periodo, models.DO_NOTHING, db_column="PeriodoId", null=True, blank=True
-    )
-    parameter_id = models.ForeignKey(
-        MasterParameters, models.DO_NOTHING, db_column="ParametroId"
-    )
-    category_id = models.ForeignKey(
-        LoanPortfolioCategory, models.DO_NOTHING, db_column="CategoriaId"
-    )
-    correlative = models.CharField(
-        null=True, blank=True, max_length=50, db_column="Correlativo"
-    )
-    comment = models.CharField(
-        null=True, blank=True, max_length=500, db_column="Comentario"
-    )
-    is_active = models.BooleanField(
-        null=True, blank=True, default=True, db_column="Estado"
-    )
-    deleted = models.BooleanField(
-        null=True, blank=True, default=False, db_column="Eliminado"
-    )
-    base_amount = models.DecimalField(
-        db_column="MontoBase", max_digits=23, decimal_places=2, null=True, blank=True
-    )
-    annual_growth_percentage = models.FloatField(
-        db_column="PorcentajeCrecimientoAnual", null=True, blank=True
-    )
+    period_id = models.ForeignKey(Periodo, models.DO_NOTHING, db_column="PeriodoId", null=True, blank=True) # NOQA
+    parameter_id = models.ForeignKey(MasterParameters, models.DO_NOTHING, db_column="ParametroId")
+    category_id = models.ForeignKey(LoanPortfolioCategory, models.DO_NOTHING, db_column="CategoriaId") # NOQA
+    correlative = models.CharField(null=True, blank=True, max_length=50, db_column="Correlativo")
+    comment = models.CharField(null=True, blank=True, max_length=500, db_column="Comentario")
+    is_active = models.BooleanField(null=True, blank=True, default=True, db_column="Estado")
+    deleted = models.BooleanField(null=True, blank=True, default=False, db_column="Eliminado")
+    base_amount = models.DecimalField(db_column="MontoBase", max_digits=23, decimal_places=2, null=True, blank=True) # NOQA
+    annual_growth_percentage = models.FloatField(db_column="PorcentajeCrecimientoAnual", null=True, blank=True) # NOQA
     annual_growth_amount = models.DecimalField(
-        db_column="MontoCrecimientoAnual", max_digits=23,
-        decimal_places=2, null=True, blank=True,
+        db_column="MontoCrecimientoAnual", max_digits=23, decimal_places=2, null=True, blank=True
     )
-
-    created_by = models.ForeignKey(
-        User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True
-    )
+    created_by = models.ForeignKey(User, models.DO_NOTHING, db_column="CreadoPor", null=True, blank=True) # NOQA
     updated_by = models.ForeignKey(
         User, models.DO_NOTHING, db_column="ActualizadoPor",
         related_name="user_upd_loan_portfolio_scenario", null=True, blank=True
@@ -210,6 +190,20 @@ class LoanPortfolio(AuditDataMixin):
     )
     commission_amount = models.DecimalField(
         db_column="MontoComision", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
+    )
+    recovery_percentage = models.FloatField(
+        db_column="ProcentajeRecuperacion", blank=True, null=True, default=0
+    )
+    recovery_amount = models.DecimalField(
+        db_column="MontoRecuperacion", max_digits=23, decimal_places=2,
+        blank=True, null=True, default=0
+    )
+    percantage_interest_due = models.FloatField(
+        db_column="PorcentajeInteresesVencidos", blank=True, null=True, default=0
+    )
+    interest_due_amount = models.DecimalField(
+        db_column="MontoInteresesVencidos", max_digits=23, decimal_places=2,
         blank=True, null=True, default=0
     )
     comment = models.CharField(

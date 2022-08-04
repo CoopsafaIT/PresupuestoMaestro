@@ -129,7 +129,9 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'percentage_arrears': 'percentage_arrears_january',
         'commission_percentage': 'commission_percentage_january',
         'rate': 'rate_january',
-        'term': 'term_january'
+        'term': 'term_january',
+        'recovery_percentage': 'recovery_percentage_january',
+        'percentage_of_interest_due': 'percentage_of_interest_due_january',
     },
     {
         'growth_percentage': 'growth_percentage_february',
@@ -138,6 +140,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_february',
         'rate': 'rate_february',
         'term': 'term_february',
+        'recovery_percentage': 'recovery_percentage_february',
+        'percentage_of_interest_due': 'percentage_of_interest_due_february',
     },
     {
         'growth_percentage': 'growth_percentage_march',
@@ -146,6 +150,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_march',
         'rate': 'rate_march',
         'term': 'term_march',
+        'recovery_percentage': 'recovery_percentage_march',
+        'percentage_of_interest_due': 'percentage_of_interest_due_march',
     },
     {
         'growth_percentage': 'growth_percentage_april',
@@ -154,6 +160,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_april',
         'rate': 'rate_april',
         'term': 'term_april',
+        'recovery_percentage': 'recovery_percentage_april',
+        'percentage_of_interest_due': 'percentage_of_interest_due_april',
     },
     {
         'growth_percentage': 'growth_percentage_may',
@@ -162,6 +170,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_may',
         'rate': 'rate_may',
         'term': 'term_may',
+        'recovery_percentage': 'recovery_percentage_may',
+        'percentage_of_interest_due': 'percentage_of_interest_due_may',
     },
     {
         'growth_percentage': 'growth_percentage_june',
@@ -170,6 +180,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_june',
         'rate': 'rate_june',
         'term': 'term_june',
+        'recovery_percentage': 'recovery_percentage_june',
+        'percentage_of_interest_due': 'percentage_of_interest_due_june',
     },
     {
         'growth_percentage': 'growth_percentage_july',
@@ -178,6 +190,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_july',
         'rate': 'rate_july',
         'term': 'term_july',
+        'recovery_percentage': 'recovery_percentage_july',
+        'percentage_of_interest_due': 'percentage_of_interest_due_july',
     },
     {
         'growth_percentage': 'growth_percentage_august',
@@ -186,6 +200,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_august',
         'rate': 'rate_august',
         'term': 'term_august',
+        'recovery_percentage': 'recovery_percentage_august',
+        'percentage_of_interest_due': 'percentage_of_interest_due_august',
     },
     {
         'growth_percentage': 'growth_percentage_september',
@@ -194,6 +210,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_september',
         'rate': 'rate_september',
         'term': 'term_september',
+        'recovery_percentage': 'recovery_percentage_september',
+        'percentage_of_interest_due': 'percentage_of_interest_due_september',
     },
     {
         'growth_percentage': 'growth_percentage_october',
@@ -202,6 +220,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_october',
         'rate': 'rate_october',
         'term': 'term_october',
+        'recovery_percentage': 'recovery_percentage_october',
+        'percentage_of_interest_due': 'percentage_of_interest_due_october',
     },
     {
         'growth_percentage': 'growth_percentage_november',
@@ -210,6 +230,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_november',
         'rate': 'rate_november',
         'term': 'term_november',
+        'recovery_percentage': 'recovery_percentage_november',
+        'percentage_of_interest_due': 'percentage_of_interest_due_november',
     },
     {
         'growth_percentage': 'growth_percentage_december',
@@ -218,6 +240,8 @@ LIST_LOAN_PORTFOLIO_FIELDS = [
         'commission_percentage': 'commission_percentage_december',
         'rate': 'rate_december',
         'term': 'term_december',
+        'recovery_percentage': 'recovery_percentage_december',
+        'percentage_of_interest_due': 'percentage_of_interest_due_december',
     },
 ]
 

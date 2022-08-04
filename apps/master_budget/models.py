@@ -257,6 +257,90 @@ class RateMonthlyMixin(models.Model):
         abstract = True
 
 
+class RecoveryPercentageMonthlyMixin(models.Model):
+    recovery_percentage_january = models.FloatField(
+        db_column="PorcentajeRecuperacionEne", null=True, blank=True, default=0
+    )
+    recovery_percentage_february = models.FloatField(
+        db_column="PorcentajeRecuperacionFeb", null=True, blank=True, default=0
+    )
+    recovery_percentage_march = models.FloatField(
+        db_column="PorcentajeRecuperacionMar", null=True, blank=True, default=0
+    )
+    recovery_percentage_april = models.FloatField(
+        db_column="PorcentajeRecuperacionAbr", null=True, blank=True, default=0
+    )
+    recovery_percentage_may = models.FloatField(
+        db_column="PorcentajeRecuperacionMay", null=True, blank=True, default=0
+    )
+    recovery_percentage_june = models.FloatField(
+        db_column="PorcentajeRecuperacionJun", null=True, blank=True, default=0
+    )
+    recovery_percentage_july = models.FloatField(
+        db_column="PorcentajeRecuperacionJul", null=True, blank=True, default=0
+    )
+    recovery_percentage_august = models.FloatField(
+        db_column="PorcentajeRecuperacionAgo", null=True, blank=True, default=0
+    )
+    recovery_percentage_september = models.FloatField(
+        db_column="PorcentajeRecuperacionSep", null=True, blank=True, default=0
+    )
+    recovery_percentage_october = models.FloatField(
+        db_column="PorcentajeRecuperacionOct", null=True, blank=True, default=0
+    )
+    recovery_percentage_november = models.FloatField(
+        db_column="PorcentajeRecuperacionNov", null=True, blank=True, default=0
+    )
+    recovery_percentage_december = models.FloatField(
+        db_column="PorcentajeRecuperacionDic", null=True, blank=True, default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
+class PercentageInterestDueMonthlyMixin(models.Model):
+    percentage_of_interest_due_january = models.FloatField(
+        db_column="PorcentajeInteresesVencidosEne", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_february = models.FloatField(
+        db_column="PorcentajeInteresesVencidosFeb", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_march = models.FloatField(
+        db_column="PorcentajeInteresesVencidosMar", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_april = models.FloatField(
+        db_column="PorcentajeInteresesVencidosAbr", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_may = models.FloatField(
+        db_column="PorcentajeInteresesVencidosMay", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_june = models.FloatField(
+        db_column="PorcentajeInteresesVencidosJun", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_july = models.FloatField(
+        db_column="PorcentajeInteresesVencidosJul", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_august = models.FloatField(
+        db_column="PorcentajeInteresesVencidosAgo", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_september = models.FloatField(
+        db_column="PorcentajeInteresesVencidosSep", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_october = models.FloatField(
+        db_column="PorcentajeInteresesVencidosOct", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_november = models.FloatField(
+        db_column="PorcentajeInteresesVencidosNov", null=True, blank=True, default=0
+    )
+    percentage_of_interest_due_december = models.FloatField(
+        db_column="PorcentajeInteresesVencidosDic", null=True, blank=True, default=0
+    )
+
+    class Meta:
+        abstract = True
+
+
 class TermMonthlyMixin(models.Model):
     term_january = models.FloatField(
         db_column="PlazoEne", null=True, blank=True, default=0,
