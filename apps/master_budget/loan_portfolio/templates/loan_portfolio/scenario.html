@@ -305,6 +305,40 @@
   </script>
   <script>
     $(document).ready(()=>{
+      $('#fill-recovery-percentage-monthly-jan').click(()=>{
+        let val = $('#id_recovery_percentage_january').val()
+        if(!!val === false) return;
+        $('.recovery-percentage-monthly').val(val)
+      })
+
+      $('.recovery-percentage-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false) {
+          $(this).val(0)
+          return;
+        }
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('#fill-percentage-of-interest-due-monthly-jan').click(()=>{
+        let val = $('#id_percentage_of_interest_due_january').val()
+        if(!!val === false) return;
+        $('.percentage-of-interest-due-monthly').val(val)
+      })
+
+      $('.percentage-of-interest-due-monthly').change(function(){
+        let val = $(this).val()
+        if(!!val === false) {
+          $(this).val(0)
+          return;
+        }
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
       $('#fill-percentage-arrears-monthly-jan').click(()=>{
         let val = $('#id_percentage_arrears_january').val()
         if(!!val === false) return;
@@ -333,6 +367,14 @@
           $(input).val(toClean.replaceAll(',', ''))
         })
         $.each($('.commission-percentage-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.recovery-percentage-monthly'), function(key, input){
+          let toClean = $(input).val()
+          $(input).val(toClean.replaceAll(',', ''))
+        })
+        $.each($('.percentage-of-interest-due-monthly'), function(key, input){
           let toClean = $(input).val()
           $(input).val(toClean.replaceAll(',', ''))
         })

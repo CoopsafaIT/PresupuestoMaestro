@@ -450,6 +450,32 @@ def scenario_loan_portfolio(request, id):
         qs.commission_percentage_october = dc(post.get('commission_percentage_october').replace(',','')) # NOQA
         qs.commission_percentage_november = dc(post.get('commission_percentage_november').replace(',','')) # NOQA
         qs.commission_percentage_december = dc(post.get('commission_percentage_december').replace(',','')) # NOQA
+
+        qs.recovery_percentage_january = dc(post.get('recovery_percentage_january').replace(',','')) # NOQA
+        qs.recovery_percentage_february = dc(post.get('recovery_percentage_february').replace(',','')) # NOQA
+        qs.recovery_percentage_march = dc(post.get('recovery_percentage_march').replace(',','')) # NOQA
+        qs.recovery_percentage_april = dc(post.get('recovery_percentage_april').replace(',','')) # NOQA
+        qs.recovery_percentage_may = dc(post.get('recovery_percentage_may').replace(',','')) # NOQA
+        qs.recovery_percentage_june = dc(post.get('recovery_percentage_june').replace(',','')) # NOQA
+        qs.recovery_percentage_july = dc(post.get('recovery_percentage_july').replace(',','')) # NOQA
+        qs.recovery_percentage_august = dc(post.get('recovery_percentage_august').replace(',','')) # NOQA
+        qs.recovery_percentage_september = dc(post.get('recovery_percentage_september').replace(',','')) # NOQA
+        qs.recovery_percentage_october = dc(post.get('recovery_percentage_october').replace(',','')) # NOQA
+        qs.recovery_percentage_november = dc(post.get('recovery_percentage_november').replace(',','')) # NOQA
+        qs.recovery_percentage_december = dc(post.get('recovery_percentage_december').replace(',','')) # NOQA
+
+        qs.percentage_of_interest_due_january = dc(post.get('percentage_of_interest_due_january').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_february = dc(post.get('percentage_of_interest_due_february').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_march = dc(post.get('percentage_of_interest_due_march').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_april = dc(post.get('percentage_of_interest_due_april').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_may = dc(post.get('percentage_of_interest_due_may').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_june = dc(post.get('percentage_of_interest_due_june').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_july = dc(post.get('percentage_of_interest_due_july').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_august = dc(post.get('percentage_of_interest_due_august').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_september = dc(post.get('percentage_of_interest_due_september').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_october = dc(post.get('percentage_of_interest_due_october').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_november = dc(post.get('percentage_of_interest_due_november').replace(',','')) # NOQA
+        qs.percentage_of_interest_due_december = dc(post.get('percentage_of_interest_due_december').replace(',','')) # NOQA
         qs.save()
 
     if request.method == 'POST':
@@ -465,6 +491,8 @@ def scenario_loan_portfolio(request, id):
                 amount_adjustment = request.POST.get(fields.get('amount_adjustment'))
                 percentage_arrears = request.POST.get(fields.get('percentage_arrears'))
                 commission_percentage = request.POST.get(fields.get('commission_percentage')) # NOQA
+                recovery_percentage = request.POST.get(fields.get('recovery_percentage')) # NOQA
+                percentage_of_interest_due = request.POST.get(fields.get('percentage_of_interest_due')) # NOQA
                 rate = request.POST.get(fields.get('rate'))
                 term = request.POST.get(fields.get('term'))
                 if item == 1:
@@ -487,6 +515,8 @@ def scenario_loan_portfolio(request, id):
                 _upd.term = float(term)
                 _upd.percentage_arrears = float(percentage_arrears)
                 _upd.commission_percentage = float(commission_percentage)
+                _upd.recovery_percentage = float(recovery_percentage)
+                _upd.percantage_interest_due = float(percentage_of_interest_due)
                 level_quota = calculations.level_quota(
                     _upd.amount_initial, _upd.amount_growth, _upd.rate, _upd.term
                 )
@@ -507,6 +537,12 @@ def scenario_loan_portfolio(request, id):
                 )
                 _upd.default_interest = calculations.default_interest(
                     _upd.amount_arrears, _upd.rate
+                )
+                _upd.recovery_amount = calculations.recovery_amount(
+                    _upd.recovery_percentage, _upd.total_interest, _upd.default_interest
+                )
+                _upd.interest_due_amount = calculations.interest_due_amount(
+                    _upd.percantage_interest_due, _upd.recovery_amount
                 )
                 _upd.save()
             messages.success(request, 'Escenario editado con éxito!')
@@ -542,10 +578,13 @@ def scenario_loan_portfolio(request, id):
         'MontoMora': 'SUM(MontoMora)',
         'InteresesMoratorios': 'SUM(InteresesMoratorios)',
         'MontoComision': 'SUM(MontoComision)',
+        'MontoRecuperacion': 'SUM(MontoRecuperacion)',
+        'MontoInteresesVencidos': 'SUM(MontoInteresesVencidos)',
     }).values(
         'MontoInicial', 'MontoCrecimiento', 'MontoNuevo',
         'CuotaNivelada', 'InteresesTotales', 'PagosCapital',
-        'MontoMora', 'InteresesMoratorios', 'MontoComision'
+        'MontoMora', 'InteresesMoratorios', 'MontoComision',
+        'MontoRecuperacion', 'MontoInteresesVencidos'
     )
 
     ctx = {

@@ -26,19 +26,7 @@
                 >{{qs.base_amount|floatformat:'2'|intcomma|default:'0'}}</p>
               </div>
             </div>
-            <!-- <div class="col-md-3">
-              <div class="mb-3">
-                <label for="id_annual_growth_percentage">Porcentaje Anual de Crecimiento:</label>
-                <input
-                  type="text"
-                  name="annual_growth_percentage"
-                  value="{{qs.annual_growth_percentage|floatformat:2|intcomma|default:'0'}}"
-                  class="form-control validation-number-input-text calculate_anual_amount"
-                  id="id_annual_growth_percentage"
-                  required
-                />
-              </div>
-            </div> -->
+
             <div class="col-md-3">
               <div class="mb-3">
                 <label for="id_annual_growth_amount">Monto Total Anual de Crecimiento:</label>
@@ -777,6 +765,238 @@
                           value="{{qs.commission_percentage_december}}"
                           class="form-control validation-input-text commission-percentage-monthly"
                           name="commission_percentage_december" id="id_commission_percentage_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>% Recuperación</td>
+                      <td>
+                        <div class="d-grid gap-2 d-flex justify-content-center">
+                          <input 
+                            type="text"
+                            value="{{qs.recovery_percentage_january|default:'0'}}"
+                            class="form-control validation-input-text recovery-percentage-monthly"
+                            name="recovery_percentage_january" id="id_recovery_percentage_january"
+                            required 
+                          />
+                          <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="fill-recovery-percentage-monthly-jan">
+                            <i class="bi bi-arrow-right"></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_february|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_february" id="id_recovery_percentage_february"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_march|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_march" id="id_recovery_percentage_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_april|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_april" id="id_recovery_percentage_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_may|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_may" id="id_recovery_percentage_may"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_june|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_june" id="id_recovery_percentage_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_july|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_july" id="id_recovery_percentage_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_august|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_august" id="id_recovery_percentage_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_september|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_september" id="id_recovery_percentage_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_october|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_october" id="id_recovery_percentage_october"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_november|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_november" id="id_recovery_percentage_november"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.recovery_percentage_december|default:'0'}}"
+                          class="form-control validation-input-text recovery-percentage-monthly"
+                          name="recovery_percentage_december" id="id_recovery_percentage_december"
+                          required 
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>% Int. Vencidos</td>
+                      <td>
+                        <div class="d-grid gap-2 d-flex justify-content-center">
+                          <input 
+                            type="text"
+                            value="{{qs.percentage_of_interest_due_january|default:'0'}}"
+                            class="form-control validation-input-text percentage-of-interest-due-monthly"
+                            name="percentage_of_interest_due_january" id="id_percentage_of_interest_due_january"
+                            required 
+                          />
+                          <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="fill-percentage-of-interest-due-monthly-jan">
+                            <i class="bi bi-arrow-right"></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_february|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_february" id="id_percentage_of_interest_due_february"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_march|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_march" id="id_percentage_of_interest_due_march"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_april|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_april" id="id_percentage_of_interest_due_april"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_may|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_may" id="id_percentage_of_interest_due_may"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_june|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_june" id="id_percentage_of_interest_due_june"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_july|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_july" id="id_percentage_of_interest_due_july"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_august|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_august" id="id_percentage_of_interest_due_august"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_september|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_september" id="id_percentage_of_interest_due_september"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_october|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_october" id="id_percentage_of_interest_due_october"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_november|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_november" id="id_percentage_of_interest_due_november"
+                          required 
+                        />
+                      </td>
+                      <td>
+                        <input 
+                          type="text"
+                          value="{{qs.percentage_of_interest_due_december|default:'0'}}"
+                          class="form-control validation-input-text percentage-of-interest-due-monthly"
+                          name="percentage_of_interest_due_december" id="id_percentage_of_interest_due_december"
                           required 
                         />
                       </td>
