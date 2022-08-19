@@ -70,3 +70,51 @@ class Equity(AuditDataMixin, AmountMonthlyMixin, AmountIncreasesMonthlyMixin):
     class Meta:
         default_permissions = []
         db_table = "pptoMaestroPatrimonio"
+
+
+class SurplusCategory(AuditDataMixin):
+    id = models.AutoField(primary_key=True, db_column='Id')
+    name = models.CharField(null=False, blank=False, max_length=100, db_column="Nombre")
+    order = models.IntegerField(db_column="Orden", null=False, blank=False)
+    action = models.CharField(null=False, blank=False, max_length=5, db_column="Accion")
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroCategoriaExcedentes"
+
+
+class DistributionSurplusPeriod(AuditDataMixin):
+    id = models.AutoField(primary_key=True, db_column='Id')
+    period_id = models.ForeignKey(
+        Periodo, models.DO_NOTHING, db_column="IdPeriodo", null=False, blank=False
+    )
+    surplus_amount = models.DecimalField(
+        db_column="MontoExcedentes", decimal_places=2, max_digits=18, default=0, null=False,
+        blank=False
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroDistribucionExcedentesPeriodo"
+
+
+class DistributionSurplusCategory(AuditDataMixin):
+    id = models.AutoField(primary_key=True, db_column='Id')
+    id_surplus_category = models.ForeignKey(
+        SurplusCategory, models.DO_NOTHING, db_column="IdCategoriaExcedentes", null=False,
+        blank=False
+    )
+    id_dsp = models.ForeignKey(
+        DistributionSurplusPeriod, models.DO_NOTHING, db_column="IdDEP", null=False, blank=False
+    )
+    title = models.CharField(db_column="Etiqueta", null=False, blank=False, max_length=100)
+    percentage = models.FloatField(
+       db_column="Porcentaje", null=False, blank=False, default=0
+    )
+    amount = models.DecimalField(
+        db_column="Monto", decimal_places=2, max_digits=18, default=0, blank=False, null=False
+    )
+
+    class Meta:
+        default_permissions = []
+        db_table = "pptoMaestroDistribucionExcedentesCategoria"
