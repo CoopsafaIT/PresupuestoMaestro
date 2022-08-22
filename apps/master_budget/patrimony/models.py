@@ -9,6 +9,12 @@ from apps.master_budget.models import (
 from utils.constants import OTHERS_ASSETS_CRITERIA
 
 
+def is_percentage(value):
+    if value >= 0 and value <= 1:
+        return True
+    return False
+
+
 class EquityCategory(AuditDataMixin):
     id = models.AutoField(primary_key=True, db_column="Id")
     name = models.CharField(null=True, blank=True, max_length=50, db_column="Nombre")
@@ -81,6 +87,10 @@ class SurplusCategory(AuditDataMixin):
     class Meta:
         default_permissions = []
         db_table = "pptoMaestroCategoriaExcedentes"
+        ordering = ('order',)
+
+    def __str__(self):
+        return self.name
 
 
 class DistributionSurplusPeriod(AuditDataMixin):
@@ -109,7 +119,8 @@ class DistributionSurplusCategory(AuditDataMixin):
     )
     title = models.CharField(db_column="Etiqueta", null=False, blank=False, max_length=100)
     percentage = models.FloatField(
-       db_column="Porcentaje", null=False, blank=False, default=0
+       db_column="Porcentaje", null=False, blank=False, default=0,
+       validators=[is_percentage]
     )
     amount = models.DecimalField(
         db_column="Monto", decimal_places=2, max_digits=18, default=0, blank=False, null=False

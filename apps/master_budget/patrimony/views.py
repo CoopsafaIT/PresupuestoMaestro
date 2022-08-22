@@ -1,7 +1,9 @@
+from decimal import Decimal as dc
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Sum
 
 from apps.master_budget.models import MasterParameters
 from apps.master_budget.patrimony import forms
@@ -193,6 +195,7 @@ def scenario_equity(request, id):
     return render(request, "equity/scenario.html", ctx)
 
 
+@login_required()
 def surplus(request):
     page = request.GET.get("page", 1)
     qs = DistributionSurplusPeriod.objects.all()
@@ -201,11 +204,108 @@ def surplus(request):
     return render(request, "surplus/surplus.html", ctx)
 
 
+@login_required()
 def surplus_detail(request, id):
     qs = get_object_or_404(DistributionSurplusPeriod, pk=id)
+    form = forms.DistributionSurplusCategoryForm()
+    qs_categories = SurplusCategory.objects.all()
     qs_dsc = DistributionSurplusCategory.objects.filter(id_dsp=id).order_by(
         "id_surplus_category__order"
     )
-    qs_categories = SurplusCategory.objects.all()
-    ctx = {"qs": qs, "qs_dsc": qs_dsc, "qs_categories": qs_categories}
+    sum_amount_before_tax = qs_dsc.filter(id_surplus_category__order__in=[1, 2]).aggregate(sum_total=Sum('amount')) # NOQA
+    sum_amount_tax = qs_dsc.filter(id_surplus_category__order__in=[4]).aggregate(sum_total=Sum('amount')) # NOQA
+    sum_amount_before_tax = qs.surplus_amount - sum_amount_before_tax.get('sum_total', 0)
+    sum_amount_tax = sum_amount_tax.get('sum_total', 0)
+    sum_suplus_net = (sum_amount_before_tax or 0) - (sum_amount_tax or 0)
+
+    def _struct_data_by_order(order_list):
+        data = []
+        for category in qs_categories.filter(order__in=order_list).order_by('order'):
+            category_sum = qs_dsc.filter(id_surplus_category=category.pk).aggregate(sum_total=Sum('amount')) # NOQA
+            data.append({
+                'category_name': category.name,
+                'sub_categories': qs_dsc.filter(id_surplus_category=category.pk),
+                'category_sum': category_sum.get('sum_total', 0)
+            })
+        return data
+
+    if request.method == 'POST':
+        if request.POST.get('method') == 'update-suplus-amount':
+            new_surplus_amount = request.POST.get('surplus_amount').replace(',', '')
+            qs.surplus_amount = new_surplus_amount
+            qs.save()
+            qs.refresh_from_db()
+
+            qs_upd_before_tax = DistributionSurplusCategory.objects.filter(
+                id_dsp=qs.pk, id_surplus_category__order__in=[1, 2]
+            )
+            qs_upd_tax = DistributionSurplusCategory.objects.filter(
+                id_dsp=qs.pk, id_surplus_category__order__in=[4]
+            )
+            qs_upd_surplus = DistributionSurplusCategory.objects.filter(
+                id_dsp=qs.pk, id_surplus_category__order__in=[5]
+            )
+            for item in qs_upd_before_tax:
+                item.amount = qs.surplus_amount * dc(item.percentage)
+                item.save()
+
+            sum_amount_before_tax = DistributionSurplusCategory.objects.filter(
+                id_dsp=id, id_surplus_category__order__in=[1, 2]
+            ).aggregate(sum_total=Sum('amount'))
+            sum_amount_before_tax = qs.surplus_amount - sum_amount_before_tax.get('sum_total', 0)
+            for item in qs_upd_tax:
+                item.amount = sum_amount_before_tax * dc(item.percentage)
+                item.save()
+
+            sum_amount_tax = DistributionSurplusCategory.objects.filter(
+                id_dsp=id, id_surplus_category__order__in=[4]
+            ).aggregate(sum_total=Sum('amount'))
+            sum_amount_tax = sum_amount_tax.get('sum_total', 0)
+            sum_suplus_net = (sum_amount_before_tax or 0) - (sum_amount_tax or 0)
+            for item in qs_upd_surplus:
+                item.amount = sum_suplus_net * dc(item.percentage)
+                item.save()
+
+            messages.success(request, 'Monto Excedente Actualizado con éxito')
+            return redirect(reverse(surplus_detail, kwargs={'id': id}))
+
+        elif request.POST.get('method') == 'add-label-value':
+            form = forms.DistributionSurplusCategoryForm(request.POST)
+            if not form.is_valid():
+                messages.warning(request, f"Formulario no válido: {form.errors.as_text()}")
+            else:
+                cleaned_data = form.cleaned_data
+                _new = DistributionSurplusCategory()
+                _new.id_surplus_category = cleaned_data.get('id_surplus_category')
+                _new.title = cleaned_data.get('title')
+                _new.id_dsp = qs
+                _new.percentage = cleaned_data.get('percentage')
+                if _new.id_surplus_category.order in [1, 2]:
+                    _new.amount = qs.surplus_amount * dc(_new.percentage)
+                elif _new.id_surplus_category.order == 4:
+                    _new.amount = sum_amount_before_tax * dc(_new.percentage)
+                elif _new.id_surplus_category.order == 5:
+                    _new.amount = sum_suplus_net * dc(_new.percentage)
+                _new.save()
+                form = forms.DistributionSurplusCategoryForm()
+                messages.success(request, 'Nuevo registro agregado con éxito')
+        elif request.POST.get('method') == 'delete-sub-category':
+            DistributionSurplusCategory.objects.filter(pk=request.POST.get('id')).delete()
+            messages.success(request, 'Registro eliminado con éxito')
+            return redirect(reverse(surplus_detail, kwargs={'id': id}))
+
+    data_before_tax = _struct_data_by_order([1, 2])
+    data_taxes = _struct_data_by_order([4])
+    data_net = _struct_data_by_order([5])
+
+    ctx = {
+        "qs": qs,
+        "qs_dsc": qs_dsc,
+        "data_before_tax": data_before_tax,
+        "data_taxes": data_taxes,
+        "data_net": data_net,
+        "sum_amount_before_fee": sum_amount_before_tax,
+        "qs_categories": qs_categories,
+        "form": form
+    }
     return render(request, "surplus/surplus_detail.html", ctx)

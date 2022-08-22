@@ -28,8 +28,8 @@
                 <tr>
                   <th>#</th>
                   <th>Periodo</th>
-                  <th>Monto</th>
-                  <th>Acción</th>
+                  <th>Monto Excedente</th>
+                  <th class="text-center">Acción</th>
                 </tr>
               </thead>
               <tbody>
@@ -39,8 +39,8 @@
                   <td>{{item.period_id}}</td>
                   <td>{{item.surplus_amount|intcomma}}</td>
                   <td>
-                    <div class="d-flex justifi align-items-center">
-                      <a href="{% url 'surplus_detail' item.pk %}">
+                    <div class="d-flex justify-content-center">
+                      <a href="{% url 'surplus_detail' item.pk %}" class="btn btn-outline-success btn-sm">
                         <i class="bi bi-file-spreadsheet"></i>
                       </a>
                     </div>
