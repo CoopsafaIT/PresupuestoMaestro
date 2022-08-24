@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import messages
+from django.db.models import Sum
 from decimal import Decimal as dc
 
 from apps.master_budget.models import MasterParameters
@@ -837,6 +838,22 @@ def scenarios_others_passives(request):
 @login_required()
 def scenario_others_passives(request, id):
     qs = get_object_or_404(OtherPassivesScenario, pk=id)
+    qs_categories = OtherPassivesCategory.objects.all().order_by('name')
+    qs_details = OtherPassives.objects.filter(scenario_id=qs.pk).order_by(
+        'category_id', 'category'
+    )
+
+    def _struct_data_by_order():
+        data = []
+        for category in qs_categories:
+            category_sum = qs_details.filter(category_id=category.pk).aggregate(sum_total=Sum('new_balance')) # NOQA
+            data.append({
+                'category_name': category.name,
+                'sub_categories': qs_details.filter(category_id=category.pk),
+                'category_sum': category_sum.get('sum_total', 0)
+            })
+        return data
+
     if request.method == 'POST':
         if request.POST.get('method') == 'criteria':
             item = get_object_or_404(OtherPassives, pk=request.POST.get('pk'))
@@ -876,12 +893,9 @@ def scenario_others_passives(request, id):
             messages.error(request, 'Escenario eliminado')
             return redirect('scenarios_others_passives')
 
-    qs_details = OtherPassives.objects.filter(scenario_id=qs.pk).order_by(
-        'category_id', 'category'
-    )
     ctx = {
         'qs': qs,
-        'qs_details': qs_details,
+        'qs_details': _struct_data_by_order(),
         'others_assets_criteria': OTHERS_ASSETS_CRITERIA,
         'form_clone': ScenarioCloneForm()
     }

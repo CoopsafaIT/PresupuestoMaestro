@@ -1,7 +1,11 @@
 from django import forms
 
 from apps.master_budget.models import MasterParameters
-from apps.master_budget.patrimony.models import EquityScenario, Equity
+from apps.master_budget.patrimony.models import (
+    EquityScenario, Equity, DistributionSurplusCategory,
+    SurplusCategory
+)
+
 from utils.constants import STATUS_SCENARIO
 
 
@@ -117,3 +121,31 @@ class EquityDefineAmountMonthlyForm(forms.ModelForm):
             'increases_july', 'increases_august', 'increases_september',
             'increases_october', 'increases_november', 'increases_december'
         )
+
+
+class DistributionSurplusCategoryForm(forms.ModelForm):
+    id_surplus_category = forms.ModelChoiceField(
+        label="Categoria",
+        required=True,
+        queryset=SurplusCategory.objects.all(),
+        empty_label="--- Seleccione Categoria ---",
+        widget=forms.Select(
+            attrs={'class': 'form-select select2-style-clone-update', 'style': 'width:100%'}
+        )
+    )
+    title = forms.CharField(
+        label="Nombre",
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    percentage = forms.FloatField(
+        label='Porcentaje',
+        required=True,
+        widget=forms.NumberInput(
+            attrs={'class': 'form-control', 'min': '0', 'max': '1', 'step': 'any'}
+        )
+    )
+
+    class Meta:
+        model = DistributionSurplusCategory
+        fields = ('id_surplus_category', 'title', 'percentage')

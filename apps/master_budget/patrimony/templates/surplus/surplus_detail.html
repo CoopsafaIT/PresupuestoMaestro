@@ -1,0 +1,112 @@
+{% extends 'master_budget/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Excedentes {% endblock title %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active text-white" aria-current="page">/ Patrimonio - Excedentes - Distribución Excedentes </li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include 'surplus/surplus_form_add_label_value.html' %}
+<div class="container-fluid pt-3">
+  <div class="card card-template">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="card-title fw-light fs-4 mt-1">Distribución Excedentes</h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="w-100"></div>
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th><button type="button" class="btn btn-outline-primary btn-sm" id="btn_add_label_value">Agregar</button></th>
+                  <th colspan="1" class="text-end">Total Excedentes</th>
+                  <th>
+                    <form method="post" id="form_edit_surplus_amount">
+                      {% csrf_token %}
+                      <input type="hidden" name="method" value="update-suplus-amount">
+                      <div class="d-grid gap-2 d-flex" id="div_edit_surplus_amount">
+                        <input 
+                          type="text" class="form-control validation-input-text" name="surplus_amount"
+                          value="{{qs.surplus_amount|intcomma}}" id="id_surplus_amount" 
+                        />
+                    </form>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% include 'surplus/surplus_table_detail.html' with data=data_before_tax %}
+                <tr style="background-color: #017224 !important; color: white;">
+                  <td>Excedentes Antes de Impuestos</td>
+                  <td></td>
+                  <td>{{sum_amount_before_fee|default:'0'|intcomma}}</td>
+                </tr>
+                {% include 'surplus/surplus_table_detail.html' with data=data_taxes %}
+                {% include 'surplus/surplus_table_detail.html' with data=data_net %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+  <script>
+    $(document).ready(()=>{
+      function handleChangeStatus(e){
+        const action = e?.data?.action ? e.data.action : 'cancel'
+        if(action === 'edit'){
+          $('#id_surplus_amount').removeAttr('readonly')
+          $('#btn_edit_surplus_amount').remove()
+          $('#div_edit_surplus_amount').append(`
+            <button type="button" class="btn btn-outline-success btn-sm" id='btn_save_surplus_amount'>Guardar</button>
+          `)
+          $('#div_edit_surplus_amount').append(`
+            <button type="button" class="btn btn-outline-secondary btn-sm" id='btn_cancel_surplus_amount'>Cancelar</button>
+          `)
+        }else if(action === 'save'){
+          $('#btn_save_surplus_amount').attr('disabled', true)
+          $('#btn_cancel_surplus_amount').attr('disabled', true)
+          $('#form_edit_surplus_amount').submit()
+        }else{
+          $('#id_surplus_amount').attr('readonly', true)
+          $('#btn_save_surplus_amount').remove()
+          $('#btn_cancel_surplus_amount').remove()
+          $('#div_edit_surplus_amount').append(`
+          <button type="button" class="btn btn-outline-danger btn-sm" id='btn_edit_surplus_amount'>Editar</button>
+          `)
+        }
+      }
+      handleChangeStatus()
+      $(document).on('click', '#btn_edit_surplus_amount', {'action': 'edit'} , handleChangeStatus)
+      $(document).on('click', '#btn_cancel_surplus_amount', {'action': 'cancel'}, handleChangeStatus)
+      $(document).on('click', '#btn_save_surplus_amount', {'action': 'save'}, handleChangeStatus)
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('#btn_add_label_value').click(function(){
+        $('#addLabelValueScenarioModal').modal('show');
+      })
+
+      $('.btn-delete-sub-category').click(function(){
+        const form = $(this).data('form');
+        const name = $(this).data('name');
+        if(confirm(`Desea eliminar ${name}`)){
+          $(`#${form}`).submit()
+        }
+      })
+    })
+  </script>
+{% endblock javascript %}

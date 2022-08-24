@@ -7,78 +7,93 @@
         <thead>
           <tr style="background-color: #017224 !important; color: white;">
             <th class="text-center">Concepto</th>
-            <th class="text-center">Cuenta</th>
-            <th class="text-center">Saldo a {{qs.parameter_id.date_base|date:'Y-m-d'}}</th>
-            <th class="text-center">Criterio</th>
-            <th class="text-center">Procentaje</th>
-            <th class="text-center">Nuevo Saldo</th>
+            <th class="text-center">Detalle</th>
+            <th class="text-center">Total</th>
           </tr>
         </thead>
         <tbody>
           {% for item in qs_details %}
             <tr>
-              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %} fw-bold">
-                {{item.category_id.name}}
-              </td>
-              <td
-                data-criteria="{{item.criteria}}"
-                data-comment="{{item.comment|default:''}}"
-                data-pk="{{item.pk}}"
-                data-category-name="{{item.category_name}}"
-                data-previous-balance="{{item.previous_balance}}"
-                data-previous-balance-commas="{{item.previous_balance|intcomma}}"
-                data-percentage="{{item.percentage}}"
-                data-new-balance="{{item.new_balance}}"
-                data-new-balance-commas="{{item.new_balance|intcomma}}"
-                style="cursor: pointer;"
-                class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %} fw-bold add_criteria"
-              >
+              <td class="fw-bold">
                 {{item.category_name}}
               </td>
-              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %}">
-                <span class="float-end">{{item.previous_balance|intcomma}}</span>
+              <td>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Cuenta</th>
+                      <th class="text-center">Saldo a {{qs.parameter_id.date_base|date:'Y-m-d'}}</th>
+                      <th class="text-center">Criterio</th>
+                      <th class="text-center">Procentaje</th>
+                      <th class="text-center">Nuevo Saldo</th>
+                    </tr>
+                  </thead>
+                  {% for sub_category in item.sub_categories %}
+                  <tr>
+                    <td
+                      data-criteria="{{item.criteria}}"
+                      data-comment="{{item.comment|default:''}}"
+                      data-pk="{{item.pk}}"
+                      data-category-name="{{item.category_name}}"
+                      data-previous-balance="{{item.previous_balance}}"
+                      data-previous-balance-commas="{{item.previous_balance|intcomma}}"
+                      data-percentage="{{item.percentage}}"
+                      data-new-balance="{{item.new_balance}}"
+                      data-new-balance-commas="{{item.new_balance|intcomma}}"
+                      style="cursor: pointer;"
+                      class="fw-bold add_criteria"
+                    >
+                      {{item.category_name}}
+                    </td>
+                    <td class="">
+                      <span class="float-end">{{item.previous_balance|intcomma}}</span>
+                    </td>
+                    <td class="">
+                      <span class="float-end">{{item.get_criteria_display|default:''}}</span>
+                    </td>
+                    <td class="">
+                      <span class="float-end">{{item.percentage|intcomma}}</span>
+                    </td>
+                    <td class=" add_monthly_amount"
+                      data-pk="{{item.pk}}"
+       
+                      data-amount_january="{{item.amount_january|default:'0'}}"
+                      data-amount_february="{{item.amount_february|default:'0'}}"
+                      data-amount_march="{{item.amount_march|default:'0'}}"
+                      data-amount_april="{{item.amount_april|default:'0'}}"
+                      data-amount_may="{{item.amount_may|default:'0'}}"
+                      data-amount_june="{{item.amount_june|default:'0'}}"
+                      data-amount_july="{{item.amount_july|default:'0'}}"
+                      data-amount_august="{{item.amount_august|default:'0'}}"
+                      data-amount_september="{{item.amount_september|default:'0'}}"
+                      data-amount_october="{{item.amount_october|default:'0'}}"
+                      data-amount_november="{{item.amount_november|default:'0'}}"
+                      data-amount_december="{{item.amount_december|default:'0'}}"
+      
+                      data-increases_january="{{item.increases_january|default:'0'}}"
+                      data-increases_february="{{item.increases_february|default:'0'}}"
+                      data-increases_march="{{item.increases_march|default:'0'}}"
+                      data-increases_april="{{item.increases_april|default:'0'}}"
+                      data-increases_may="{{item.increases_may|default:'0'}}"
+                      data-increases_june="{{item.increases_june|default:'0'}}"
+                      data-increases_july="{{item.increases_july|default:'0'}}"
+                      data-increases_august="{{item.increases_august|default:'0'}}"
+                      data-increases_september="{{item.increases_september|default:'0'}}"
+                      data-increases_october="{{item.increases_october|default:'0'}}"
+                      data-increases_november="{{item.increases_november|default:'0'}}"
+                      data-increases_december="{{item.increases_december|default:'0'}}"
+                      data-new-balance="{{item.new_balance|default:'0'}}"
+                      data-previous-balance="{{item.previous_balance|default:'0'}}"
+                      data-category-name="{{item.category_name}}"
+                      style="cursor: pointer;"
+                    >
+                      <span class="float-end">{{item.new_balance|intcomma}}</span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </table>
               </td>
-              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %}">
-                <span class="float-end">{{item.get_criteria_display|default:''}}</span>
-              </td>
-              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %}">
-                <span class="float-end">{{item.percentage|intcomma}}</span>
-              </td>
-              <td class="{% if item.category_id.pk|divisibleby:2 %} table-primary{% endif %} add_monthly_amount"
-                data-pk="{{item.pk}}"
- 
-                data-amount_january="{{item.amount_january|default:'0'}}"
-                data-amount_february="{{item.amount_february|default:'0'}}"
-                data-amount_march="{{item.amount_march|default:'0'}}"
-                data-amount_april="{{item.amount_april|default:'0'}}"
-                data-amount_may="{{item.amount_may|default:'0'}}"
-                data-amount_june="{{item.amount_june|default:'0'}}"
-                data-amount_july="{{item.amount_july|default:'0'}}"
-                data-amount_august="{{item.amount_august|default:'0'}}"
-                data-amount_september="{{item.amount_september|default:'0'}}"
-                data-amount_october="{{item.amount_october|default:'0'}}"
-                data-amount_november="{{item.amount_november|default:'0'}}"
-                data-amount_december="{{item.amount_december|default:'0'}}"
-
-                data-increases_january="{{item.increases_january|default:'0'}}"
-                data-increases_february="{{item.increases_february|default:'0'}}"
-                data-increases_march="{{item.increases_march|default:'0'}}"
-                data-increases_april="{{item.increases_april|default:'0'}}"
-                data-increases_may="{{item.increases_may|default:'0'}}"
-                data-increases_june="{{item.increases_june|default:'0'}}"
-                data-increases_july="{{item.increases_july|default:'0'}}"
-                data-increases_august="{{item.increases_august|default:'0'}}"
-                data-increases_september="{{item.increases_september|default:'0'}}"
-                data-increases_october="{{item.increases_october|default:'0'}}"
-                data-increases_november="{{item.increases_november|default:'0'}}"
-                data-increases_december="{{item.increases_december|default:'0'}}"
-                data-new-balance="{{item.new_balance|default:'0'}}"
-                data-previous-balance="{{item.previous_balance|default:'0'}}"
-                data-category-name="{{item.category_name}}"
-                style="cursor: pointer;"
-              >
-                <span class="float-end">{{item.new_balance|intcomma}}</span>
-              </td>
+              <td>{{item.category_sum|default:'0'|intcomma}}</td>
             </tr>
           {% endfor %}
         </tbody>
