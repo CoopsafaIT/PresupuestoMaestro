@@ -501,6 +501,21 @@ def scenarios_others_assets(request):
 @login_required()
 def scenario_others_assets(request, id):
     qs = get_object_or_404(OtherAssetsScenario, pk=id)
+    qs_categories = OtherAssetsCategory.objects.all().order_by('name')
+    qs_details = OtherAssets.objects.filter(scenario_id=qs.pk).order_by(
+        'category_id', 'category'
+    )
+
+    def _struct_data_by_order():
+        data = []
+        for category in qs_categories:
+            category_sum = qs_details.filter(category_id=category.pk).aggregate(sum_total=Sum('new_balance')) # NOQA
+            data.append({
+                'category_name': category.name,
+                'sub_categories': qs_details.filter(category_id=category.pk),
+                'category_sum': category_sum.get('sum_total', 0)
+            })
+        return data
     if request.method == 'POST':
         if request.POST.get('method') == 'criteria':
             item = get_object_or_404(OtherAssets, pk=request.POST.get('pk'))
@@ -540,16 +555,13 @@ def scenario_others_assets(request, id):
             messages.error(request, 'Escenario eliminado')
             return redirect('scenarios_others_assets')
 
-    qs_details = OtherAssets.objects.filter(scenario_id=qs.pk).order_by(
-        'category_id', 'category'
-    )
     global_non_performing_assets = scenario_global_non_performing_assets(
         qs.parameter_id.pk
     )
     ctx = {
         'qs': qs,
         'global_non_performing_assets': global_non_performing_assets,
-        'qs_details': qs_details,
+        'qs_details': _struct_data_by_order(),
         'others_assets_criteria': OTHERS_ASSETS_CRITERIA,
         'form_clone': ScenarioCloneForm()
     }
