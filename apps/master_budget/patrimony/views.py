@@ -281,11 +281,11 @@ def surplus_detail(request, id):
                 _new.id_dsp = qs
                 _new.percentage = cleaned_data.get('percentage')
                 if _new.id_surplus_category.order in [1, 2]:
-                    _new.amount = qs.surplus_amount * dc(_new.percentage)
+                    _new.amount = qs.surplus_amount * (dc(_new.percentage) / 100)
                 elif _new.id_surplus_category.order == 4:
-                    _new.amount = sum_amount_before_tax * dc(_new.percentage)
+                    _new.amount = sum_amount_before_tax * (dc(_new.percentage) / 100)
                 elif _new.id_surplus_category.order == 5:
-                    _new.amount = sum_suplus_net * dc(_new.percentage)
+                    _new.amount = sum_suplus_net * (dc(_new.percentage) / 100)
                 _new.save()
                 form = forms.DistributionSurplusCategoryForm()
                 messages.success(request, 'Nuevo registro agregado con éxito')
@@ -294,16 +294,12 @@ def surplus_detail(request, id):
             messages.success(request, 'Registro eliminado con éxito')
             return redirect(reverse(surplus_detail, kwargs={'id': id}))
 
-    data_before_tax = _struct_data_by_order([1, 2])
-    data_taxes = _struct_data_by_order([4])
-    data_net = _struct_data_by_order([5])
-
     ctx = {
         "qs": qs,
         "qs_dsc": qs_dsc,
-        "data_before_tax": data_before_tax,
-        "data_taxes": data_taxes,
-        "data_net": data_net,
+        "data_before_tax": _struct_data_by_order([1, 2]),
+        "data_taxes": _struct_data_by_order([4]),
+        "data_net": _struct_data_by_order([5]),
         "sum_amount_before_fee": sum_amount_before_tax,
         "qs_categories": qs_categories,
         "form": form

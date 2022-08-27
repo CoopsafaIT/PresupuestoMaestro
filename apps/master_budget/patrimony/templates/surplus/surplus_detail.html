@@ -27,7 +27,9 @@
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th><button type="button" class="btn btn-outline-primary btn-sm" id="btn_add_label_value">Agregar</button></th>
+                  <th>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="btn_add_label_value">Agregar</button>
+                  </th>
                   <th colspan="1" class="text-end">Total Excedentes</th>
                   <th>
                     <form method="post" id="form_edit_surplus_amount">
@@ -106,6 +108,27 @@
         if(confirm(`Desea eliminar ${name}`)){
           $(`#${form}`).submit()
         }
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(()=>{
+      $('#divAmount').hide();
+      $('#idChbxAmount').change(function(e){
+        if($(this).is(':checked')){
+          $('#divPercentage').hide()
+          $('#divAmount').show()
+        }else{
+          $('#divPercentage').show()
+          $('#divAmount').hide()
+        }
+      })
+
+      $(document).on('change', '#idAmount', function(e){
+        const amount = parseFloat($(this).val().replaceAll(',', ''))
+        const surplusAmount = parseFloat('{{qs.surplus_amount}}');
+        const percentage = (amount / surplusAmount) * 100;
+        $('#id_percentage').val(percentage)
       })
     })
   </script>

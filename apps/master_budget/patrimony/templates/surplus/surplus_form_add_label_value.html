@@ -13,20 +13,48 @@
             {{ hidden }}
           {% endfor %}
           <div class="row">
-            {% for field in form.visible_fields  %}
             <div class="col-md-6">
               <div class="form-group mb-3">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.help_text %}
-                  <small class="text-muted">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
+                {{form.id_surplus_category.label_tag}}
+                {{form.id_surplus_category}}
+                <small class="text-muted">{{ form.id_surplus_category.help_text }}</small>
+                {% for error in form.id_surplus_category.errors %}
                   <p class="text-danger">{{ error }}</p>
                 {% endfor %}
               </div>
             </div>
-            {% endfor %}
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                {{form.title.label_tag}}
+                {{form.title}}
+                <small class="text-muted">{{ form.title.help_text }}</small>
+                {% for error in form.title.errors %}
+                  <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="idChbxAmount" value="amount">
+                <label class="form-check-label" for="idChbxAmount">Ingresar Monto</label>
+              </div>
+            </div>
+            <div class="col-md-6" id="divPercentage">
+              <div class="form-group mb-3">
+                {{form.percentage.label_tag}}
+                {{form.percentage}}
+                <small class="text-muted">{{ form.percentage.help_text }}</small>
+                {% for error in form.percentage.errors %}
+                  <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-md-6" id="divAmount">
+              <div class="form-group mb-3">
+                <label for="id_amount">Monto</label>
+                <input type="text" name="amount" value="0" id="idAmount" class="form-control validation-input-text" />
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">

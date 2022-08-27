@@ -142,7 +142,7 @@ class DistributionSurplusCategoryForm(forms.ModelForm):
         label='Porcentaje',
         required=True,
         widget=forms.NumberInput(
-            attrs={'class': 'form-control', 'min': '0', 'max': '1', 'step': 'any'}
+            attrs={'class': 'form-control', 'min': '0', 'max': '100', 'step': 'any'}
         )
     )
 
