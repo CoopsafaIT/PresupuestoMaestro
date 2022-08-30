@@ -78,7 +78,7 @@ class CollateralPaymentScenarioForm(forms.ModelForm):
     )
     percentage_social_security = forms.FloatField(
         required=True,
-        label="Procentaje Seguridad Social (%)",
+        label="Porcentaje Seguridad Social (%)",
         widget=forms.NumberInput(
             attrs={'class': "form-control"}
         )
