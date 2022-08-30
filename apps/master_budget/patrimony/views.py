@@ -214,7 +214,7 @@ def surplus_detail(request, id):
     )
     sum_amount_before_tax = qs_dsc.filter(id_surplus_category__order__in=[1, 2]).aggregate(sum_total=Sum('amount')) # NOQA
     sum_amount_tax = qs_dsc.filter(id_surplus_category__order__in=[4]).aggregate(sum_total=Sum('amount')) # NOQA
-    sum_amount_before_tax = qs.surplus_amount - sum_amount_before_tax.get('sum_total', 0)
+    sum_amount_before_tax = qs.surplus_amount - (sum_amount_before_tax.get('sum_total') or 0)
     sum_amount_tax = sum_amount_tax.get('sum_total', 0)
     sum_suplus_net = (sum_amount_before_tax or 0) - (sum_amount_tax or 0)
 
@@ -252,7 +252,7 @@ def surplus_detail(request, id):
             sum_amount_before_tax = DistributionSurplusCategory.objects.filter(
                 id_dsp=id, id_surplus_category__order__in=[1, 2]
             ).aggregate(sum_total=Sum('amount'))
-            sum_amount_before_tax = qs.surplus_amount - sum_amount_before_tax.get('sum_total', 0)
+            sum_amount_before_tax = qs.surplus_amount - (sum_amount_before_tax.get('sum_total') or 0) # NOQA
             for item in qs_upd_tax:
                 item.amount = sum_amount_before_tax * dc(item.percentage)
                 item.save()
@@ -270,25 +270,31 @@ def surplus_detail(request, id):
             return redirect(reverse(surplus_detail, kwargs={'id': id}))
 
         elif request.POST.get('method') == 'add-label-value':
-            form = forms.DistributionSurplusCategoryForm(request.POST)
-            if not form.is_valid():
-                messages.warning(request, f"Formulario no válido: {form.errors.as_text()}")
+            data = request.POST
+            _new = DistributionSurplusCategory()
+            _new.id_surplus_category = SurplusCategory.objects.get(pk=data.get('id_surplus_category')) # NOQA
+            _new.title = data.get('title')
+            _new.id_dsp = qs
+            if data.get('way') == 'amount':
+                _new.amount = data.get('amount').replace(',', '')
+                if _new.id_surplus_category.order in [1, 2]:
+                    _new.percentage = (dc(_new.amount) / qs.surplus_amount) * 100
+                elif _new.id_surplus_category.order == 4:
+                    _new.percentage = (dc(_new.amount) / sum_amount_before_tax) * 100
+                elif _new.id_surplus_category.order == 5:
+                    _new.percentage = (dc(_new.amount) / sum_suplus_net) * 100
             else:
-                cleaned_data = form.cleaned_data
-                _new = DistributionSurplusCategory()
-                _new.id_surplus_category = cleaned_data.get('id_surplus_category')
-                _new.title = cleaned_data.get('title')
-                _new.id_dsp = qs
-                _new.percentage = cleaned_data.get('percentage')
+                _new.percentage = data.get('percentage')
                 if _new.id_surplus_category.order in [1, 2]:
                     _new.amount = qs.surplus_amount * (dc(_new.percentage) / 100)
                 elif _new.id_surplus_category.order == 4:
                     _new.amount = sum_amount_before_tax * (dc(_new.percentage) / 100)
                 elif _new.id_surplus_category.order == 5:
                     _new.amount = sum_suplus_net * (dc(_new.percentage) / 100)
-                _new.save()
-                form = forms.DistributionSurplusCategoryForm()
-                messages.success(request, 'Nuevo registro agregado con éxito')
+            _new.save()
+            form = forms.DistributionSurplusCategoryForm()
+            messages.success(request, 'Nuevo registro agregado con éxito')
+            return redirect(reverse(surplus_detail, kwargs={'id': id}))
         elif request.POST.get('method') == 'delete-sub-category':
             DistributionSurplusCategory.objects.filter(pk=request.POST.get('id')).delete()
             messages.success(request, 'Registro eliminado con éxito')

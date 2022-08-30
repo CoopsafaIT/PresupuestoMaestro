@@ -8,8 +8,8 @@
     {% for sub_category in item.sub_categories %}
     <tr class="table-active">
       <td>{{sub_category.title}}</td>
-      <td>{{sub_category.percentage}}</td>
-      <td>{{sub_category.amount|intcomma|default:''}}</td>
+      <td title="{{sub_category.percentage}}"><span class="me-auto float-end">{{sub_category.percentage|floatformat:2}}</span></td>
+      <td><span class="me-auto float-end">{{sub_category.amount|intcomma|default:''}}</span></td>
       <td>
         <form method="POST" id="formDeleteSubCategory_{{sub_category.pk}}">
           {% csrf_token %}

@@ -116,20 +116,31 @@
       $('#divAmount').hide();
       $('#idChbxAmount').change(function(e){
         if($(this).is(':checked')){
-          $('#divPercentage').hide()
-          $('#divAmount').show()
+          $('#divPercentage').hide();
+          $('#id_percentage').removeAttr('required')
+
+          $('#divAmount').show();
+          $('#idAmount').attr('required', true)
+
+          $(this).val('amount');
         }else{
-          $('#divPercentage').show()
-          $('#divAmount').hide()
+          $('#divPercentage').show();
+          $('#id_percentage').attr('required', true)
+
+          $('#divAmount').hide();
+          $('#idAmount').removeAttr('required')
+
+          $(this).val('percentaje');
         }
       })
 
-      $(document).on('change', '#idAmount', function(e){
-        const amount = parseFloat($(this).val().replaceAll(',', ''))
-        const surplusAmount = parseFloat('{{qs.surplus_amount}}');
-        const percentage = (amount / surplusAmount) * 100;
-        $('#id_percentage').val(percentage)
-      })
+      // $(document).on('change', '#idAmount', function(e){
+      //   const amount = parseFloat($(this).val().replaceAll(',', ''))
+      //   const surplusAmount = parseFloat('{{qs.surplus_amount}}');
+        
+      //   const percentage = (amount / surplusAmount) * 100;
+      //   $('#id_percentage').val(percentage)
+      // })
     })
   </script>
 {% endblock javascript %}
