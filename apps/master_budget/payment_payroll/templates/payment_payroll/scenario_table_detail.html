@@ -51,41 +51,41 @@
               data-amount-perm="{{item.permanent_amount_initial|intcomma}}"
               data-pk="{{item.pk}}"
             >
-              <span class="float-end">{{item.adjusted_permanent_amount|intcomma}}</span>
+              <span class="float-end">{{item.adjusted_permanent_amount|floatformat:2|intcomma}}</span>
             </td>
-            <td><span class="float-end">{{item.amount_january|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_february|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_march|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_april|intcomma}}</span></td> 
-            <td><span class="float-end">{{item.amount_may|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_june|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_july|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_august|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_september|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_october|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_november|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_december|intcomma}}</span></td>
-            <td><span class="float-end fw-bold">{{item.sum_ceco_perm|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_january|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_february|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_march|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_april|floatformat:2|intcomma}}</span></td> 
+            <td><span class="float-end">{{item.amount_may|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_june|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_july|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_august|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_september|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_october|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_november|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_december|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end fw-bold">{{item.sum_ceco_perm|floatformat:2|intcomma}}</span></td>
           </tr>
         {% endfor %}
       </tbody>
       <tfoot>
         <tr>
           <td></td>
-          <td>{{qs_sum_perm.sum_base_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_ene_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_feb_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_mar_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_abr_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_may_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_jul_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_jun_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_ago_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_sep_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_oct_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_nov_perm|intcomma}}</td>
-          <td>{{qs_sum_perm.sum_dic_perm|intcomma}}</td>
-          <td class="fw-bold">{{sum_total_perm|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_base_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_ene_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_feb_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_mar_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_abr_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_may_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_jul_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_jun_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_ago_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_sep_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_oct_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_nov_perm|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_perm.sum_dic_perm|floatformat:2|intcomma}}</td>
+          <td class="fw-bold">{{sum_total_perm|floatformat:2|intcomma}}</td>
         </tr>
         <tr style="background-color: #017224 !important; color: white;">
           <td class="text-center">Centro Costo</td>

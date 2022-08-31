@@ -26,40 +26,40 @@
         {% for item in details %}
           <tr>
             <td><b>{{item.cost_center_id.desccentrocosto}}</b></td>
-            <td><span class="float-end">{{item.amount_initial_temp|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_january|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_february|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_march|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_april|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_may|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_june|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_july|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_august|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_september|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_october|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_november|intcomma}}</span></td>
-            <td><span class="float-end">{{item.amount_temp_december|intcomma}}</span></td>
-            <td><span class="float-end fw-bold">{{item.sum_ceco_temp|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_initial_temp|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_january|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_february|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_march|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_april|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_may|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_june|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_july|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_august|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_september|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_october|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_november|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end">{{item.amount_temp_december|floatformat:2|intcomma}}</span></td>
+            <td><span class="float-end fw-bold">{{item.sum_ceco_temp|floatformat:2|intcomma}}</span></td>
           </tr>
         {% endfor %}
       </tbody>
       <tfoot>
         <tr>
           <td></td>
-          <td>{{qs_sum_temp.sum_base_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_ene_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_feb_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_mar_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_abr_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_may_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_jul_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_jun_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_ago_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_sep_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_oct_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_nov_temp|intcomma}}</td>
-          <td>{{qs_sum_temp.sum_dic_temp|intcomma}}</td>
-          <td class="fw-bold">{{sum_total_temp|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_base_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_ene_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_feb_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_mar_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_abr_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_may_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_jul_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_jun_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_ago_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_sep_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_oct_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_nov_temp|floatformat:2|intcomma}}</td>
+          <td>{{qs_sum_temp.sum_dic_temp|floatformat:2|intcomma}}</td>
+          <td class="fw-bold">{{sum_total_temp|floatformat:2|intcomma}}</td>
         </tr>
         <tr style="background-color: #017224 !important; color: white;">
           <td class="text-center">Centro Costo</td>
