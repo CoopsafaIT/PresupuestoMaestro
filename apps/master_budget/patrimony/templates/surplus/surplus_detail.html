@@ -53,6 +53,11 @@
                   <td>{{sum_amount_before_fee|default:'0'|intcomma}}</td>
                 </tr>
                 {% include 'surplus/surplus_table_detail.html' with data=data_taxes %}
+                <tr style="background-color: #017224 !important; color: white;">
+                  <td>Excedentes Netos</td>
+                  <td></td>
+                  <td>{{sum_suplus_net|default:'0'|intcomma}}</td>
+                </tr>
                 {% include 'surplus/surplus_table_detail.html' with data=data_net %}
               </tbody>
             </table>

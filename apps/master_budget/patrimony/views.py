@@ -243,7 +243,7 @@ def surplus_detail(request, id):
                 id_dsp=qs.pk, id_surplus_category__order__in=[4]
             )
             qs_upd_surplus = DistributionSurplusCategory.objects.filter(
-                id_dsp=qs.pk, id_surplus_category__order__in=[5]
+                id_dsp=qs.pk, id_surplus_category__order__in=[6]
             )
             for item in qs_upd_before_tax:
                 item.amount = qs.surplus_amount * dc(item.percentage)
@@ -281,7 +281,7 @@ def surplus_detail(request, id):
                     _new.percentage = (dc(_new.amount) / qs.surplus_amount) * 100
                 elif _new.id_surplus_category.order == 4:
                     _new.percentage = (dc(_new.amount) / sum_amount_before_tax) * 100
-                elif _new.id_surplus_category.order == 5:
+                elif _new.id_surplus_category.order == 6:
                     _new.percentage = (dc(_new.amount) / sum_suplus_net) * 100
             else:
                 _new.percentage = data.get('percentage')
@@ -289,7 +289,7 @@ def surplus_detail(request, id):
                     _new.amount = qs.surplus_amount * (dc(_new.percentage) / 100)
                 elif _new.id_surplus_category.order == 4:
                     _new.amount = sum_amount_before_tax * (dc(_new.percentage) / 100)
-                elif _new.id_surplus_category.order == 5:
+                elif _new.id_surplus_category.order == 6:
                     _new.amount = sum_suplus_net * (dc(_new.percentage) / 100)
             _new.save()
             form = forms.DistributionSurplusCategoryForm()
@@ -305,8 +305,9 @@ def surplus_detail(request, id):
         "qs_dsc": qs_dsc,
         "data_before_tax": _struct_data_by_order([1, 2]),
         "data_taxes": _struct_data_by_order([4]),
-        "data_net": _struct_data_by_order([5]),
+        "data_net": _struct_data_by_order([6]),
         "sum_amount_before_fee": sum_amount_before_tax,
+        "sum_suplus_net": sum_suplus_net,
         "qs_categories": qs_categories,
         "form": form
     }
