@@ -27,7 +27,7 @@ from .forms import (
 )
 from .request_get import QueryGetParms
 from utils.pagination import pagination
-from utils.sql import execute_sql_query
+from utils.sql import execute_sql_query, execute_sql_query_no_return
 
 
 @login_required()
@@ -330,6 +330,12 @@ def scenario_non_performing_assets(request, id):
             qs.save()
             messages.error(request, 'Escenario eliminado')
             return redirect('scenarios_non_performing_assets')
+        elif request.POST.get('method') == 'update-cta':
+            execute_sql_query_no_return(
+                f"EXEC [dbo].[sp_pptoMaestroInversionesDepreciacionesMigrarPresupuestoIndirecto] "
+                f"@CodPeriodo = {qs.period_id.pk} "
+            )
+            messages.success(request, 'Actualización realizada con éxito!')
 
     qs_details = NonPerformingAssetsXCategory.objects.filter(
         scenario_id=qs.pk

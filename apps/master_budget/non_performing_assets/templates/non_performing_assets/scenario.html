@@ -15,6 +15,7 @@
 {% include 'non_performing_assets/scenario_change_status.html' %}
 {% include 'non_performing_assets/scenario_clone.html' %}
 {% include 'non_performing_assets/scenario_edit.html' %}
+{% include 'non_performing_assets/scenario_upd_cta.html' %}
 {% include 'non_performing_assets/scenario_delete.html' %}
 {% include 'non_performing_assets/scenario_edit_amount_increases_decreases.html' %}
 {% include 'shared/global_non_performing_assets_modal.html' %}
@@ -51,7 +52,8 @@
             </button>
             <button type="button" class="btn btn-outline-danger btn-sm float-end" id="openModalCloneScenario">Clonar</button>
             <button type="button" class="btn btn-outline-success btn-sm float-end" id="openModalScenarioEdit">Editar</button>
-            <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalGlobalScenario">Ver Detalle Global</button>
+            <button type="button" class="btn btn-outline-warning btn-sm float-end" id="openModalScenarioUpdCta">Actualizar CTA</button>
+            <!-- <button type="button" class="btn btn-outline-primary btn-sm float-end" id="openModalGlobalScenario">Ver Detalle Global</button> -->
           </div>
         </div>
       </div>
@@ -162,6 +164,9 @@
       })
       $('#openModalGlobalScenario').click(()=>{
         $('#globalNonPerformingAssetsScenarioModal').modal('show')
+      })
+      $('#openModalScenarioUpdCta').click(()=>{
+        $('#UpdCtaScenarioModal').modal('show')
       })
     })
   </script>
