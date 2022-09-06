@@ -15,7 +15,7 @@
         <li><a class="link_name" href="{% url 'dashboard' %}">Volver Ingreso PPTO.</a></li>
       </ul>
     </li>
-
+    {% if perms.ppto_maestro.puede_listar_cartera_crediticia or perms.ppto_maestro.puede_listar_inversiones_financieras %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -26,11 +26,17 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Productivos</a></li>
+        {% if perms.ppto_maestro.puede_listar_cartera_crediticia %}
         <li><a href="{% url 'scenarios_loan_portfolio' %}">Cartera Crediticia</a></li>
+        {% endif %}
+        {% if perms.ppto_maestro.puede_listar_inversiones_financieras %}
         <li><a href="{% url 'scenarios_financial_investments' %}">Inversiones Financieras</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% endif %}
 
+    {% if perms.ppto_maestro.puede_listar_nuevas_adquisiciones or perms.ppto_maestro.puede_listar_escenarios_otros_activos %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -41,10 +47,17 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Improductivos</a></li>
+        {% if perms.ppto_maestro.puede_listar_nuevas_adquisiciones %}
         <li><a href="{% url 'scenarios_non_performing_assets' %}">Nuevas Adquisiciones</a></li>
+        {% endif %}
+        {% if perms.ppto_maestro.puede_listar_escenarios_otros_activos %}
         <li><a href="{% url 'scenarios_others_assets' %}">Otros Activos</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% endif %}
+
+    {% if perms.ppto_maestro.puede_listar_escenarios_pasivos_ahorros or perms.ppto_maestro.puede_listar_escenarios_pasivos_prestamos or perms.ppto_maestro.puede_listar_escenarios_otros_pasivos %}
     
     <li>
       <div class="icon-link">
@@ -56,12 +69,20 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Pasivos </a></li>
+        {% if perms.ppto_maestro.puede_listar_escenarios_pasivos_ahorros %}
         <li><a href="{% url 'scenarios_savings_liabilities' %}">Ahorro</a></li>
+        {% endif %}
+        {% if perms.ppto_maestro.puede_listar_escenarios_pasivos_prestamos %}
         <li><a href="{% url 'scenarios_liabilities_loans' %}">Prestamos</a></li>
+        {% endif %}
+        {% if perms.ppto_maestro.puede_listar_escenarios_otros_pasivos %}
         <li><a href="{% url 'scenarios_others_passives' %}">Otros Pasivos</a></li>
+        {% endif %}
       </ul>
     </li>
+    {% endif %}
 
+    {% if perms.ppto_maestro.puede_listar_escenarios_patrimonio or perms.ppto_maestro.puede_listar_escenarios_distribucion_excedentes %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -72,11 +93,18 @@
       </div>
       <ul class="sub-menu">
         <li><a class="link_name" href="#">Patrimonio</a></li>
-        <li><a href="{% url 'scenarios_equity' %}">Patrimonio</a></li>
+
+        {% if perms.ppto_maestro.puede_listar_escenarios_patrimonio %}
+        <li><a href="{% url 'scenarios_equity' %}">Patrimonio</a></li>        
+        {% endif %}
+        {% if perms.ppto_maestro.puede_listar_escenarios_distribucion_excedentes %}
         <li><a href="{% url 'surplus' %}">Distribución Excedentes</a></li>
+        {% endif %}
       </ul>
     </li>
-
+    {% endif %}
+  
+    {% if perms.ppto_maestro.puede_listar_escenarios_planilla %}
     <li>
       <a href="{% url 'scenarios_payment_payroll' %}" class="institutional-golden-color">
         <i class="bi bi-person-plus"></i>
@@ -86,6 +114,9 @@
         <li><a class="link_name" href="{% url 'scenarios_payment_payroll' %}">Planilla</a></li>
       </ul>
     </li>
+    {% endif %}
+    
+    {% if perms.ppto_maestro.puede_listar_proyecccion_complementaria_p_g %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -99,7 +130,9 @@
         <li><a href="{% url 'profit_loss_report_complementary_projection' %}">P&G Proyección Compl.</a></li>
       </ul>
     </li>
-
+    {% endif %}
+  
+    {% if perms.ppto_maestro.puede_listar_parametros_proyeccion %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -113,6 +146,9 @@
         <li><a href="{% url 'projection_parameters' %}">Proyección</a></li>
       </ul>
     </li>
+    {% endif %}
+
+    {% if perms.ppto_maestro.puede_listar_categorias_prestamos %}
     <li>
       <div class="icon-link">
         <a href="#">
@@ -126,6 +162,8 @@
         <li><a href="{% url 'categories_loan_portfolio' %}">Categorias Cartera Cred</a></li>
       </ul>
     </li>
+    {% endif %}
+
     <li>
       <div class="profile-details">
         <div class="profile-content">
