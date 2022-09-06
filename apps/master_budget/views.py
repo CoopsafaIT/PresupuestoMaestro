@@ -9,7 +9,8 @@ from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 
 from apps.main.models import Periodo
 from .models import (
@@ -26,12 +27,14 @@ from utils.sql import execute_sql_query
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_ver_menu_ppto_maestro', raise_exception=True)
 def master_budget_dashboard(request):
     ctx = {}
     return render(request, 'master_budget/dashboard.html', ctx)
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_parametros_proyeccion', raise_exception=True)
 def projection_parameters(request):
     form = MasterParametersForm()
     if request.is_ajax():
@@ -53,6 +56,8 @@ def projection_parameters(request):
         return HttpResponse(json.dumps(data), content_type='application/json')
 
     if request.method == 'POST':
+        if not request.user.has_perm('ppto_maestro.puede_crear_parametros_proyeccion'):
+            raise PermissionDenied
         form = MasterParametersForm(request.POST)
         if not form.is_valid():
             messages.warning(
@@ -106,6 +111,7 @@ def projection_parameters(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_parametros_proyeccion', raise_exception=True)
 def projection_parameter(request, id):
     qs = get_object_or_404(MasterParameters, pk=id)
     form = MasterParametersEditForm(instance=qs)
@@ -146,6 +152,7 @@ def projection_parameter(request, id):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_proyecccion_complementaria_p_g', raise_exception=True) # NOQA
 def profit_loss_report_complementary_projection(request):
     query = (
         "SELECT distinct ([PeriodoId]), p.DescPeriodo "
@@ -163,6 +170,11 @@ def profit_loss_report_complementary_projection(request):
 
 @login_required()
 def profit_loss_report_complementary_projection_detail(request, period_id):
+    if (
+        request.user.has_perm('ppto_maestro.puede_editar_proyecccion_complementaria_ganancias') is False or # NOQA
+        request.user.has_perm('ppto_maestro.puede_editar_proyecccion_complementaria_perdidas') is False # NOQA
+    ):
+        raise PermissionDenied
 
     if request.is_ajax():
         if request.method == 'GET':

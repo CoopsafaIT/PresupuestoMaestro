@@ -1,6 +1,7 @@
 import json
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.contrib import messages
 from decimal import Decimal as dc
@@ -20,6 +21,7 @@ from .request_get import QueryGetParms
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_escenarios_planilla', raise_exception=True)
 def scenarios_payment_payroll(request):
     form = PaymentPayrollScenarioForm()
 
@@ -71,6 +73,8 @@ def scenarios_payment_payroll(request):
 
     if request.method == 'POST':
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_planilla'):
+                raise PermissionDenied
             form = PaymentPayrollScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
@@ -163,6 +167,7 @@ def scenarios_payment_payroll(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_planilla', raise_exception=True)
 def scenario_payment_payroll(request, id):
     qs = get_object_or_404(PaymentPayrollScenario, pk=id)
 

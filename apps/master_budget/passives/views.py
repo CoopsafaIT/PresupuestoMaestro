@@ -2,7 +2,8 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import messages
 from django.db.models import Sum
@@ -31,6 +32,7 @@ from utils.constants import (
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_escenarios_pasivos_ahorros', raise_exception=True)
 def scenarios_savings_liabilities(request):
     form = SavingsLiabilitiesForm()
 
@@ -49,6 +51,8 @@ def scenarios_savings_liabilities(request):
 
     if request.method == 'POST':
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_pasivos_ahorros'):
+                raise PermissionDenied
             form = SavingsLiabilitiesForm(request.POST)
             if not form.is_valid():
                 messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
@@ -81,6 +85,8 @@ def scenarios_savings_liabilities(request):
                 return redirect(full_redirect_url)
 
         elif request.POST.get('method') == 'clone':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_pasivos_ahorros'):
+                raise PermissionDenied
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
@@ -129,6 +135,8 @@ def scenarios_savings_liabilities(request):
             return redirect(full_redirect_url)
 
         elif request.POST.get('method') == 'clone-update-parameter':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_pasivos_ahorros'):
+                raise PermissionDenied
             id = request.POST.get('id')
             parameter_id = request.POST.get('parameter_id')
             comment = request.POST.get('comment')
@@ -226,6 +234,7 @@ def scenarios_savings_liabilities(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_pasivos_ahorros', raise_exception=True)
 def scenario_savings_liabilities(request, id):
     qs = get_object_or_404(SavingsLiabilitiesScenario, pk=id)
 
@@ -361,6 +370,7 @@ def scenario_savings_liabilities_comments(request, id):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_escenarios_pasivos_prestamos', raise_exception=True)
 def scenarios_liabilities_loans(request):
     form = LiabilitiesLoansScenarioForm()
 
@@ -385,6 +395,8 @@ def scenarios_liabilities_loans(request):
 
     if request.method == 'POST':
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_pasivos_prestamos'):
+                raise PermissionDenied
             form = LiabilitiesLoansScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
@@ -418,7 +430,10 @@ def scenarios_liabilities_loans(request):
                 )
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
+
         elif request.POST.get('method') == 'clone':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_pasivos_prestamos'):
+                raise PermissionDenied
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
@@ -469,6 +484,8 @@ def scenarios_liabilities_loans(request):
             return redirect(full_redirect_url)
 
         elif request.POST.get('method') == "clone-update-parameter":
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_pasivos_prestamos'):
+                raise PermissionDenied
             calculations = LiabilitiesLoansCalculations()
             id = request.POST.get('id')
             parameter_id = request.POST.get('parameter_id')
@@ -570,6 +587,7 @@ def scenarios_liabilities_loans(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_pasivos_prestamos', raise_exception=True)
 def scenario_liabilities_loans(request, id):
     qs = get_object_or_404(LiabilitiesLoansScenario, pk=id)
 
@@ -718,6 +736,7 @@ def scenario_liabilities_loans_comments(request, id):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_escenarios_otros_pasivos', raise_exception=True)
 def scenarios_others_passives(request):
     form = OthersPassivesScenarioForm()
 
@@ -726,6 +745,8 @@ def scenarios_others_passives(request):
 
     if request.POST:
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_otros_pasivos'):
+                raise PermissionDenied
             form = OthersPassivesScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
@@ -781,6 +802,8 @@ def scenarios_others_passives(request):
                 full_redirect_url = f'{redirect_url}?option='
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_otros_pasivos'):
+                raise PermissionDenied
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
@@ -836,6 +859,7 @@ def scenarios_others_passives(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_otros_pasivos', raise_exception=True)
 def scenario_others_passives(request, id):
     qs = get_object_or_404(OtherPassivesScenario, pk=id)
     qs_categories = OtherPassivesCategory.objects.all().order_by('name')

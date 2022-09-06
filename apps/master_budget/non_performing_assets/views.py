@@ -1,9 +1,10 @@
 import json
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Q, Sum
+from django.core.exceptions import PermissionDenied
 # from decimal import Decimal as dc
 
 from apps.master_budget.models import MasterParameters
@@ -31,6 +32,7 @@ from utils.sql import execute_sql_query, execute_sql_query_no_return
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_nuevas_adquisiciones', raise_exception=True)
 def scenarios_non_performing_assets(request):
     form = NonPerformingAssetsScenarioForm()
 
@@ -73,6 +75,8 @@ def scenarios_non_performing_assets(request):
 
     if request.method == "POST":
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_nuevas_adquisiciones'): # NOQA
+                raise PermissionDenied
             form = NonPerformingAssetsScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
@@ -139,6 +143,8 @@ def scenarios_non_performing_assets(request):
                 full_redirect_url = f'{redirect_url}?option='
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_nuevas_adquisiciones'):
+                raise PermissionDenied
             id = request.POST.get('id')
             parameter_id = request.POST.get('parameter_id')
             comment = request.POST.get('comment')
@@ -234,6 +240,7 @@ def scenarios_non_performing_assets(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_nuevas_adquisiciones', raise_exception=True) # NOQA
 def scenario_non_performing_assets(request, id):
     qs = get_object_or_404(NonPerformingAssetsScenario, pk=id)
 
@@ -387,6 +394,7 @@ def scenario_non_performing_assets(request, id):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_escenarios_otros_activos', raise_exception=True)
 def scenarios_others_assets(request):
     form = OthersAssetsScenarioForm()
 
@@ -395,6 +403,8 @@ def scenarios_others_assets(request):
 
     if request.POST:
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_otros_activos'):
+                raise PermissionDenied
             form = OthersAssetsScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(request, f'Formulario no válido: {form.errors.as_text()}')
@@ -450,6 +460,8 @@ def scenarios_others_assets(request):
                 full_redirect_url = f'{redirect_url}?option='
                 return redirect(full_redirect_url)
         elif request.POST.get('method') == 'clone':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_otros_activos'):
+                raise PermissionDenied
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
@@ -505,6 +517,7 @@ def scenarios_others_assets(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_otros_activos', raise_exception=True)
 def scenario_others_assets(request, id):
     qs = get_object_or_404(OtherAssetsScenario, pk=id)
     qs_categories = OtherAssetsCategory.objects.all().order_by('name')

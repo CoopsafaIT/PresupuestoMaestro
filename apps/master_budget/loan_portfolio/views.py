@@ -3,8 +3,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from decimal import Decimal as dc
 
 from .models import (
@@ -26,6 +27,7 @@ from .calculations import LoanPortfolioCalculations
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_categorias_prestamos', raise_exception=True)
 def categories_loan_portfolio(request):
     def _execute_type():
         query = 'EXEC dbo.sp_pptoMaestroCarteraCredCatTipoPrestamoObtenerCatalogo'
@@ -59,6 +61,8 @@ def categories_loan_portfolio(request):
         return HttpResponse(json.dumps(ctx, cls=DjangoJSONEncoder))
 
     if request.method == 'POST':
+        if not request.user.has_perm('ppto_maestro.puede_crear_categorias_prestamos'):
+            raise PermissionDenied
         category, types_of_loans = _find_data()
         _new_cat = LoanPortfolioCategory()
         _new_cat.code_core = 0
@@ -86,6 +90,7 @@ def categories_loan_portfolio(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_categorias_prestamos', raise_exception=True)
 def category_loan_portfolio(request, id):
     qs = get_object_or_404(LoanPortfolioCategory, pk=id)
 
@@ -134,6 +139,7 @@ def category_loan_portfolio(request, id):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_cartera_crediticia', raise_exception=True)
 def scenarios_loan_portfolio(request):
     form = LoanPortfolioScenarioForm()
 
@@ -151,12 +157,12 @@ def scenarios_loan_portfolio(request):
         return amount
 
     def _correlative(category_name, period, total):
-        return (
-            f'ESC-{category_name[:4].upper()}-{period}-{total}'
-        )
+        return f'ESC-{category_name[:4].upper()}-{period}-{total}'
 
     if request.method == 'POST':
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_cartera_crediticia'):
+                raise PermissionDenied
             form = LoanPortfolioScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
@@ -192,7 +198,10 @@ def scenarios_loan_portfolio(request):
                 redirect_url = reverse('scenario_loan_portfolio', kwargs={'id': _new.pk})
                 full_redirect_url = f'{redirect_url}?option=open_calculations_modal'
                 return redirect(full_redirect_url)
+
         elif request.POST.get('method') == 'clone':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_cartera_crediticia'):
+                raise PermissionDenied
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
@@ -247,6 +256,8 @@ def scenarios_loan_portfolio(request):
             return redirect(full_redirect_url)
 
         elif request.POST.get('method') == 'clone-update-parameter':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_cartera_crediticia'):
+                raise PermissionDenied
             calculations = LoanPortfolioCalculations()
             id = request.POST.get('id')
             parameter_id = request.POST.get('parameter_id')
@@ -368,6 +379,7 @@ def scenarios_loan_portfolio(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_cartera_crediticia', raise_exception=True) # NOQA
 def scenario_loan_portfolio(request, id):
     qs = get_object_or_404(LoanPortfolioScenario, pk=id)
 
@@ -620,6 +632,7 @@ def scenario_loan_portfolio_comments(request, id):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_inversiones_financieras', raise_exception=True) # NOQA
 def scenarios_financial_investments(request):
     form = FinancialInvestmentsScenarioForm()
 
@@ -644,6 +657,8 @@ def scenarios_financial_investments(request):
 
     if request.method == 'POST':
         if request.POST.get('method') == 'create':
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_inversiones_financieras'): # NOQA
+                raise PermissionDenied
             form = FinancialInvestmentsScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
@@ -684,6 +699,8 @@ def scenarios_financial_investments(request):
                 return redirect(full_redirect_url)
 
         elif request.POST.get('method') == 'clone':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_inversiones_financieras'): # NOQA
+                raise PermissionDenied
             id = request.POST.get('id')
             comment = request.POST.get('comment')
             is_active = request.POST.get('is_active')
@@ -734,6 +751,8 @@ def scenarios_financial_investments(request):
             return redirect(full_redirect_url)
 
         elif request.POST.get('method') == 'clone-update-parameter':
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_inversiones_financieras'): # NOQA
+                raise PermissionDenied
             parameter_id = request.POST.get('parameter_id')
             id = request.POST.get('id')
             comment = request.POST.get('comment')
@@ -835,6 +854,7 @@ def scenarios_financial_investments(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_inversiones_financieras', raise_exception=True) # NOQA
 def scenario_financial_investments(request, id):
     qs = get_object_or_404(FinancialInvestmentsScenario, pk=id)
 

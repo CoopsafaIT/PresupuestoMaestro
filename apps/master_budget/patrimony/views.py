@@ -1,7 +1,8 @@
 from decimal import Decimal as dc
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.db.models import Sum
 
@@ -23,6 +24,7 @@ from utils.pagination import pagination
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_escenarios_patrimonio', raise_exception=True)
 def scenarios_equity(request):
     form = forms.EquityScenarioForm()
 
@@ -31,6 +33,8 @@ def scenarios_equity(request):
 
     if request.POST:
         if request.POST.get("method") == "create":
+            if not request.user.has_perm('ppto_maestro.puede_crear_escenarios_patrimonio'):
+                raise PermissionDenied
             form = forms.EquityScenarioForm(request.POST)
             if not form.is_valid():
                 messages.warning(
@@ -87,6 +91,8 @@ def scenarios_equity(request):
                 full_redirect_url = f"{redirect_url}?option="
                 return redirect(full_redirect_url)
         elif request.POST.get("method") == "clone":
+            if not request.user.has_perm('ppto_maestro.puede_editar_escenarios_patrimonio'):
+                raise PermissionDenied
             id = request.POST.get("id")
             comment = request.POST.get("comment")
             is_active = request.POST.get("is_active")
@@ -140,6 +146,7 @@ def scenarios_equity(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_patrimonio', raise_exception=True)
 def scenario_equity(request, id):
     qs = get_object_or_404(EquityScenario, pk=id)
     if request.method == "POST":
@@ -196,6 +203,7 @@ def scenario_equity(request, id):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_listar_escenarios_distribucion_excedentes', raise_exception=True) # NOQA
 def surplus(request):
     page = request.GET.get("page", 1)
     qs = DistributionSurplusPeriod.objects.all()
@@ -205,6 +213,7 @@ def surplus(request):
 
 
 @login_required()
+@permission_required('ppto_maestro.puede_editar_escenarios_distribucion_excedentes', raise_exception=True) # NOQA
 def surplus_detail(request, id):
     qs = get_object_or_404(DistributionSurplusPeriod, pk=id)
     form = forms.DistributionSurplusCategoryForm()

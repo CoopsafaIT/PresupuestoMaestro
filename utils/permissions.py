@@ -276,6 +276,217 @@ master_budget = [
         "content_type_name": "ppto_maestro",
         "codename": "puede_ver_menu_ppto_maestro",
     },
+    # Cartera Crediticia
+    {
+        "name": "Puede Listar Cartera Crediticia",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_cartera_crediticia",
+    },
+    {
+        "name": "Puede Crear Escenarios Cartera Crediticia",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_cartera_crediticia",
+    },
+    {
+        "name": "Puede Editar Escenarios Cartera Crediticia",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_cartera_crediticia",
+    },
+    # Inversiones Financieras
+    {
+        "name": "Puede Listar Escenarios Inversiones Financieras",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_inversiones_financieras",
+    },
+    {
+        "name": "Puede Crear Escenarios Inversiones Financieras",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_inversiones_financieras",
+    },
+    {
+        "name": "Puede Editar Escenarios Inversiones Financieras",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_inversiones_financieras",
+    },
+    # Nuevas Adquisiciones
+    {
+        "name": "Puede Listar Escenarios Nuevas Adquisiciones",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_nuevas_adquisiciones",
+    },
+    {
+        "name": "Puede Crear Escenarios Nuevas Adquisiciones",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_nuevas_adquisiciones",
+    },
+    {
+        "name": "Puede Editar Escenarios Nuevas Adquisiciones",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_nuevas_adquisiciones",
+    },
+    # Otros Activos
+    {
+        "name": "Puede Listar Escenarios Otros Activos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_escenarios_otros_activos",
+    },
+    {
+        "name": "Puede Crear Escenarios Otros Activos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_otros_activos",
+    },
+    {
+        "name": "Puede Editar Escenarios Otros Activos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_otros_activos",
+    },
+    # Pasivos Ahorros
+    {
+        "name": "Puede Listar Escenarios Pasivos Ahorros",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_escenarios_pasivos_ahorros",
+    },
+    {
+        "name": "Puede Crear Escenarios Pasivos Ahorros",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_pasivos_ahorros",
+    },
+    {
+        "name": "Puede Editar Escenarios Pasivos Ahorros",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_pasivos_ahorros",
+    },
+    # Pasivos Prestamos
+    {
+        "name": "Puede Listar Escenarios Pasivos Prestamos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_escenarios_pasivos_prestamos",
+    },
+    {
+        "name": "Puede Crear Escenarios Pasivos Prestamos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_pasivos_prestamos",
+    },
+    {
+        "name": "Puede Editar Escenarios Pasivos Prestamos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_pasivos_prestamos",
+    },
+    # Otros Pasivos
+    {
+        "name": "Puede Listar Escenarios Otros Pasivos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_escenarios_otros_pasivos",
+    },
+    {
+        "name": "Puede Crear Escenarios Otros Pasivos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_otros_pasivos",
+    },
+    {
+        "name": "Puede Editar Escenarios Otros Pasivos",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_otros_pasivos",
+    },
+    # Patrimonio
+    {
+        "name": "Puede Listar Escenarios Patrimonio",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_escenarios_patrimonio",
+    },
+    {
+        "name": "Puede Crear Escenarios Patrimonio",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_patrimonio",
+    },
+    {
+        "name": "Puede Editar Escenarios Patrimonio",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_patrimonio",
+    },
+    # Distribucion de Excedentes
+    {
+        "name": "Puede Listar Distribucion de Excedentes",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_escenarios_distribucion_excedentes",
+    },
+    {
+        "name": "Puede Crear Distribucion de Excedentes",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_distribucion_excedentes",
+    },
+    {
+        "name": "Puede Editar Distribucion de Excedentes",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_distribucion_excedentes",
+    },
+    # Planilla
+    {
+        "name": "Puede Listar Escenarios Planilla",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_escenarios_planilla",
+    },
+    {
+        "name": "Puede Crear Escenarios Planilla",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_escenarios_planilla",
+    },
+    {
+        "name": "Puede Editar Escenarios Planilla",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_escenarios_planilla",
+    },
+
+    # Proyeccion complementaria P&G
+    {
+        "name": "Puede Listar Proyeccion Complementaria P&G",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_proyecccion_complementaria_p_g",
+    },
+    {
+        "name": "Puede Editar Proyeccion Complementaria Ganancias",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_proyecccion_complementaria_ganancias",
+    },
+    {
+        "name": "Puede Editar Proyeccion Complementaria Perdidas",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_proyecccion_complementaria_perdidas",
+    },
+    # Parametros de Proyeccion
+    {
+        "name": "Puede Listar Parametros de Proyeccion",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_parametros_proyeccion",
+    },
+    {
+        "name": "Puede Crear Parametros de Proyeccion",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_parametros_proyeccion",
+    },
+    {
+        "name": "Puede Editar Parametros de Proyeccion",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_parametros_proyeccion",
+    },
+
+    # Categorias de Prestamos Cartera Crediticia
+    {
+        "name": "Puede Listar Categorias de Prestamos Cartera Crediticia",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_listar_categorias_prestamos",
+    },
+    {
+        "name": "Puede Crear Categorias de Prestamos Cartera Crediticia",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_crear_categorias_prestamos",
+    },
+    {
+        "name": "Puede Editar Categorias de Prestamos Cartera Crediticia",
+        "content_type_name": "ppto_maestro",
+        "codename": "puede_editar_categorias_prestamos",
+    },
+
 ]
 
 goals_permissions = [
